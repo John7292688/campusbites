@@ -447,63 +447,41 @@ function filterMeals() {
     }
 }
 
-// Function to dynamically build the meal grid from our database array
-function renderMeals(mealsToRender = MEALS) {
-    const gridContainer = document.getElementById('meals-grid');
-    if (!gridContainer) return;
+// Render all restaurants on the homepage grid
+function renderRestaurants() {
+    const mealGrid = document.getElementById("meal-grid"); // This is your existing grid container
+    if (!mealGrid) return;
 
-    // Clear old products out of the container layout
-    gridContainer.innerHTML = '';
+    mealGrid.innerHTML = ""; // Clear any existing content
 
-    // If no meals match our active filter parameters, show a friendly status update
-    if (mealsToRender.length === 0) {
-        gridContainer.innerHTML = `
-            <div style="grid-column: 1 / -1; text-align: center; padding: 40px; color: #666666;">
-                <p style="font-size: 16px; font-weight: bold;">No meals found in this category yet.</p>
-                <p style="font-size: 13px; margin: 5px 0 0 0;">We are constantly onboarding new student chefs!</p>
-            </div>`;
-        return;
-    }
+    // Loop through our 6 restaurants and build their storefront cards
+    Object.values(RESTAURANTS).forEach(restaurant => {
+        const card = document.createElement("div");
+        card.className = "bg-white rounded-xl shadow-md overflow-hidden hover:shadow-lg transition duration-300 cursor-pointer border border-gray-100";
+        
+        // When a user clicks a restaurant card, it will open that restaurant's page
+        card.onclick = () => showRestaurantDetails(restaurant.id);
 
-    // Loop through each structured meal and assemble its markup
-    // Loop through each structured meal and assemble its markup
-mealsToRender.forEach(meal => {
-    // Map back to the specific restaurant info using the cross-reference ID
-    const vendor = RESTAURANTS[meal.restaurantId] || { name: "Premium Chef" };
-    
-    const card = document.createElement('div');
-    card.className = 'meal-card';
-    card.setAttribute('data-name', meal.name.toLowerCase());
-    card.setAttribute('data-category', meal.category.toLowerCase());
-    card.style.cssText = 'border: 2px solid #000000; border-radius: 12px; overflow: hidden; background-color: #ffffff; display: flex; flex-direction: column;';
-
-    card.innerHTML = `
-        <div style="background-color: #000000; color: #ffffff; height: 160px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 14px; background-image: url('${meal.image}'); background-size: cover; background-position: center;">
-            ${meal.image ? '' : '[ ' + meal.name + ' Image ]'}
-        </div>
-        <div style="padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between;">
-            <div>
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 5px; gap: 10px;">
-                    <!-- Added data-meal-id right here -->
-                    <span class="food-trigger" data-meal-id="${meal.id}" style="font-weight: bold; font-size: 18px; color: #000000; min-height: 44px; display: block; cursor: pointer; text-decoration: underline;">${meal.name}</span>
-                    <span class="meal-rating" style="color: #FF6600; font-weight: bold; font-size: 14px; white-space: nowrap;">⭐ ${meal.rating.toFixed(1)}</span>
+        card.innerHTML = `
+            <div class="relative h-48 w-full bg-gray-200">
+                <img src="${restaurant.image}" alt="${restaurant.name}" class="w-full h-full object-cover">
+                <div class="absolute top-3 right-3 bg-white px-2 py-1 rounded-lg text-xs font-semibold text-gray-700 shadow-sm flex items-center gap-1">
+                    ⭐ ${restaurant.rating}
                 </div>
-                <!-- Added data-vendor-id right here -->
-                <p class="vendor-link" data-vendor-id="${meal.restaurantId}" style="color: #666666; font-size: 13px; margin: 0 0 15px 0; cursor: pointer; text-decoration: underline;">By ${vendor.name}</p>
             </div>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <span class="meal-price" style="font-weight: bold; font-size: 18px; color: #000000;">₦ ${meal.price.toLocaleString()}</span>
-                <button style="background-color: #FF6600; color: #ffffff; border: none; padding: 8px 15px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: background-color 0.2s;">+ Add</button>
+            <div class="p-4">
+                <h3 class="text-lg font-bold text-gray-800">${restaurant.name}</h3>
+                <p class="text-sm text-gray-500 mt-1 flex items-center gap-1">
+                    📍 ${restaurant.address}
+                </p>
+                <div class="flex justify-between items-center mt-4 pt-3 border-t border-gray-50 text-xs text-gray-600">
+                    <span class="flex items-center gap-1">🕒 ${restaurant.estimatedTime}</span>
+                    <span class="font-semibold text-green-600">₦${restaurant.deliveryFee} Delivery</span>
+                </div>
             </div>
-        </div>
-    `;
-    gridContainer.appendChild(card);
-});
-
-    // CRITICAL: Rebind modal click events and tray triggers onto our newly generated elements!
-    if (typeof unifiedCardRebinder === 'function') {
-        unifiedCardRebinder();
-    }
+        `;
+        mealGrid.appendChild(card);
+    });
 }
 
 // Function to capture card clicks and inject real database information into your modals
@@ -726,70 +704,256 @@ function initDarkMode() {
     });
 }
 
-// 2. Restaurants Database (With metadata for individual profiles)
 const RESTAURANTS = {
-    1: {
-        id: 1,
-        name: "Campus Hub Kitchen",
-        logo: "https://via.placeholder.com/50",
-        coverPhoto: "https://via.placeholder.com/800x400",
-        description: "The ultimate student stop for local delicacies.",
-        address: "Behind Technical Block, University Campus",
-        contact: "+2348012345678",
-        openingHours: "08:00 AM - 09:00 PM",
-        deliveryTime: "15-25 mins",
-        deliveryFee: 150,
-        rating: 4.8 // Overall Restaurant Rating
+    "res_001": {
+        id: "res_001",
+        name: "Iya Ghana Kitchen",
+        address: "Near School Gate, Campus Road, Iree", //
+        deliveryFee: 300,
+        image: "./images/jollof_rice.jpg",
+        rating: 4.5,
+        estimatedTime: "20-30 mins",
+        
+        packages: [
+            { 
+                id: "pkg_101", 
+                name: "Student Mini Combo", 
+                price: 1500, 
+                description: "Standard portion of Jollof Rice, 1 piece of beef, and a chilled water." 
+            },
+            { 
+                id: "pkg_102", 
+                name: "Mega Swallow Deal", 
+                price: 2200, 
+                description: "2 wraps of Amala, Ewedu/Gbegiri, and 2 massive pieces of Fish." 
+            }
+        ],
+        
+        customMenu: {
+            bases: [
+                { id: "cb_1", name: "Jollof Rice (Per Spoon)", price: 200 },
+                { id: "cb_2", name: "Fried Rice (Per Spoon)", price: 200 },
+                { id: "cb_3", name: "White Rice (Per Spoon)", price: 150 },
+                { id: "cb_4", name: "Amala (Per Wrap)", price: 150 },
+                { id: "cb_5", name: "Eba (Per Wrap)", price: 150 }
+            ],
+            proteins: [
+                { id: "cp_1", name: "Beef", price: 300 },
+                { id: "cp_2", name: "Chicken", price: 700 },
+                { id: "cp_3", name: "Fish", price: 400 },
+                { id: "cp_4", name: "Boiled Egg", price: 150 }
+            ],
+            sides: [
+                { id: "cs_1", name: "Dodo / Plantain (Portion)", price: 150 },
+                { id: "cs_2", name: "Moin Moin", price: 250 },
+                { id: "cs_3", name: "Salad / Coleslaw", price: 150 },
+                { id: "cs_4", name: "Extra Beans", price: 100 }
+            ],
+            drinks: [
+                { id: "cd_1", name: "Bottled Water", price: 200 },
+                { id: "cd_2", name: "Soft Drink (Coke/Fanta)", price: 350 },
+                { id: "cd_3", name: "Chilled Yo!", price: 250 }
+            ]
+        }
     },
-    2: {
-        id: 2,
+    "res_002": {
+        id: "res_002",
+        name: "Campus Hub Kitchen",
+        address: "Behind Technical Block, University Campus",
+        deliveryFee: 150,
+        image: "./images/jollof_rice.jpg",
+        rating: 4.8,
+        estimatedTime: "15-25 mins",
+        
+        packages: [
+            { 
+                id: "r2_pkg_101", 
+                name: "Hub Special Jollof", 
+                price: 1800, 
+                description: "Spiced Jollof Rice, fried plantain, salad, and turkey." 
+            }
+        ],
+        
+        customMenu: {
+            bases: [
+                { id: "r2_cb_1", name: "Jollof Rice (Per Spoon)", price: 200 },
+                { id: "r2_cb_2", name: "Fried Rice (Per Spoon)", price: 250 },
+                { id: "r2_cb_3", name: "Ofada Rice (Portion)", price: 400 }
+            ],
+            proteins: [
+                { id: "r2_cp_1", name: "Turkey", price: 1000 },
+                { id: "r2_cp_2", name: "Assorted Meat", price: 300 },
+                { id: "r2_cp_3", name: "Fried Fish", price: 400 }
+            ],
+            sides: [
+                { id: "r2_cs_1", name: "Dodo / Plantain (Portion)", price: 150 },
+                { id: "r2_cs_2", name: "Ofada Sauce", price: 200 },
+                { id: "r2_cs_3", name: "Coleslaw", price: 150 }
+            ],
+            drinks: [
+                { id: "r2_cd_1", name: "Bottled Water", price: 200 },
+                { id: "r2_cd_2", name: "Chilled Juice", price: 500 }
+            ]
+        }
+    },
+    "res_003": {
+        id: "res_003",
         name: "Buka Express",
-        logo: "https://via.placeholder.com/50",
-        coverPhoto: "https://via.placeholder.com/800x400",
-        description: "Hot, fresh, and authentic swallows and soups.",
         address: "Gate 2 Street, School Community",
-        contact: "+2348098765432",
-        openingHours: "09:00 AM - 10:00 PM",
-        deliveryTime: "20-35 mins",
         deliveryFee: 200,
-        rating: 4.5
+        image: "./images/jollof_rice.jpg",
+        rating: 4.5,
+        estimatedTime: "20-35 mins",
+        
+        packages: [
+            { 
+                id: "r3_pkg_101", 
+                name: "Mega Swallow Deal", 
+                price: 2400, 
+                description: "2 wraps of Amala, rich Ewedu/Gbegiri, and 2 massive pieces of Goat Meat." 
+            }
+        ],
+        
+        customMenu: {
+            bases: [
+                { id: "r3_cb_1", name: "Amala (Per Wrap)", price: 150 },
+                { id: "r3_cb_2", name: "Eba (Per Wrap)", price: 150 },
+                { id: "r3_cb_3", name: "Pounded Yam (Per Wrap)", price: 250 }
+            ],
+            proteins: [
+                { id: "r3_cp_1", name: "Goat Meat (Ogunfe)", price: 500 },
+                { id: "r3_cp_2", name: "Beef", price: 300 },
+                { id: "r3_cp_3", name: "Bush Meat", price: 600 }
+            ],
+            sides: [
+                { id: "r3_cs_1", name: "Ewedu & Gbegiri", price: 100 },
+                { id: "r3_cs_2", name: "Efo Riro (Portion)", price: 200 },
+                { id: "r3_cs_3", name: "Egusi Soup (Portion)", price: 200 }
+            ],
+            drinks: [
+                { id: "r3_cd_1", name: "Bottled Water", price: 200 },
+                { id: "r3_cd_2", name: "Soft Drink", price: 350 }
+            ]
+        }
+    },
+    "res_004": {
+        id: "res_004",
+        name: "Divine Favour Kitchen",
+        address: "Opposite State Poly Junction, Iree", //
+        deliveryFee: 250,
+        image: "./images/jollof_rice.jpg",
+        rating: 4.3,
+        estimatedTime: "25-35 mins",
+        
+        packages: [
+            { 
+                id: "r4_pkg_101", 
+                name: "Divine Rice Combo", 
+                price: 1300, 
+                description: "White Rice, spaghetti, stew, and 1 boiled egg." 
+            }
+        ],
+        
+        customMenu: {
+            bases: [
+                { id: "r4_cb_1", name: "White Rice (Per Spoon)", price: 150 },
+                { id: "r4_cb_2", name: "Spaghetti (Per Spoon)", price: 150 },
+                { id: "r4_cb_3", name: "Beans (Per Spoon)", price: 150 }
+            ],
+            proteins: [
+                { id: "r4_cp_1", name: "Boiled Egg", price: 150 },
+                { id: "r4_cp_2", name: "Fried Fish", price: 400 },
+                { id: "r4_cp_3", name: "Beef", price: 300 }
+            ],
+            sides: [
+                { id: "r4_cs_1", name: "Dodo (Portion)", price: 150 },
+                { id: "r4_cs_2", name: "Stew (Extra)", price: 100 }
+            ],
+            drinks: [
+                { id: "r4_cd_1", name: "Bottled Water", price: 200 },
+                { id: "r4_cd_2", name: "Zobo (Chilled Bottle)", price: 250 }
+            ]
+        }
+    },
+    "res_005": {
+        id: "res_005",
+        name: "PD Food Court",
+        address: "Inside Pavilion Plaza, Campus Core",
+        deliveryFee: 100,
+        image: "./images/jollof_rice.jpg",
+        rating: 4.7,
+        estimatedTime: "10-20 mins",
+        
+        packages: [
+            { 
+                id: "r5_pkg_101", 
+                name: "Noodle Mania", 
+                price: 1200, 
+                description: "Double noodles, mixed veggies, and 2 fried eggs." 
+            }
+        ],
+        
+        customMenu: {
+            bases: [
+                { id: "r5_cb_1", name: "Instant Noodles (Single)", price: 400 },
+                { id: "r5_cb_2", name: "French Fries (Portion)", price: 600 }
+            ],
+            proteins: [
+                { id: "r5_cp_1", name: "Fried Egg", price: 150 },
+                { id: "r5_cp_2", name: "Gizzard (Stick)", price: 500 },
+                { id: "r5_cp_3", name: "Fried Chicken", price: 700 }
+            ],
+            sides: [
+                { id: "r5_cs_1", name: "Fried Plantain (Portion)", price: 150 },
+                { id: "r5_cs_2", name: "Ketchup & Mayonnaise", price: 50 }
+            ],
+            drinks: [
+                { id: "r5_cd_1", name: "Bottled Water", price: 200 },
+                { id: "r5_cd_2", name: "Energy Drink", price: 600 },
+                { id: "r5_cd_3", name: "Chilled Soda", price: 350 }
+            ]
+        }
+    },
+    "res_006": {
+        id: "res_006",
+        name: "Royal Fast Food",
+        address: "Beside GTBank ATM Gallery, Iree", //
+        deliveryFee: 300,
+        image: "./images/jollof_rice.jpg",
+        rating: 4.6,
+        estimatedTime: "15-30 mins",
+        
+        packages: [
+            { 
+                id: "r6_pkg_101", 
+                name: "Royal Burger Meal", 
+                price: 3500, 
+                description: "Double Beef Burger, regular fries, and a cold soft drink." 
+            }
+        ],
+        
+        customMenu: {
+            bases: [
+                { id: "r6_cb_1", name: "Meat Pie", price: 500 },
+                { id: "r6_cb_2", name: "Chicken Shawarma", price: 1500 },
+                { id: "r6_cb_3", name: "Beef Burger", price: 1200 }
+            ],
+            proteins: [
+                { id: "r6_cp_1", name: "Sausage Roll", price: 250 },
+                { id: "r6_cp_2", name: "Chicken Lap", price: 1000 }
+            ],
+            sides: [
+                { id: "r6_cs_1", name: "French Fries (Portion)", price: 600 },
+                { id: "r6_cs_2", name: "Mashing Salad", price: 300 }
+            ],
+            drinks: [
+                { id: "r6_cd_1", name: "Bottled Water", price: 200 },
+                { id: "r6_cd_2", name: "Ice Cream (Cup)", price: 800 },
+                { id: "r6_cd_3", name: "Canned Malt", price: 450 }
+            ]
+        }
     }
 };
-
-// 3. Meals Database (Featuring the Dual-Rating System & Categories)
-const MEALS = [
-    // 1. Rice Categories
-    { id: 101, restaurantId: 1, name: "Jollof Rice + Quarter Chicken", price: 1500, category: "Jollof Rice", image: "https://via.placeholder.com/300x200", description: "Rich smoky campus Jollof rice served with a deeply seasoned quarter chicken piece.", estimatedTime: "20 mins", rating: 4.9 },
-    { id: 102, restaurantId: 1, name: "Special Stir-fry Fried Rice", price: 1300, category: "Fried Rice", image: "https://via.placeholder.com/300x200", description: "Fried rice tossed with fresh sweet corn, carrots, peas, and shredded beef.", estimatedTime: "15 mins", rating: 4.4 },
-    { id: 103, restaurantId: 2, name: "White Rice with Offal Pepper Sauce", price: 1100, category: "White Rice", image: "https://via.placeholder.com/300x200", description: "Fluffy white parboiled rice served with a spicy local designer pepper sauce.", estimatedTime: "15 mins", rating: 4.6 },
-    
-    // 2. Legumes, Tuber & Swallows
-    { id: 104, restaurantId: 2, name: "Ewa Agoyin with Honey Bread", price: 900, category: "Beans", image: "https://via.placeholder.com/300x200", description: "Slow-cooked mashed beans paired with the iconic dark, spicy palm oil sauce.", estimatedTime: "10 mins", rating: 5.0 },
-    { id: 105, restaurantId: 1, name: "Fried Yam & Akara Combo", price: 800, category: "Yam", image: "https://via.placeholder.com/300x200", description: "Crispy golden fried yam strips served with hot, fluffy bean cakes.", estimatedTime: "12 mins", rating: 4.3 },
-    { id: 106, restaurantId: 2, name: "Amala with Abula (Gbegiri & Ewedu)", price: 1000, category: "Amala", image: "https://via.placeholder.com/300x200", description: "Piping hot local Amala served with traditional mixed soups and assorted meat.", estimatedTime: "10 mins", rating: 4.9 },
-    { id: 107, restaurantId: 2, name: "Pounded Yam with Egusi", price: 1400, category: "Pounded Yam", image: "https://via.placeholder.com/300x200", description: "Smooth, stretchy pounded yam paired with rich, textured melon seed soup.", estimatedTime: "15 mins", rating: 4.7 },
-    { id: 108, restaurantId: 2, name: "Ijebu Eba with Okra Soup", price: 950, category: "Eba", image: "https://via.placeholder.com/300x200", description: "Sour, perfectly turned Ijebu garri served with dynamic local okra soup.", estimatedTime: "10 mins", rating: 4.5 },
-    { id: 109, restaurantId: 2, name: "Premium Semo with Vegetable Soup", price: 1200, category: "Semo", image: "https://via.placeholder.com/300x200", description: "Light, lump-free Semolina served alongside seasoned Efo Riro.", estimatedTime: "15 mins", rating: 4.2 },
-
-    // 3. Soups
-    { id: 110, restaurantId: 2, name: "Special Melon Egusi Soup Bowl", price: 800, category: "Egusi Soup", image: "https://via.placeholder.com/300x200", description: "A standalone rich bowl of Egusi soup cooked with stockfish and shaki.", estimatedTime: "10 mins", rating: 4.8 },
-    { id: 111, restaurantId: 2, name: "Crunchy Ila Alase (Okra Soup)", price: 700, category: "Okra Soup", image: "https://via.placeholder.com/300x200", description: "Finely chopped local okra soup loaded with prawns and fish cuts.", estimatedTime: "10 mins", rating: 4.4 },
-    { id: 112, restaurantId: 2, name: "Efo Riro (Vegetable Soup)", price: 900, category: "Vegetable Soup", image: "https://via.placeholder.com/300x200", description: "Rich, iron-packed Yoruba style spinach soup cooked with palm oil and locust beans.", estimatedTime: "12 mins", rating: 4.9 },
-    { id: 113, restaurantId: 1, name: "Catfish Pepper Soup (Point & Kill)", price: 2500, category: "Pepper Soup", image: "https://via.placeholder.com/300x200", description: "Fiery, highly aromatic fresh catfish soup cooked with local campus spices.", estimatedTime: "25 mins", rating: 4.8 },
-
-    // 4. Fast Food & Continental
-    { id: 114, restaurantId: 1, name: "Double Beef Chicken Shawarma", price: 1800, category: "Shawarma", image: "https://via.placeholder.com/300x200", description: "Creamy, double-wrapped flatbread filled with grilled chicken, beef, and cabbage.", estimatedTime: "15 mins", rating: 4.7 },
-    { id: 115, restaurantId: 1, name: "Campus Pepperoni Pizza", price: 4500, category: "Pizza", image: "https://via.placeholder.com/300x200", description: "Freshly baked dough topped with classic zesty tomato sauce, mozzarella, and pepperoni slices.", estimatedTime: "20 mins", rating: 4.5 },
-    { id: 116, restaurantId: 1, name: "Crunchy Cheese Burger + Fries", price: 2200, category: "Burgers", image: "https://via.placeholder.com/300x200", description: "Grilled beef patty topped with melted cheddar cheese, lettuce, onions, and signature burger sauce.", estimatedTime: "15 mins", rating: 4.6 },
-    { id: 117, restaurantId: 1, name: "Spicy Stir-Fry Spaghetti", price: 1200, category: "Spaghetti", image: "https://via.placeholder.com/300x200", description: "Spicy stir-fried pasta tossed with fresh bell peppers and shredded beef chunks.", estimatedTime: "15 mins", rating: 4.4 },
-    { id: 118, restaurantId: 1, name: "Instant Noodles Deluxe with Egg", price: 750, category: "Noodles", image: "https://via.placeholder.com/300x200", description: "Perfectly seasoned campus noodles cooked with fresh carrots, bell peppers, and a boiled egg.", estimatedTime: "10 mins", rating: 4.5 },
-
-    // 5. Snacks, Breaks & Refreshments
-    { id: 119, restaurantId: 1, name: "Gala Puff Puff & Meatpie Combo", price: 600, category: "Snacks", image: "https://via.placeholder.com/300x200", description: "A quick student fuel bundle consisting of golden puff puff and a warm minced beef pie.", estimatedTime: "5 mins", rating: 4.2 },
-    { id: 120, restaurantId: 1, name: "Morning Pancake & Omelette Set", price: 1100, category: "Breakfast", image: "https://via.placeholder.com/300x200", description: "Two fluffy buttermilk pancakes served with a well-seasoned fried egg omelette.", estimatedTime: "12 mins", rating: 4.6 },
-    { id: 121, restaurantId: 1, name: "Ice Cold Coca-Cola (60cl)", price: 400, category: "Drinks", image: "https://via.placeholder.com/300x200", description: "Chilled, crisp carbonated soft drink to beat the campus heat.", estimatedTime: "5 mins", rating: 4.9 },
-    { id: 122, restaurantId: 1, name: "Fudge Chocolate Brownie Slice", price: 1000, category: "Desserts", image: "https://via.placeholder.com/300x200", description: "Rich, chewy chocolate brownie baked perfectly with dark chocolate chips.", estimatedTime: "5 mins", rating: 4.4 }
-];
 
 // Function to dynamically inject the 22 client-requested categories
 function renderCategories() {
@@ -860,7 +1024,7 @@ function setupCategoryClickHandlers() {
 // Ensure this runs automatically as soon as the DOM finishes building
 document.addEventListener('DOMContentLoaded', () => {
     renderCategories();
-    renderMeals(); // This spins up your brand new database array!
+    renderRestaurants(); 
     initDarkMode(); // Start the dark mode listener loop!
     initSearch(); // Boot up the real-time search engine!
 });
@@ -1367,6 +1531,302 @@ sortButtons.forEach(btn => {
 
 // INITIALIZATION HOOK
 unifiedCardRebinder();
+
+// Switch view from Homepage Grid to Restaurant Menu Details
+function showRestaurantDetails(restaurantId) {
+    const restaurant = RESTAURANTS[restaurantId];
+    if (!restaurant) return;
+
+    const mealGrid = document.getElementById("meal-grid");
+    if (!mealGrid) return;
+
+    // 1. Find or create the restaurant details container
+    let detailsContainer = document.getElementById("restaurant-details");
+    if (!detailsContainer) {
+        detailsContainer = document.createElement("div");
+        detailsContainer.id = "restaurant-details";
+        // Insert it right after the meal-grid in the DOM
+        mealGrid.parentNode.insertBefore(detailsContainer, mealGrid.nextSibling);
+    }
+
+    // 2. Hide the homepage grid and show the details container
+    mealGrid.classList.add("hidden");
+    detailsContainer.classList.remove("hidden");
+
+    // Scroll to top of the page smoothly
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+    // 3. Render the Restaurant Header, Packages, and Custom Plate Builder
+    detailsContainer.innerHTML = `
+        <!-- Back Button & Restaurant Info Header -->
+        <div class="mb-6">
+            <button onclick="goBackToRestaurants()" class="mb-4 flex items-center gap-2 text-gray-600 hover:text-orange-500 font-medium transition">
+                ⬅️ Back to Restaurants
+            </button>
+            <div class="relative h-64 rounded-2xl overflow-hidden shadow-lg mb-6">
+                <img src="${restaurant.image}" alt="${restaurant.name}" class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col justify-end p-6 text-white">
+                    <span class="bg-orange-500 text-white text-xs font-bold px-2 py-1 rounded-md w-max mb-2">⭐ ${restaurant.rating}</span>
+                    <h2 class="text-3xl font-black">${restaurant.name}</h2>
+                    <p class="text-sm text-gray-200 mt-1">📍 ${restaurant.address}</p>
+                    <div class="flex gap-4 mt-3 text-xs font-semibold text-gray-300">
+                        <span>🕒 Delivery: ${restaurant.estimatedTime}</span>
+                        <span>•</span>
+                        <span>₦${restaurant.deliveryFee} Delivery Fee</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- TWO COLUMN MENU LAYOUT -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            
+            <!-- LEFT COLUMN: Preset Combos & Packages -->
+            <div>
+                <h3 class="text-xl font-extrabold text-gray-800 mb-4 flex items-center gap-2">
+                    📦 Preset Combos & Packages
+                </h3>
+                <div class="space-y-4">
+                    ${restaurant.packages.map(pkg => `
+                        <div class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 flex justify-between items-center hover:shadow-md transition">
+                            <div class="flex-1 pr-4">
+                                <h4 class="font-bold text-gray-800">${pkg.name}</h4>
+                                <p class="text-xs text-gray-500 mt-1">${pkg.description}</p>
+                                <span class="text-orange-500 font-extrabold text-sm block mt-2">₦${pkg.price}</span>
+                            </div>
+                            <button onclick="addPackageToCart('${restaurantId}', '${pkg.id}')" 
+                                class="bg-orange-500 hover:bg-orange-600 text-white px-4 py-2 rounded-lg font-bold text-sm transition shadow-sm">
+                                Add Combo
+                            </button>
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+
+            <!-- RIGHT COLUMN: Build Your Custom Plate -->
+            <div class="bg-orange-50/50 p-6 rounded-2xl border border-orange-100">
+                <h3 class="text-xl font-extrabold text-gray-800 mb-1 flex items-center gap-2">
+                    🍽️ Build-Your-Own Custom Plate
+                </h3>
+                <p class="text-xs text-gray-500 mb-6">Mix and match your bases, proteins, sides, and drinks exactly how you like them!</p>
+                
+                <div class="space-y-6" id="custom-builder-form">
+                    <!-- Custom elements will render dynamically here in Step 4! -->
+                </div>
+            </div>
+
+        </div>
+    `;
+
+    // Render the custom plate builder options inside the right column
+    renderCustomBuilder(restaurantId);
+}
+
+// Function to handle the Back Button
+function goBackToRestaurants() {
+    const mealGrid = document.getElementById("meal-grid");
+    const detailsContainer = document.getElementById("restaurant-details");
+    
+    if (mealGrid) mealGrid.classList.remove("hidden");
+    if (detailsContainer) detailsContainer.classList.add("hidden");
+}
+
+// Global state to track custom plate items before adding to cart
+let currentCustomPlate = {};
+
+// Render the individual ingredients with +/- controls
+function renderCustomBuilder(restaurantId) {
+    const restaurant = RESTAURANTS[restaurantId];
+    if (!restaurant) return;
+
+    const builderForm = document.getElementById("custom-builder-form");
+    if (!builderForm) return;
+
+    // Reset our temporary custom plate tracker for this session
+    currentCustomPlate = {
+        restaurantId: restaurantId,
+        items: {} // Will store itemId: quantity
+    };
+
+    const categories = [
+        { key: "bases", label: "🍚 Choose your Base (Rice, Swallow...)" },
+        { key: "proteins", label: "🥩 Choose your Protein (Meat, Fish...)" },
+        { key: "sides", label: "🥗 Choose your Sides (Dodo, Salad...)" },
+        { key: "drinks", label: "🥤 Choose your Drinks" }
+    ];
+
+    let builderHTML = "";
+
+    categories.forEach(category => {
+        const items = restaurant.customMenu[category.key];
+        if (!items || items.length === 0) return;
+
+        builderHTML += `
+            <div class="mb-4">
+                <h4 class="font-bold text-sm text-gray-700 mb-2 border-b border-orange-100 pb-1">${category.label}</h4>
+                <div class="space-y-2">
+        `;
+
+        items.forEach(item => {
+            builderHTML += `
+                <div class="flex justify-between items-center bg-white p-3 rounded-xl border border-gray-100 shadow-sm">
+                    <div>
+                        <span class="font-semibold text-sm text-gray-800">${item.name}</span>
+                        <span class="text-xs text-orange-500 font-bold ml-2">₦${item.price}</span>
+                    </div>
+                    <!-- Quantity Controls -->
+                    <div class="flex items-center gap-3 bg-gray-100 rounded-lg p-1">
+                        <button onclick="changeCustomItemQty('${category.key}', '${item.id}', -1, ${item.price}, '${item.name}', '${restaurantId}')" 
+                            class="w-6 h-6 flex items-center justify-center bg-white rounded-md text-sm font-bold text-gray-600 hover:bg-orange-500 hover:text-white transition">
+                            -
+                        </button>
+                        <span id="qty-${item.id}" class="text-xs font-bold text-gray-800 w-4 text-center">0</span>
+                        <button onclick="changeCustomItemQty('${category.key}', '${item.id}', 1, ${item.price}, '${item.name}', '${restaurantId}')" 
+                            class="w-6 h-6 flex items-center justify-center bg-white rounded-md text-sm font-bold text-gray-600 hover:bg-orange-500 hover:text-white transition">
+                            +
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        builderHTML += `
+                </div>
+            </div>
+        `;
+    });
+
+    // Add a beautiful Plate Summary & Add-to-Cart Action bar at the bottom
+    builderHTML += `
+        <div class="mt-6 pt-4 border-t border-orange-200">
+            <div class="flex justify-between items-center mb-4">
+                <span class="font-bold text-gray-700">Plate Summary:</span>
+                <span class="text-lg font-black text-orange-600" id="custom-plate-total">₦0</span>
+            </div>
+            <button onclick="addCustomPlateToCart()" id="add-plate-btn" disabled
+                class="w-full bg-gray-300 text-gray-500 cursor-not-allowed py-3 rounded-xl font-bold transition shadow-sm text-center">
+                Create Custom Plate
+            </button>
+        </div>
+    `;
+
+    builderForm.innerHTML = builderHTML;
+}
+
+// Handle adding/subtracting items on the custom plate builder
+function changeCustomItemQty(categoryKey, itemId, change, price, name, restaurantId) {
+    if (!currentCustomPlate.items[itemId]) {
+        currentCustomPlate.items[itemId] = { name: name, price: price, quantity: 0 };
+    }
+
+    // Update quantity
+    currentCustomPlate.items[itemId].quantity += change;
+
+    // Prevent negative quantities
+    if (currentCustomPlate.items[itemId].quantity <= 0) {
+        delete currentCustomPlate.items[itemId];
+        document.getElementById(`qty-${itemId}`).innerText = "0";
+    } else {
+        document.getElementById(`qty-${itemId}`).innerText = currentCustomPlate.items[itemId].quantity;
+    }
+
+    // Recalculate total price of this custom plate
+    let plateTotal = 0;
+    Object.values(currentCustomPlate.items).forEach(item => {
+        plateTotal += item.price * item.quantity;
+    });
+
+    // Update total display in the UI
+    document.getElementById("custom-plate-total").innerText = `₦${plateTotal}`;
+
+    // Enable or disable the "Add Custom Plate" button
+    const addPlateBtn = document.getElementById("add-plate-btn");
+    if (plateTotal > 0) {
+        addPlateBtn.disabled = false;
+        addPlateBtn.className = "w-full bg-orange-500 hover:bg-orange-600 text-white py-3 rounded-xl font-bold transition shadow-md text-center cursor-pointer";
+    } else {
+        addPlateBtn.disabled = true;
+        addPlateBtn.className = "w-full bg-gray-300 text-gray-500 cursor-not-allowed py-3 rounded-xl font-bold transition shadow-sm text-center";
+    }
+}
+
+// Add Preset Package/Combo to Cart
+function addPackageToCart(restaurantId, packageId) {
+    const restaurant = RESTAURANTS[restaurantId];
+    if (!restaurant) return;
+
+    const pkg = restaurant.packages.find(p => p.id === packageId);
+    if (!pkg) return;
+
+    // Create a normalized cart item
+    const cartItem = {
+        id: pkg.id,
+        name: `${pkg.name} (${restaurant.name})`,
+        price: pkg.price,
+        quantity: 1,
+        image: restaurant.image // Fallback to restaurant image
+    };
+
+    // Push to your existing cart array
+    if (typeof cart !== "undefined") {
+        const existingItem = cart.find(item => item.id === cartItem.id);
+        if (existingItem) {
+            existingItem.quantity += 1;
+        } else {
+            cart.push(cartItem);
+        }
+        
+        // Save & update your UI (Calling your existing functions)
+        if (typeof saveCart !== "undefined") saveCart();
+        if (typeof updateCartUI !== "undefined") updateCartUI();
+        alert(`${pkg.name} added to cart!`);
+    } else {
+        console.error("Cart array not found. Check if 'cart' variable is initialized globally.");
+    }
+}
+
+// Add Built-Your-Own Plate to Cart
+function addCustomPlateToCart() {
+    const restaurantId = currentCustomPlate.restaurantId;
+    const restaurant = RESTAURANTS[restaurantId];
+    if (!restaurant) return;
+
+    // Generate a description breakdown of their custom plate
+    const itemDescriptions = Object.values(currentCustomPlate.items)
+        .map(item => `${item.quantity}x ${item.name}`)
+        .join(", ");
+
+    let plateTotal = 0;
+    Object.values(currentCustomPlate.items).forEach(item => {
+        plateTotal += item.price * item.quantity;
+    });
+
+    // Create a clean, unique cart item representation
+    const customPlateCartItem = {
+        id: `custom_${restaurantId}_${Date.now()}`, // Unique timestamp to prevent grouping different custom plates
+        name: `Custom Plate (${restaurant.name})`,
+        price: plateTotal,
+        quantity: 1,
+        description: itemDescriptions,
+        image: restaurant.image
+    };
+
+    // Push to your existing cart array
+    if (typeof cart !== "undefined") {
+        cart.push(customPlateCartItem);
+        
+        // Save & update your UI (Calling your existing functions)
+        if (typeof saveCart !== "undefined") saveCart();
+        if (typeof updateCartUI !== "undefined") updateCartUI();
+        
+        alert("Custom Plate added to cart!");
+        
+        // Reset the form layout so they can build another if they want
+        renderCustomBuilder(restaurantId);
+    } else {
+        console.error("Cart array not found. Check if 'cart' variable is initialized globally.");
+    }
+}
 </script>
 </body>
 </html>
