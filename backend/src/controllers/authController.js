@@ -1,28 +1,119 @@
-const register = (req, res) => {
-  const { email, password } = req.body;
+const bcrypt = require("bcrypt");
+const pool = require("../config/database");
 
-  if (!email || !password) {
-  return res.status(400).json({
+const register = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    // Check password length
+    if (password.length < 8) {
+      return res.status(400).json({
+        success: false,
+        message: "Password must be at least 8 characters",
+      });
+    }
+
+    // Check if the email already exists
+    const existingUser = await pool.query(
+      "SELECT * FROM students WHERE email = $1",
+      [email]
+    );
+
+    if (existingUser.rows.length > 0) {
+      return res.status(409).json({
+        success: false,
+        message: "Email already registered",
+      });
+    }
+
+    // Hash the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Save the new student
+    await pool.query(
+      "INSERT INTO students (email, password) VALUES ($1, $2)",
+      [email, hashedPassword]
+    );
+
+    res.status(201).json({
+      success: true,
+      message: "Student registered successfully",
+    });
+
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
+};
+
+const login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    // Validate input
+    if (!email || !password) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and password are required",
+      });
+    }
+
+    // Find the student by email
+    const result = await pool.query(
+      "SELECT * FROM students WHERE email = $1",
+      [email]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Student not found",
+      });
+    }
+
+    // Compare passwords
+const student = result.rows[0];
+
+const isPasswordCorrect = await bcrypt.compare(
+  password,
+  student.password
+);
+
+if (!isPasswordCorrect) {
+  return res.status(401).json({
     success: false,
-    message: "Email and password are required"
+    message: "Invalid email or password",
   });
 }
 
-if (password.length < 8) {
-  return res.status(400).json({
-    success: false,
-    message: "Password must be at least 8 characters long"
-  });
-}
-
-  console.log("Registration Request:", req.body);
-
-  res.status(201).json({
+return res.status(200).json({
   success: true,
-  message: "Student registered successfully"
+  message: "Login successful",
 });
+
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error",
+    });
+  }
 };
 
 module.exports = {
-  register
+  register,
+  login,
 };
