@@ -1,10 +1,19 @@
 const express = require("express");
 const authRoutes = require("./routes/authRoutes");
 
+const restaurantRoutes = require("./routes/restaurantRoutes");
+
+const authMiddleware = require("./middleware/authMiddleware");
+
+const menuRoutes = require("./routes/menuRoutes");
+
+const cartRoutes = require("./routes/cartRoutes");
+
 const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 
 app.get("/", (req, res) => {
   res.send("CampusBites Backend Running");
@@ -17,5 +26,16 @@ app.get("/api/health", (req, res) => {
   });
 });
 app.use("/api/auth", authRoutes);
+app.use("/api/restaurants", restaurantRoutes);
+app.use("/api/menus", menuRoutes);
+app.use("/api/cart", cartRoutes);
+
+app.get("/api/profile", authMiddleware, (req, res) => {
+  res.json({
+    success: true,
+    message: "Welcome to your CampusBites profile!",
+    student: req.student,
+  });
+});
 
 module.exports = app;

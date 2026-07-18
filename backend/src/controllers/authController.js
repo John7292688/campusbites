@@ -1,17 +1,19 @@
 const bcrypt = require("bcrypt");
 const pool = require("../config/database");
 
+const generateToken = require("../utils/generateToken");
+
 const register = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { full_name, phone, email, password } = req.body;
 
     // Validate input
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
+    if (!full_name || !phone || !email || !password) {
+  return res.status(400).json({
+    success: false,
+    message: "Full name, phone, email and password are required",
+  });
+}
 
     // Check password length
     if (password.length < 8) {
@@ -39,9 +41,9 @@ const register = async (req, res) => {
 
     // Save the new student
     await pool.query(
-      "INSERT INTO students (email, password) VALUES ($1, $2)",
-      [email, hashedPassword]
-    );
+  "INSERT INTO students (full_name, phone, email, password) VALUES ($1, $2, $3, $4)",
+  [full_name, phone, email, hashedPassword]
+);
 
     res.status(201).json({
       success: true,
@@ -101,6 +103,13 @@ if (!isPasswordCorrect) {
 return res.status(200).json({
   success: true,
   message: "Login successful",
+  token: generateToken(student.id),
+  student: {
+    id: student.id,
+    full_name: student.full_name,
+    phone: student.phone,
+    email: student.email,
+  },
 });
 
   } catch (error) {
