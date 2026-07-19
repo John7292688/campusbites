@@ -17,6 +17,95 @@ const addToCart = async (cartData) => {
   return result.rows[0];
 };
 
+const getCartByStudentId = async (studentId) => {
+  const result = await pool.query(
+    `
+    SELECT
+      cart_items.id,
+      cart_items.quantity,
+      menus.id AS menu_item_id,
+      menus.name,
+      menus.description,
+      menus.price,
+      menus.image_url,
+      restaurants.name AS restaurant_name
+    FROM cart_items
+    JOIN menus
+      ON cart_items.menu_item_id = menus.id
+    JOIN restaurants
+      ON menus.restaurant_id = restaurants.id
+    WHERE cart_items.student_id = $1
+    ORDER BY cart_items.created_at DESC;
+    `,
+    [studentId]
+  );
+
+  return result.rows;
+};
+
+const updateCartItemQuantity = async (cartItemId, quantity) => {
+  const result = await pool.query(
+    `
+    UPDATE cart_items
+    SET quantity = $1
+    WHERE id = $2
+    RETURNING *;
+    `,
+    [quantity, cartItemId]
+  );
+
+  return result.rows[0];
+};
+
+const removeCartItem = async (cartItemId) => {
+  const result = await pool.query(
+    `
+    DELETE FROM cart_items
+    WHERE id = $1
+    RETURNING *;
+    `,
+    [cartItemId]
+  );
+
+  return result.rows[0];
+};
+
+const getCartByStudentIdWithClient = async (client, studentId) => {
+  const result = await client.query(
+    `
+    SELECT
+      ci.id,
+      ci.quantity,
+      m.id AS menu_item_id,
+      m.name,
+      m.price,
+      r.name AS restaurant_name
+    FROM cart_items ci
+    JOIN menus m ON ci.menu_item_id = m.id
+    JOIN restaurants r ON m.restaurant_id = r.id
+    WHERE ci.student_id = $1;
+    `,
+    [studentId]
+  );
+
+  return result.rows;
+};
+
+const clearCartWithClient = async (client, studentId) => {
+  await client.query(
+    `
+    DELETE FROM cart_items
+    WHERE student_id = $1;
+    `,
+    [studentId]
+  );
+};
+
 module.exports = {
   addToCart,
+  getCartByStudentId,
+  getCartByStudentIdWithClient,
+  updateCartItemQuantity,
+  removeCartItem,
+  clearCartWithClient,
 };

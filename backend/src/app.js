@@ -9,6 +9,8 @@ const menuRoutes = require("./routes/menuRoutes");
 
 const cartRoutes = require("./routes/cartRoutes");
 
+const orderRoutes = require("./routes/orderRoutes");
+
 const app = express();
 
 app.use(express.json());
@@ -29,6 +31,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/orders", orderRoutes);
 
 app.get("/api/profile", authMiddleware, (req, res) => {
   res.json({
