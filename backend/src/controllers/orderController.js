@@ -48,6 +48,51 @@ const getOrderById = async (req, res) => {
   }
 };
 
+const updateOrderStatus = async (req, res) => {
+  try {
+    const { orderId } = req.params;
+    const { status } = req.body;
+
+    const allowedStatuses = [
+  "Pending",
+  "Preparing",
+  "Ready",
+  "Out for Delivery",
+  "Delivered",
+  "Cancelled",
+];
+
+if (!allowedStatuses.includes(status)) {
+  return res.status(400).json({
+    success: false,
+    message: "Invalid order status",
+  });
+}
+
+    const order = await orderService.updateOrderStatus(orderId, status);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: "Order not found",
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Order status updated successfully",
+      order,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Failed to update order status",
+    });
+  }
+};
+
 const createOrderItem = async (req, res) => {
   try {
     const { orderId, menuItemId, quantity, price } = req.body;
@@ -96,7 +141,9 @@ const getOrderItems = async (req, res) => {
 
 const checkout = async (req, res) => {
   try {
-    const order = await orderService.checkout();
+    const studentId = req.student.id;
+
+    const order = await orderService.checkout(studentId);
 
     res.status(201).json({
       success: true,
@@ -116,6 +163,7 @@ const checkout = async (req, res) => {
 module.exports = {
   createOrder,
   getOrderById,
+  updateOrderStatus,
   createOrderItem,
   getOrderItems,
   checkout,

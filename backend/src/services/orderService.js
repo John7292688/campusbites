@@ -10,6 +10,10 @@ const getOrderById = async (orderId) => {
   return await orderModel.getOrderById(orderId);
 };
 
+const updateOrderStatus = async (orderId, status) => {
+  return await orderModel.updateOrderStatus(orderId, status);
+};
+
 const createOrderItem = async (orderId, menuItemId, quantity, price) => {
   return await orderModel.createOrderItem(
     orderId,
@@ -23,18 +27,16 @@ const getOrderItems = async (orderId) => {
   return await orderModel.getOrderItems(orderId);
 };
 
-const checkout = async () => {
+const checkout = async (studentId) => {
   const client = await pool.connect();
 
   try {
     await client.query("BEGIN");
 
-const studentId = 1; // Temporary for testing
-
-const cartItems = await cartModel.getCartByStudentIdWithClient(
-  client,
-  studentId
-);
+    const cartItems = await cartModel.getCartByStudentIdWithClient(
+      client,
+      studentId
+    );
 
 if (cartItems.length === 0) {
   throw new Error("Cart is empty");
@@ -75,6 +77,7 @@ await cartModel.clearCartWithClient(client, studentId);
 module.exports = {
   createOrder,
   getOrderById,
+  updateOrderStatus,
   createOrderItem,
   getOrderItems,
   checkout,

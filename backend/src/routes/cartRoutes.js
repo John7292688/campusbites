@@ -2,13 +2,14 @@ const express = require("express");
 const router = express.Router();
 
 const cartController = require("../controllers/cartController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/", cartController.addToCart);
+// Protected routes
+router.post("/", authMiddleware, cartController.addToCart);
 
-router.get("/:studentId", cartController.getCartByStudentId);
-
-router.put("/:cartItemId", cartController.updateCartItemQuantity);
-
-router.delete("/:cartItemId", cartController.removeCartItem);
+// You can protect these too
+router.get("/", authMiddleware, cartController.getCartByStudentId);
+router.put("/:cartItemId", authMiddleware, cartController.updateCartItemQuantity);
+router.delete("/:cartItemId", authMiddleware, cartController.removeCartItem);
 
 module.exports = router;

@@ -8,12 +8,16 @@ const getCartByStudentId = async (studentId) => {
   return await cartModel.getCartByStudentId(studentId);
 };
 
-const updateCartItemQuantity = async (cartItemId, quantity) => {
-  return await cartModel.updateCartItemQuantity(cartItemId, quantity);
+const updateCartItemQuantity = async (cartItemId, studentId, quantity) => {
+  return await cartModel.updateCartItemQuantity(
+    cartItemId,
+    studentId,
+    quantity
+  );
 };
 
-const removeCartItem = async (cartItemId) => {
-  return await cartModel.removeCartItem(cartItemId);
+const removeCartItem = async (cartItemId, studentId) => {
+  return await cartModel.removeCartItem(cartItemId, studentId);
 };
 
 module.exports = {

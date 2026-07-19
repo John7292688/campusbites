@@ -43,28 +43,30 @@ const getCartByStudentId = async (studentId) => {
   return result.rows;
 };
 
-const updateCartItemQuantity = async (cartItemId, quantity) => {
+const updateCartItemQuantity = async (cartItemId, studentId, quantity) => {
   const result = await pool.query(
     `
     UPDATE cart_items
     SET quantity = $1
     WHERE id = $2
+      AND student_id = $3
     RETURNING *;
     `,
-    [quantity, cartItemId]
+    [quantity, cartItemId, studentId]
   );
 
   return result.rows[0];
 };
 
-const removeCartItem = async (cartItemId) => {
+const removeCartItem = async (cartItemId, studentId) => {
   const result = await pool.query(
     `
     DELETE FROM cart_items
     WHERE id = $1
+      AND student_id = $2
     RETURNING *;
     `,
-    [cartItemId]
+    [cartItemId, studentId]
   );
 
   return result.rows[0];

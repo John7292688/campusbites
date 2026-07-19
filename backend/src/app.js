@@ -1,3 +1,4 @@
+const paymentRoutes = require("./routes/paymentRoutes");
 const express = require("express");
 const authRoutes = require("./routes/authRoutes");
 
@@ -32,6 +33,7 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
+app.use("/api/payments", paymentRoutes);
 
 app.get("/api/profile", authMiddleware, (req, res) => {
   res.json({

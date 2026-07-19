@@ -2,11 +2,10 @@ const cartService = require("../services/cartService");
 
 const addToCart = async (req, res) => {
   try {
-    const {
-      studentId,
-      menuItemId,
-      quantity,
-    } = req.body;
+    // Get the logged-in student's ID from the JWT
+    const studentId = req.student.id;
+
+    const { menuItemId, quantity } = req.body;
 
     const cartItem = await cartService.addToCart({
       student_id: studentId,
@@ -31,7 +30,8 @@ const addToCart = async (req, res) => {
 
 const getCartByStudentId = async (req, res) => {
   try {
-    const { studentId } = req.params;
+    // Get the logged-in student's ID from the JWT
+    const studentId = req.student.id;
 
     const cartItems = await cartService.getCartByStudentId(studentId);
 
@@ -54,15 +54,19 @@ const updateCartItemQuantity = async (req, res) => {
     const { cartItemId } = req.params;
     const { quantity } = req.body;
 
+    // Get the authenticated student's ID
+    const studentId = req.student.id;
+
     const cartItem = await cartService.updateCartItemQuantity(
       cartItemId,
+      studentId,
       quantity
     );
 
     if (!cartItem) {
       return res.status(404).json({
         success: false,
-        message: "Cart item not found",
+        message: "Cart item not found or you do not have permission to update it",
       });
     }
 
@@ -85,12 +89,18 @@ const removeCartItem = async (req, res) => {
   try {
     const { cartItemId } = req.params;
 
-    const cartItem = await cartService.removeCartItem(cartItemId);
+    // Get the authenticated student's ID
+    const studentId = req.student.id;
+
+    const cartItem = await cartService.removeCartItem(
+      cartItemId,
+      studentId
+    );
 
     if (!cartItem) {
       return res.status(404).json({
         success: false,
-        message: "Cart item not found",
+        message: "Cart item not found or you do not have permission to delete it",
       });
     }
 
