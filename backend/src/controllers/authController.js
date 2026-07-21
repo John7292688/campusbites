@@ -7,22 +7,6 @@ const register = async (req, res) => {
   try {
     const { full_name, phone, email, password } = req.body;
 
-    // Validate input
-    if (!full_name || !phone || !email || !password) {
-  return res.status(400).json({
-    success: false,
-    message: "Full name, phone, email and password are required",
-  });
-}
-
-    // Check password length
-    if (password.length < 8) {
-      return res.status(400).json({
-        success: false,
-        message: "Password must be at least 8 characters",
-      });
-    }
-
     // Check if the email already exists
     const existingUser = await pool.query(
       "SELECT * FROM students WHERE email = $1",
@@ -63,14 +47,6 @@ const register = async (req, res) => {
 const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-
-    // Validate input
-    if (!email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "Email and password are required",
-      });
-    }
 
     // Find the student by email
     const result = await pool.query(
