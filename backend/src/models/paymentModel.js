@@ -41,7 +41,39 @@ const getPaymentByOrderId = async (orderId) => {
   return result.rows[0];
 };
 
+const getPaymentByReference = async (transactionReference) => {
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM payments
+    WHERE transaction_reference = $1;
+    `,
+    [transactionReference]
+  );
+
+  return result.rows[0];
+};
+
+const updatePaymentStatus = async (
+  transactionReference,
+  status
+) => {
+  const result = await pool.query(
+    `
+    UPDATE payments
+    SET payment_status = $1
+    WHERE transaction_reference = $2
+    RETURNING *;
+    `,
+    [status, transactionReference]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   createPayment,
   getPaymentByOrderId,
+  getPaymentByReference,
+  updatePaymentStatus,
 };

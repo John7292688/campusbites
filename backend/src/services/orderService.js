@@ -27,6 +27,10 @@ const getOrderItems = async (orderId) => {
   return await orderModel.getOrderItems(orderId);
 };
 
+const getOrdersByRestaurantId = async (restaurantId) => {
+  return await orderModel.getOrdersByRestaurantId(restaurantId);
+};
+
 const checkout = async (studentId) => {
   const client = await pool.connect();
 
@@ -80,5 +84,6 @@ module.exports = {
   updateOrderStatus,
   createOrderItem,
   getOrderItems,
+  getOrdersByRestaurantId,
   checkout,
 };

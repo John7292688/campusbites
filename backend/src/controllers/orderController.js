@@ -139,6 +139,28 @@ const getOrderItems = async (req, res) => {
   }
 };
 
+const getOrdersByRestaurantId = async (req, res) => {
+  try {
+    const { restaurantId } = req.params;
+
+    const orders = await orderService.getOrdersByRestaurantId(
+      restaurantId
+    );
+
+    return res.status(200).json({
+      success: true,
+      orders,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
 const checkout = async (req, res) => {
   try {
     const studentId = req.student.id;
@@ -166,5 +188,6 @@ module.exports = {
   updateOrderStatus,
   createOrderItem,
   getOrderItems,
+  getOrdersByRestaurantId,
   checkout,
 };
