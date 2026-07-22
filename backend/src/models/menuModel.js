@@ -49,6 +49,23 @@ const getMenuItemById = async (menuItemId) => {
   return result.rows[0];
 };
 
+const getMenuItemByRestaurant = async (
+  menuItemId,
+  restaurantId
+) => {
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM menus
+    WHERE id = $1
+      AND restaurant_id = $2
+    `,
+    [menuItemId, restaurantId]
+  );
+
+  return result.rows[0];
+};
+
 const updateMenuItem = async (menuItemId, menuData) => {
   const {
     name,
@@ -96,7 +113,7 @@ module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
+  getMenuItemByRestaurant,
   updateMenuItem,
   deleteMenuItem,
 };
-

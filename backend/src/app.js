@@ -7,6 +7,9 @@ const menuRoutes = require("./routes/menuRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
+const packageRoutes = require("./routes/packageRoutes");
+const reviewRoutes = require("./routes/reviewRoutes");
+
 const authMiddleware = require("./middleware/authMiddleware");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -38,6 +41,8 @@ app.use("/api/menus", menuRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
+app.use("/api/packages", packageRoutes);
+app.use("/api/reviews", reviewRoutes);
 
 // Protected Student Profile Route
 app.get("/api/profile", authMiddleware, (req, res) => {
@@ -47,6 +52,8 @@ app.get("/api/profile", authMiddleware, (req, res) => {
     student: req.student,
   });
 });
+
+// Global Error Handler
 app.use(errorHandler);
 
 module.exports = app;
