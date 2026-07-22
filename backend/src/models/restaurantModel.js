@@ -38,8 +38,22 @@ const getRestaurantById = async (restaurantId) => {
   return result.rows[0];
 };
 
+const getRestaurantByOwnerId = async (ownerId) => {
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM restaurants
+    WHERE owner_id = $1;
+    `,
+    [ownerId]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   createRestaurant,
   getAllRestaurants,
   getRestaurantById,
+  getRestaurantByOwnerId,
 };

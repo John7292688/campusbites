@@ -1,5 +1,6 @@
 const cartModel = require("../models/cartModel");
 const orderModel = require("../models/orderModel");
+const restaurantModel = require("../models/restaurantModel");
 const pool = orderModel.getPool();
 
 const createOrder = async (studentId, totalAmount) => {
@@ -33,6 +34,16 @@ const getOrdersByRestaurantId = async (restaurantId) => {
 
 const getRestaurantOwnerByOrderId = async (orderId) => {
   return await orderModel.getRestaurantOwnerByOrderId(orderId);
+};
+
+const getOrdersForAuthenticatedOwner = async (ownerId) => {
+  const restaurant = await restaurantModel.getRestaurantByOwnerId(ownerId);
+
+  if (!restaurant) {
+    throw new Error("Restaurant not found");
+  }
+
+  return await orderModel.getOrdersByRestaurantId(restaurant.id);
 };
 
 const checkout = async (studentId) => {
@@ -90,5 +101,6 @@ module.exports = {
   getOrderItems,
   getOrdersByRestaurantId,
   getRestaurantOwnerByOrderId,
+  getOrdersForAuthenticatedOwner,
   checkout,
 };

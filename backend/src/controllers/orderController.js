@@ -103,9 +103,9 @@ const getOrderItems = asyncHandler(async (req, res) => {
 });
 
 const getOrdersByRestaurantId = asyncHandler(async (req, res) => {
-  const { restaurantId } = req.params;
+  const ownerId = req.owner.id;
 
-  const orders = await orderService.getOrdersByRestaurantId(restaurantId);
+  const orders = await orderService.getOrdersForAuthenticatedOwner(ownerId);
 
   res.status(200).json({
     success: true,

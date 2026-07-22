@@ -19,7 +19,7 @@ router.patch(
 );
 
 router.get(
-  "/restaurant/:restaurantId",
+  "/restaurant",
   restaurantOwnerAuthMiddleware,
   orderController.getOrdersByRestaurantId
 );
