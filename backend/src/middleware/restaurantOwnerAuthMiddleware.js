@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
 
-const authMiddleware = (req, res, next) => {
+const restaurantOwnerAuthMiddleware = (req, res, next) => {
   const authHeader = req.headers.authorization;
 
   // Check if token exists
@@ -16,15 +16,15 @@ const authMiddleware = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-    // Ensure the token belongs to a student
-    if (decoded.role !== "student") {
+    // Ensure the token belongs to a restaurant owner
+    if (decoded.role !== "restaurant_owner") {
       return res.status(403).json({
         success: false,
-        message: "Access denied. Students only.",
+        message: "Access denied. Restaurant owners only.",
       });
     }
 
-    req.student = decoded;
+    req.owner = decoded;
 
     next();
   } catch (error) {
@@ -35,4 +35,4 @@ const authMiddleware = (req, res, next) => {
   }
 };
 
-module.exports = authMiddleware;
+module.exports = restaurantOwnerAuthMiddleware;

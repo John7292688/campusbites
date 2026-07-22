@@ -1,186 +1,129 @@
 const orderService = require("../services/orderService");
+const asyncHandler = require("../utils/asyncHandler");
+const AppError = require("../utils/AppError");
 
-const createOrder = async (req, res) => {
-  try {
-    const { studentId, totalAmount } = req.body;
+const createOrder = asyncHandler(async (req, res) => {
+  const { studentId, totalAmount } = req.body;
 
-    const order = await orderService.createOrder(studentId, totalAmount);
+  const order = await orderService.createOrder(studentId, totalAmount);
 
-    res.status(201).json({
-      success: true,
-      message: "Order created successfully",
-      order,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to create order",
-    });
-  }
-};
-
-const getOrderById = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-
-    const order = await orderService.getOrderById(orderId);
-
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found",
-      });
-    }
-
-    res.status(200).json({
-      success: true,
-      order,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve order",
-    });
-  }
-};
-
-const updateOrderStatus = async (req, res) => {
-  try {
-    const { orderId } = req.params;
-    const { status } = req.body;
-
-    const allowedStatuses = [
-  "Pending",
-  "Preparing",
-  "Ready",
-  "Out for Delivery",
-  "Delivered",
-  "Cancelled",
-];
-
-if (!allowedStatuses.includes(status)) {
-  return res.status(400).json({
-    success: false,
-    message: "Invalid order status",
+  res.status(201).json({
+    success: true,
+    message: "Order created successfully",
+    order,
   });
-}
+});
 
-    const order = await orderService.updateOrderStatus(orderId, status);
+const getOrderById = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
 
-    if (!order) {
-      return res.status(404).json({
-        success: false,
-        message: "Order not found",
-      });
-    }
+  const order = await orderService.getOrderById(orderId);
 
-    res.status(200).json({
-      success: true,
-      message: "Order status updated successfully",
-      order,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to update order status",
-    });
+  if (!order) {
+    throw new AppError("Order not found", 404);
   }
-};
 
-const createOrderItem = async (req, res) => {
-  try {
-    const { orderId, menuItemId, quantity, price } = req.body;
+  res.status(200).json({
+    success: true,
+    order,
+  });
+});
 
-    const orderItem = await orderService.createOrderItem(
-      orderId,
-      menuItemId,
-      quantity,
-      price
+const updateOrderStatus = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
+  const { status } = req.body;
+
+  const allowedStatuses = [
+    "Pending",
+    "Preparing",
+    "Ready",
+    "Out for Delivery",
+    "Delivered",
+    "Cancelled",
+  ];
+
+  if (!allowedStatuses.includes(status)) {
+    throw new AppError("Invalid order status", 400);
+  }
+
+  // Get the authenticated restaurant owner
+  const ownerId = req.owner.id;
+
+  // Find who owns the restaurant for this order
+  const orderOwner = await orderService.getRestaurantOwnerByOrderId(orderId);
+
+  if (!orderOwner) {
+    throw new AppError("Order not found", 404);
+  }
+
+  // Check ownership
+  if (orderOwner.owner_id !== ownerId) {
+    throw new AppError(
+      "You are not authorized to update this order",
+      403
     );
-
-    res.status(201).json({
-      success: true,
-      message: "Order item created successfully",
-      orderItem,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Failed to create order item",
-    });
   }
-};
 
-const getOrderItems = async (req, res) => {
-  try {
-    const { orderId } = req.params;
+  // Update the order status
+  const order = await orderService.updateOrderStatus(orderId, status);
 
-    const items = await orderService.getOrderItems(orderId);
+  res.status(200).json({
+    success: true,
+    message: "Order status updated successfully",
+    order,
+  });
+});
 
-    res.status(200).json({
-      success: true,
-      items,
-    });
-  } catch (error) {
-    console.error(error);
+const createOrderItem = asyncHandler(async (req, res) => {
+  const { orderId, menuItemId, quantity, price } = req.body;
 
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve order items",
-    });
-  }
-};
+  const orderItem = await orderService.createOrderItem(
+    orderId,
+    menuItemId,
+    quantity,
+    price
+  );
 
-const getOrdersByRestaurantId = async (req, res) => {
-  try {
-    const { restaurantId } = req.params;
+  res.status(201).json({
+    success: true,
+    message: "Order item created successfully",
+    orderItem,
+  });
+});
 
-    const orders = await orderService.getOrdersByRestaurantId(
-      restaurantId
-    );
+const getOrderItems = asyncHandler(async (req, res) => {
+  const { orderId } = req.params;
 
-    return res.status(200).json({
-      success: true,
-      orders,
-    });
-  } catch (error) {
-    console.error(error);
+  const items = await orderService.getOrderItems(orderId);
 
-    return res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-};
+  res.status(200).json({
+    success: true,
+    items,
+  });
+});
 
-const checkout = async (req, res) => {
-  try {
-    const studentId = req.student.id;
+const getOrdersByRestaurantId = asyncHandler(async (req, res) => {
+  const { restaurantId } = req.params;
 
-    const order = await orderService.checkout(studentId);
+  const orders = await orderService.getOrdersByRestaurantId(restaurantId);
 
-    res.status(201).json({
-      success: true,
-      message: "Checkout completed successfully",
-      order,
-    });
-  } catch (error) {
-    console.error(error);
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});
 
-    res.status(500).json({
-      success: false,
-      message: error.message || "Checkout failed",
-    });
-  }
-};
+const checkout = asyncHandler(async (req, res) => {
+  const studentId = req.student.id;
+
+  const order = await orderService.checkout(studentId);
+
+  res.status(201).json({
+    success: true,
+    message: "Checkout completed successfully",
+    order,
+  });
+});
 
 module.exports = {
   createOrder,

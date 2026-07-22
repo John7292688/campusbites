@@ -8,26 +8,30 @@ const AppError = require("../utils/AppError");
 const register = asyncHandler(async (req, res) => {
   const { full_name, phone, email, password } = req.body;
 
-  const existingUser = await pool.query(
-    "SELECT * FROM students WHERE email = $1",
+  // Check if the email already exists
+  const existingOwner = await pool.query(
+    "SELECT * FROM restaurant_owners WHERE email = $1",
     [email]
   );
 
-  if (existingUser.rows.length > 0) {
+  if (existingOwner.rows.length > 0) {
     throw new AppError("Email already registered", 409);
   }
 
+  // Hash password
   const hashedPassword = await bcrypt.hash(password, 10);
 
+  // Save restaurant owner
   await pool.query(
-    `INSERT INTO students (full_name, phone, email, password)
-     VALUES ($1, $2, $3, $4)`,
+    `INSERT INTO restaurant_owners
+    (full_name, phone, email, password)
+    VALUES ($1, $2, $3, $4)`,
     [full_name, phone, email, hashedPassword]
   );
 
   res.status(201).json({
     success: true,
-    message: "Student registered successfully",
+    message: "Restaurant owner registered successfully",
   });
 });
 
@@ -35,19 +39,19 @@ const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
 
   const result = await pool.query(
-    "SELECT * FROM students WHERE email = $1",
+    "SELECT * FROM restaurant_owners WHERE email = $1",
     [email]
   );
 
   if (result.rows.length === 0) {
-    throw new AppError("Student not found", 404);
+    throw new AppError("Restaurant owner not found", 404);
   }
 
-  const student = result.rows[0];
+  const owner = result.rows[0];
 
   const isPasswordCorrect = await bcrypt.compare(
     password,
-    student.password
+    owner.password
   );
 
   if (!isPasswordCorrect) {
@@ -57,12 +61,12 @@ const login = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: "Login successful",
-    token: generateToken(student.id, "student"),
-    student: {
-      id: student.id,
-      full_name: student.full_name,
-      phone: student.phone,
-      email: student.email,
+    token: generateToken(owner.id, "restaurant_owner"),
+    owner: {
+      id: owner.id,
+      full_name: owner.full_name,
+      phone: owner.phone,
+      email: owner.email,
     },
   });
 });

@@ -31,6 +31,10 @@ const getOrdersByRestaurantId = async (restaurantId) => {
   return await orderModel.getOrdersByRestaurantId(restaurantId);
 };
 
+const getRestaurantOwnerByOrderId = async (orderId) => {
+  return await orderModel.getRestaurantOwnerByOrderId(orderId);
+};
+
 const checkout = async (studentId) => {
   const client = await pool.connect();
 
@@ -85,5 +89,6 @@ module.exports = {
   createOrderItem,
   getOrderItems,
   getOrdersByRestaurantId,
+  getRestaurantOwnerByOrderId,
   checkout,
 };

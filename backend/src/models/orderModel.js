@@ -126,6 +126,23 @@ const getOrdersByRestaurantId = async (restaurantId) => {
   return result.rows;
 };
 
+const getRestaurantOwnerByOrderId = async (orderId) => {
+  const result = await pool.query(
+    `
+    SELECT DISTINCT
+      r.owner_id
+    FROM orders o
+    JOIN order_items oi ON o.id = oi.order_id
+    JOIN menus m ON oi.menu_item_id = m.id
+    JOIN restaurants r ON m.restaurant_id = r.id
+    WHERE o.id = $1;
+    `,
+    [orderId]
+  );
+
+  return result.rows[0];
+};
+
 const getPool = () => {
   return pool;
 };
@@ -139,5 +156,6 @@ module.exports = {
   createOrderItemWithClient,
   getOrderItems,
   getOrdersByRestaurantId,
+  getRestaurantOwnerByOrderId,
   getPool,
 };
