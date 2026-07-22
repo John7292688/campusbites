@@ -29,6 +29,17 @@ const getOrderById = asyncHandler(async (req, res) => {
   });
 });
 
+const getMyOrders = asyncHandler(async (req, res) => {
+  const studentId = req.student.id;
+
+  const orders = await orderService.getOrdersByStudentId(studentId);
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});
+
 const updateOrderStatus = asyncHandler(async (req, res) => {
   const { orderId } = req.params;
   const { status } = req.body;
@@ -128,6 +139,7 @@ const checkout = asyncHandler(async (req, res) => {
 module.exports = {
   createOrder,
   getOrderById,
+  getMyOrders,
   updateOrderStatus,
   createOrderItem,
   getOrderItems,

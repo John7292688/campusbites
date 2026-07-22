@@ -11,6 +11,10 @@ const getOrderById = async (orderId) => {
   return await orderModel.getOrderById(orderId);
 };
 
+const getOrdersByStudentId = async (studentId) => {
+  return await orderModel.getOrdersByStudentId(studentId);
+};
+
 const updateOrderStatus = async (orderId, status) => {
   return await orderModel.updateOrderStatus(orderId, status);
 };
@@ -96,6 +100,7 @@ await cartModel.clearCartWithClient(client, studentId);
 module.exports = {
   createOrder,
   getOrderById,
+  getOrdersByStudentId,
   updateOrderStatus,
   createOrderItem,
   getOrderItems,

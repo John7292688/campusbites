@@ -11,6 +11,12 @@ router.post("/", orderController.createOrder);
 router.post("/items", orderController.createOrderItem);
 router.post("/checkout", authMiddleware, orderController.checkout);
 
+router.get(
+  "/my-orders",
+  authMiddleware,
+  orderController.getMyOrders
+);
+
 // Restaurant Owner Routes
 router.patch(
   "/:orderId/status",
