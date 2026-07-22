@@ -1,16 +1,16 @@
 const restaurantService = require("../services/restaurantService");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
+const { createRestaurantSchema } = require("../validators/restaurantValidator");
 
 const createRestaurant = asyncHandler(async (req, res) => {
   const { name, description, location, phone, image_url } = req.body;
 
-  if (!name || !location) {
-    throw new AppError(
-      "Restaurant name and location are required",
-      400
-    );
-  }
+  const { error } = createRestaurantSchema.validate(req.body);
+
+if (error) {
+  throw new AppError(error.details[0].message, 400);
+}
 
   const restaurant = await restaurantService.createRestaurant({
   name,
