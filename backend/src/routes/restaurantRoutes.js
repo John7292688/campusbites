@@ -6,7 +6,14 @@ const {
   getAllRestaurants,
 } = require("../controllers/restaurantController");
 
+const restaurantOwnerAuthMiddleware = require("../middleware/restaurantOwnerAuthMiddleware");
+
 router.get("/", getAllRestaurants);
-router.post("/", createRestaurant);
+
+router.post(
+  "/",
+  restaurantOwnerAuthMiddleware,
+  createRestaurant
+);
 
 module.exports = router;
