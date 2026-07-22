@@ -81,10 +81,22 @@ const updateMenuItem = async (menuItemId, menuData) => {
   return result.rows[0];
 };
 
+const deleteMenuItem = async (menuItemId) => {
+  const result = await pool.query(
+    `DELETE FROM menus
+     WHERE id = $1
+     RETURNING *`,
+    [menuItemId]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
   updateMenuItem,
+  deleteMenuItem,
 };
 

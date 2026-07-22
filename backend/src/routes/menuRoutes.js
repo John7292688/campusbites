@@ -17,6 +17,12 @@ router.put(
   menuController.updateMenuItem
 );
 
+router.delete(
+  "/:menuItemId",
+  restaurantOwnerAuthMiddleware,
+  menuController.deleteMenuItem
+);
+
 router.get("/item/:menuItemId", menuController.getMenuItemById);
 router.get("/:restaurantId", menuController.getRestaurantMenu);
 

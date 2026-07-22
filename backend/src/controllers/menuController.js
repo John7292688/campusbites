@@ -81,9 +81,24 @@ const updateMenuItem = asyncHandler(async (req, res) => {
   });
 });
 
+const deleteMenuItem = asyncHandler(async (req, res) => {
+  const { menuItemId } = req.params;
+
+  await menuService.deleteMenuItem(
+    menuItemId,
+    req.owner.id
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Menu item deleted successfully",
+  });
+});
+
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
   updateMenuItem,
+  deleteMenuItem,
 };

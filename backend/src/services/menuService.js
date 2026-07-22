@@ -61,9 +61,35 @@ const updateMenuItem = async (
   );
 };
 
+const deleteMenuItem = async (menuItemId, ownerId) => {
+  const menuItem = await menuModel.getMenuItemById(menuItemId);
+
+  if (!menuItem) {
+    throw new AppError("Menu item not found", 404);
+  }
+
+  const restaurant = await restaurantModel.getRestaurantById(
+    menuItem.restaurant_id
+  );
+
+  if (!restaurant) {
+    throw new AppError("Restaurant not found", 404);
+  }
+
+  if (restaurant.owner_id !== ownerId) {
+    throw new AppError(
+      "You can only delete menu items from your own restaurant",
+      403
+    );
+  }
+
+  return await menuModel.deleteMenuItem(menuItemId);
+};
+
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
   updateMenuItem,
+  deleteMenuItem,
 };
