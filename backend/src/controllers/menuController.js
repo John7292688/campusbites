@@ -65,8 +65,25 @@ const getMenuItemById = asyncHandler(async (req, res) => {
   });
 });
 
+const updateMenuItem = asyncHandler(async (req, res) => {
+  const { menuItemId } = req.params;
+
+  const updatedMenuItem = await menuService.updateMenuItem(
+    menuItemId,
+    req.body,
+    req.owner.id
+  );
+
+  res.status(200).json({
+    success: true,
+    message: "Menu item updated successfully",
+    menuItem: updatedMenuItem,
+  });
+});
+
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
+  updateMenuItem,
 };

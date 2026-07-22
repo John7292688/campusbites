@@ -10,6 +10,13 @@ router.post(
   restaurantOwnerAuthMiddleware,
   menuController.createMenuItem
 );
+
+router.put(
+  "/:menuItemId",
+  restaurantOwnerAuthMiddleware,
+  menuController.updateMenuItem
+);
+
 router.get("/item/:menuItemId", menuController.getMenuItemById);
 router.get("/:restaurantId", menuController.getRestaurantMenu);
 

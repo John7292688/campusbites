@@ -49,9 +49,42 @@ const getMenuItemById = async (menuItemId) => {
   return result.rows[0];
 };
 
+const updateMenuItem = async (menuItemId, menuData) => {
+  const {
+    name,
+    description,
+    price,
+    image_url,
+    is_available,
+  } = menuData;
+
+  const result = await pool.query(
+    `UPDATE menus
+     SET
+       name = $1,
+       description = $2,
+       price = $3,
+       image_url = $4,
+       is_available = $5
+     WHERE id = $6
+     RETURNING *`,
+    [
+      name,
+      description,
+      price,
+      image_url,
+      is_available,
+      menuItemId,
+    ]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
+  updateMenuItem,
 };
 
