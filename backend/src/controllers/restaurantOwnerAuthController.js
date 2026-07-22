@@ -5,7 +5,18 @@ const generateToken = require("../utils/generateToken");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 
+const {
+  registerRestaurantOwnerSchema,
+  loginRestaurantOwnerSchema,
+} = require("../validators/restaurantOwnerValidator");
+
 const register = asyncHandler(async (req, res) => {
+  const { error } = registerRestaurantOwnerSchema.validate(req.body);
+
+  if (error) {
+    throw new AppError(error.details[0].message, 400);
+  }
+
   const { full_name, phone, email, password } = req.body;
 
   // Check if the email already exists
@@ -36,6 +47,12 @@ const register = asyncHandler(async (req, res) => {
 });
 
 const login = asyncHandler(async (req, res) => {
+  const { error } = loginRestaurantOwnerSchema.validate(req.body);
+
+  if (error) {
+    throw new AppError(error.details[0].message, 400);
+  }
+
   const { email, password } = req.body;
 
   const result = await pool.query(
