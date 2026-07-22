@@ -2,7 +2,17 @@ const menuService = require("../services/menuService");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 
+const {
+  createMenuItemSchema,
+} = require("../validators/menuValidator");
+
 const createMenuItem = asyncHandler(async (req, res) => {
+  const { error } = createMenuItemSchema.validate(req.body);
+
+  if (error) {
+    throw new AppError(error.details[0].message, 400);
+  }
+
   const {
     restaurant_id,
     name,
