@@ -21,13 +21,16 @@ const createMenuItem = asyncHandler(async (req, res) => {
     image_url,
   } = req.body;
 
-  const menuItem = await menuService.createMenuItem({
+  const menuItem = await menuService.createMenuItem(
+  {
     restaurant_id,
     name,
     description,
     price,
     image_url,
-  });
+  },
+  req.owner.id
+);
 
   res.status(201).json({
     success: true,

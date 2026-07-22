@@ -29,7 +29,17 @@ const getAllRestaurants = async () => {
   return result.rows;
 };
 
+const getRestaurantById = async (restaurantId) => {
+  const result = await pool.query(
+    "SELECT * FROM restaurants WHERE id = $1",
+    [restaurantId]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   createRestaurant,
   getAllRestaurants,
+  getRestaurantById,
 };
