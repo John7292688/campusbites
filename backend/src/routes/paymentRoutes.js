@@ -2,11 +2,24 @@ const express = require("express");
 const router = express.Router();
 
 const paymentController = require("../controllers/paymentController");
+const authMiddleware = require("../middleware/authMiddleware");
 
-router.post("/initialize", paymentController.initializePayment);
+router.post(
+  "/initialize",
+  authMiddleware,
+  paymentController.initializePayment
+);
 
-router.get("/verify/:reference", paymentController.verifyPayment);
+router.get(
+  "/verify/:reference",
+  authMiddleware,
+  paymentController.verifyPayment
+);
 
-router.post("/", paymentController.createPayment);
+router.post(
+  "/",
+  authMiddleware,
+  paymentController.createPayment
+);
 
 module.exports = router;

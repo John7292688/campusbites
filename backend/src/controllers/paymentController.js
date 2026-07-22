@@ -49,6 +49,7 @@ const createPayment = async (req, res) => {
 const initializePayment = async (req, res) => {
   try {
     const { orderId, email, paymentMethod } = req.body;
+    const studentId = req.student.id;
     const allowedPaymentMethods = [
   "Paystack",
   "Flutterwave",
@@ -61,7 +62,10 @@ if (!allowedPaymentMethods.includes(paymentMethod)) {
     message: "Invalid payment method",
   });
 }
-    const order = await orderService.getOrderById(orderId);
+    const order = await orderService.getOrderByIdAndStudent(
+      orderId,
+      studentId
+    );
 
 if (!order) {
   return res.status(404).json({

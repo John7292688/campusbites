@@ -58,6 +58,20 @@ const getOrderById = async (orderId) => {
   return result.rows[0];
 };
 
+const getOrderByIdAndStudent = async (orderId, studentId) => {
+  const result = await pool.query(
+    `
+    SELECT *
+    FROM orders
+    WHERE id = $1
+      AND student_id = $2;
+    `,
+    [orderId, studentId]
+  );
+
+  return result.rows[0];
+};
+
 const getOrdersByStudentId = async (studentId) => {
   const result = await pool.query(
     `
@@ -169,6 +183,7 @@ module.exports = {
   createOrder,
   createOrderWithClient,
   getOrderById,
+  getOrderByIdAndStudent,
   getOrdersByStudentId,
   updateOrderStatus,
   createOrderItem,
