@@ -14,9 +14,6 @@ const createReview = async (
     throw new Error("Order not found.");
   }
 
-console.log("Order student_id:", order.student_id);
-console.log("JWT studentId:", studentId);
-
 if (order.student_id !== studentId) {
   throw new Error("You can only review your own orders.");
 }
@@ -67,16 +64,14 @@ const newReview =
   return newReview;
 };
 
-const getRestaurantReviews = async (
-  restaurantId
-) => {
-  return await reviewModel.getRestaurantReviews(
+const getRestaurantReviews = (restaurantId) => {
+  return reviewModel.getRestaurantReviews(
     restaurantId
   );
 };
 
-const getPackageReviews = async (packageId) => {
-  return await reviewModel.getPackageReviews(
+const getPackageReviews = (packageId) => {
+  return reviewModel.getPackageReviews(
     packageId
   );
 };

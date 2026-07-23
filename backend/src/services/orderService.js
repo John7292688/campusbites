@@ -3,8 +3,8 @@ const orderModel = require("../models/orderModel");
 const restaurantModel = require("../models/restaurantModel");
 const pool = orderModel.getPool();
 
-const createOrder = async (studentId, totalAmount) => {
-  return await orderModel.createOrder(studentId, totalAmount);
+const createOrder = (studentId, totalAmount) => {
+  return orderModel.createOrder(studentId, totalAmount);
 };
 
 const getOrderById = async (orderId) => {

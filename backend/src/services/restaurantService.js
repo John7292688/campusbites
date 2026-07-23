@@ -1,11 +1,11 @@
 const restaurantModel = require("../models/restaurantModel");
 
-const createRestaurant = async (restaurantData) => {
-  return await restaurantModel.createRestaurant(restaurantData);
+const createRestaurant = (restaurantData) => {
+  return restaurantModel.createRestaurant(restaurantData);
 };
 
-const getAllRestaurants = async () => {
-  return await restaurantModel.getAllRestaurants();
+const getAllRestaurants = () => {
+  return restaurantModel.getAllRestaurants();
 };
 
 module.exports = {

@@ -25,8 +25,8 @@ const getRestaurantMenu = async (restaurantId) => {
   return await menuModel.getRestaurantMenu(restaurantId);
 };
 
-const getMenuItemById = async (menuItemId) => {
-  return await menuModel.getMenuItemById(menuItemId);
+const getMenuItemById = (menuItemId) => {
+  return menuModel.getMenuItemById(menuItemId);
 };
 
 const updateMenuItem = async (

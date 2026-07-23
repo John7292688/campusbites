@@ -20,18 +20,18 @@ const createPayment = async (
   );
 };
 
-const updatePaymentStatus = async (
+const updatePaymentStatus = (
   transactionReference,
   status
 ) => {
-  return await paymentModel.updatePaymentStatus(
+  return paymentModel.updatePaymentStatus(
     transactionReference,
     status
   );
 };
 
-const getPaymentByReference = async (transactionReference) => {
-  return await paymentModel.getPaymentByReference(transactionReference);
+const getPaymentByReference = (transactionReference) => {
+  return paymentModel.getPaymentByReference(transactionReference);
 };
 
 module.exports = {

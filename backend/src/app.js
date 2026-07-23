@@ -53,6 +53,13 @@ app.get("/api/profile", authMiddleware, (req, res) => {
   });
 });
 
+app.use((req, res) => {
+  res.status(404).json({
+    success: false,
+    message: "Route not found",
+  });
+});
+
 // Global Error Handler
 app.use(errorHandler);
 

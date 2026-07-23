@@ -16,28 +16,28 @@ const createPackage = async (ownerId, packageData) => {
   });
 };
 
-const getPackageById = async (packageId) => {
-  return await packageModel.getPackageById(packageId);
+const getPackageById = (packageId) => {
+  return packageModel.getPackageById(packageId);
 };
 
-const getPackagesByRestaurant = async (restaurantId) => {
-  return await packageModel.getPackagesByRestaurant(
+const getPackagesByRestaurant = (restaurantId) => {
+  return packageModel.getPackagesByRestaurant(
     restaurantId
   );
 };
 
-const updatePackage = async (
+const updatePackage = (
   packageId,
   packageData
 ) => {
-  return await packageModel.updatePackage(
+  return packageModel.updatePackage(
     packageId,
     packageData
   );
 };
 
-const deletePackage = async (packageId) => {
-  return await packageModel.deletePackage(packageId);
+const deletePackage = (packageId) => {
+  return packageModel.deletePackage(packageId);
 };
 
 const addMenuItemToPackage = async (
