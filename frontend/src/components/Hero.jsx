@@ -1,22 +1,92 @@
+import heroFood from "../assets/images/hero-food.jpg";
 function Hero() {
   return (
     <section className="hero">
-      <h1>
-        Order Delicious Food <span>Around Campus</span> In Minutes.
-      </h1>
+      <div className="container hero-container">
 
-      <p>
-        Fast, fresh, and delivered straight to your hostel, lecture hall, or
-        department.
-      </p>
+        <div className="hero-content">
 
-      <div className="search-box">
-        <input
-          type="text"
-          placeholder="Search restaurant, meal, or category..."
-        />
+          <span className="hero-badge">
+            🍔 Campus Food Delivery Made Easy
+          </span>
 
-        <button>Search</button>
+          <h1>
+            Order Delicious Food Around Campus
+            <span> In Minutes.</span>
+          </h1>
+
+          <p>
+            Discover the best restaurants around your campus, order your
+            favourite meals, and get them delivered quickly to your hostel,
+            lecture hall, or department.
+          </p>
+
+          <div className="hero-search">
+
+            <input
+              type="text"
+              placeholder="Search restaurants, meals or categories..."
+            />
+
+            <button>
+              Search
+            </button>
+
+          </div>
+
+          <div className="hero-buttons">
+            <button className="primary-btn">
+              Browse Restaurants
+            </button>
+
+            <button className="secondary-btn">
+              Become a Vendor
+            </button>
+          </div>
+
+          <div className="hero-stats">
+
+            <div className="stat-card">
+              <h3>100+</h3>
+              <p>Restaurants</p>
+            </div>
+
+            <div className="stat-card">
+              <h3>5,000+</h3>
+              <p>Students</p>
+            </div>
+
+            <div className="stat-card">
+              <h3>30 mins</h3>
+              <p>Delivery</p>
+            </div>
+
+          </div>
+
+        </div>
+
+        <div className="hero-image">
+
+          <div className="floating-card rating-card">
+            ⭐ 4.9 Rating
+          </div>
+
+          <img
+            src={heroFood}
+            alt="Delicious food"
+            className="hero-food"
+          />
+
+          <div className="floating-card delivery-card">
+            🛵 30 mins
+          </div>
+
+          <div className="floating-card popular-card">
+            🔥 Popular
+          </div>
+
+        </div>
+
       </div>
     </section>
   );

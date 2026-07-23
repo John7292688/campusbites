@@ -1,4 +1,5 @@
 const express = require("express");
+const cors = require("cors");
 
 const authRoutes = require("./routes/authRoutes");
 const restaurantOwnerAuthRoutes = require("./routes/restaurantOwnerAuthRoutes");
@@ -15,8 +16,17 @@ const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
+// Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// Enable CORS for React frontend
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 // Home Route
 app.get("/", (req, res) => {
@@ -53,6 +63,7 @@ app.get("/api/profile", authMiddleware, (req, res) => {
   });
 });
 
+// 404 Route
 app.use((req, res) => {
   res.status(404).json({
     success: false,

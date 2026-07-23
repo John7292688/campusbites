@@ -1,18 +1,33 @@
 function Navbar() {
   return (
     <header className="navbar">
-      <div className="logo">
-        Campus<span>Bites</span>
-      </div>
+      <div className="container navbar-container">
 
-      <div className="nav-actions">
-        <button className="theme-btn">
-          Dark Mode
-        </button>
+        <div className="logo">
+          Campus<span>Bites</span>
+        </div>
 
-        <button className="cart-btn">
-          Cart (0)
-        </button>
+        <nav className="nav-links">
+          <a href="#">Home</a>
+          <a href="#">Restaurants</a>
+          <a href="#">Categories</a>
+          <a href="#">Packages</a>
+          <a href="#">Contact</a>
+        </nav>
+
+        <div className="nav-actions">
+
+          <button className="theme-btn">
+            🌙
+          </button>
+
+          <button className="cart-btn">
+            🛒
+            <span>0</span>
+          </button>
+
+        </div>
+
       </div>
     </header>
   );

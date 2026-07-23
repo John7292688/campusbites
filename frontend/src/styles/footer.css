@@ -1,0 +1,50 @@
+/* ==========================
+   HOW IT WORKS
+========================== */
+
+.how-it-works{
+    padding:90px 0;
+    background:#ffffff;
+}
+
+.steps-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:2rem;
+}
+
+.step-card{
+    background:#fff;
+    padding:2.5rem 2rem;
+    border-radius:22px;
+    text-align:center;
+    box-shadow:var(--shadow);
+    transition:var(--transition);
+}
+
+.step-card:hover{
+    transform:translateY(-10px);
+}
+
+.step-icon{
+    width:80px;
+    height:80px;
+    margin:0 auto 1.5rem;
+    border-radius:50%;
+    background:#fff3e8;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    font-size:2.2rem;
+}
+
+.step-card h3{
+    margin-bottom:1rem;
+    font-size:1.4rem;
+    color:var(--black);
+}
+
+.step-card p{
+    color:var(--gray);
+    line-height:1.7;
+}

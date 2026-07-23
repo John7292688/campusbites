@@ -1,0 +1,131 @@
+/* Google Font */
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap");
+
+/* CSS Reset */
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    font-family:"Poppins",sans-serif;
+    background:#ffffff;
+    color:#111111;
+    line-height:1.6;
+    overflow-x:hidden;
+}
+
+a{
+    text-decoration:none;
+    color:inherit;
+}
+
+img{
+    display:block;
+    max-width:100%;
+}
+
+button,
+input,
+textarea,
+select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+    border:none;
+    outline:none;
+}
+
+ul{
+    list-style:none;
+}
+
+.container{
+    width:min(1200px,92%);
+    margin:auto;
+}
+
+/* Theme Colors */
+:root{
+
+    --primary:#ff7a00;
+    --primary-dark:#e56d00;
+
+    --black:#111111;
+    --dark:#1c1c1c;
+
+    --white:#ffffff;
+
+    --gray:#666666;
+    --light:#f7f7f7;
+
+    --border:#e5e5e5;
+
+    --shadow:0 10px 30px rgba(0,0,0,.08);
+
+    --transition:.3s ease;
+}
+
+
+/* ==========================
+   RESPONSIVE NAVBAR
+========================== */
+
+@media (max-width: 992px){
+
+    .nav-links{
+        gap:1.2rem;
+    }
+
+    .logo{
+        font-size:1.6rem;
+    }
+
+}
+
+@media (max-width:768px){
+
+    .nav-links{
+        display:none;
+    }
+
+    .navbar-container{
+        height:70px;
+    }
+
+    .logo{
+        font-size:1.5rem;
+    }
+
+    .theme-btn,
+    .cart-btn{
+        width:44px;
+        height:44px;
+    }
+
+}
+
+
+
+
+
+/* Mobile */
+
+@media (max-width:768px){
+
+    .section-title h2{
+        font-size:1.8rem;
+    }
+
+    .categories{
+        padding:60px 0;
+    }
+
+}
