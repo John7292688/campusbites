@@ -2,24 +2,36 @@ const pool = require("../config/database");
 
 const createPackage = async ({
   restaurantId,
+  categoryId,
   name,
   description,
   price,
-  imageUrl,
+  image,
+  itemsIncluded,
 }) => {
   const result = await pool.query(
     `
-    INSERT INTO packages (
+    INSERT INTO combo_packages (
       restaurant_id,
+      category_id,
       name,
       description,
       price,
-      image_url
+      image,
+      items_included
     )
-    VALUES ($1, $2, $3, $4, $5)
+    VALUES ($1,$2,$3,$4,$5,$6,$7)
     RETURNING *;
     `,
-    [restaurantId, name, description, price, imageUrl]
+    [
+      restaurantId,
+      categoryId,
+      name,
+      description,
+      price,
+      image,
+      itemsIncluded,
+    ]
   );
 
   return result.rows[0];
@@ -28,9 +40,16 @@ const createPackage = async ({
 const getPackageById = async (packageId) => {
   const result = await pool.query(
     `
-    SELECT *
-    FROM packages
-    WHERE id = $1;
+    SELECT
+      cp.*,
+      r.name AS restaurant_name,
+      cc.name AS category_name
+    FROM combo_packages cp
+    JOIN restaurants r
+      ON cp.restaurant_id = r.id
+    JOIN combo_categories cc
+      ON cp.category_id = cc.id
+    WHERE cp.id = $1;
     `,
     [packageId]
   );
@@ -41,10 +60,14 @@ const getPackageById = async (packageId) => {
 const getPackagesByRestaurant = async (restaurantId) => {
   const result = await pool.query(
     `
-    SELECT *
-    FROM packages
-    WHERE restaurant_id = $1
-    ORDER BY created_at DESC;
+    SELECT
+      cp.*,
+      cc.name AS category_name
+    FROM combo_packages cp
+    JOIN combo_categories cc
+      ON cp.category_id = cc.id
+    WHERE cp.restaurant_id = $1
+    ORDER BY cp.created_at DESC;
     `,
     [restaurantId]
   );
@@ -52,28 +75,61 @@ const getPackagesByRestaurant = async (restaurantId) => {
   return result.rows;
 };
 
+const getAllPackages = async () => {
+  const result = await pool.query(
+    `
+    SELECT
+      cp.*,
+      r.name AS restaurant_name,
+      r.logo,
+      cc.name AS category_name
+    FROM combo_packages cp
+    JOIN restaurants r
+      ON cp.restaurant_id = r.id
+    JOIN combo_categories cc
+      ON cp.category_id = cc.id
+    WHERE cp.is_available = TRUE
+    ORDER BY cp.created_at DESC;
+    `
+  );
+
+  return result.rows;
+};
+
 const updatePackage = async (
   packageId,
-  { name, description, price, imageUrl, isAvailable }
+  {
+    categoryId,
+    name,
+    description,
+    price,
+    image,
+    itemsIncluded,
+    isAvailable,
+  }
 ) => {
   const result = await pool.query(
     `
-    UPDATE packages
+    UPDATE combo_packages
     SET
-      name = $1,
-      description = $2,
-      price = $3,
-      image_url = $4,
-      is_available = $5,
+      category_id = $1,
+      name = $2,
+      description = $3,
+      price = $4,
+      image = $5,
+      items_included = $6,
+      is_available = $7,
       updated_at = CURRENT_TIMESTAMP
-    WHERE id = $6
+    WHERE id = $8
     RETURNING *;
     `,
     [
+      categoryId,
       name,
       description,
       price,
-      imageUrl,
+      image,
+      itemsIncluded,
       isAvailable,
       packageId,
     ]
@@ -152,6 +208,7 @@ const getPackageItems = async (packageId) => {
 
 module.exports = {
   createPackage,
+  getAllPackages,
   getPackageById,
   getPackagesByRestaurant,
   updatePackage,

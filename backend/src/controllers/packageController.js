@@ -31,6 +31,25 @@ const createPackage = async (req, res) => {
   }
 };
 
+const getAllPackages = async (req, res) => {
+  try {
+    const packages = await packageService.getAllPackages();
+
+    res.json({
+      success: true,
+      count: packages.length,
+      data: packages,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 const getPackageById = async (req, res) => {
   try {
     const packageData = await packageService.getPackageById(
@@ -201,6 +220,7 @@ const getPackageItems = async (req, res) => {
 
 module.exports = {
   createPackage,
+  getAllPackages,
   getPackageById,
   getPackagesByRestaurant,
   updatePackage,

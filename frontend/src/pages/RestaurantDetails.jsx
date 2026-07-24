@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getRestaurantById } from "../services/restaurantService";
 import { getRestaurantMenu } from "../services/menuService";
+import { addToCart } from "../services/cartService";
 
 function RestaurantDetails() {
   const { id } = useParams();
@@ -28,6 +29,16 @@ function RestaurantDetails() {
     fetchRestaurant();
   }, [id]);
 
+  async function handleAddToCart(menuItemId) {
+    try {
+      await addToCart(menuItemId);
+
+      alert("Item added to cart successfully!");
+    } catch (error) {
+      alert(error.message);
+    }
+  }
+
   if (loading) {
     return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
   }
@@ -37,62 +48,62 @@ function RestaurantDetails() {
   }
 
   return (
-  <section className="restaurant-details">
-    <div className="restaurant-hero">
+    <section className="restaurant-details">
+      <div className="restaurant-hero">
+        <img
+          className="restaurant-hero-image"
+          src={
+            restaurant.image_url ||
+            "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80"
+          }
+          alt={restaurant.name}
+        />
 
-      <img
-        className="restaurant-hero-image"
-        src={
-          restaurant.image_url ||
-          "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=1200&q=80"
-        }
-        alt={restaurant.name}
-      />
+        <div className="restaurant-hero-content">
+          <h1>{restaurant.name}</h1>
 
-      <div className="restaurant-hero-content">
+          <p className="restaurant-location">
+            📍 {restaurant.location}
+          </p>
 
-        <h1>{restaurant.name}</h1>
+          <p className="restaurant-description">
+            {restaurant.description}
+          </p>
 
-        <p className="restaurant-location">
-          📍 {restaurant.location}
-        </p>
-
-        <p className="restaurant-description">
-          {restaurant.description}
-        </p>
-
-        <p className="restaurant-phone">
-          📞 {restaurant.phone}
-        </p>
-
+          <p className="restaurant-phone">
+            📞 {restaurant.phone}
+          </p>
+        </div>
       </div>
 
-    </div>
-    <div className="restaurant-menu">
-  <h2>Menu</h2>
+      <div className="restaurant-menu">
+        <h2>Menu</h2>
 
-  {menuItems.length === 0 ? (
-    <p>No menu items available.</p>
-  ) : (
-    <div className="menu-grid">
-      {menuItems.map((item) => (
-        <div className="menu-card" key={item.id}>
-          <h3>{item.name}</h3>
+        {menuItems.length === 0 ? (
+          <p>No menu items available.</p>
+        ) : (
+          <div className="menu-grid">
+            {menuItems.map((item) => (
+              <div className="menu-card" key={item.id}>
+                <h3>{item.name}</h3>
 
-          <p>{item.description}</p>
+                <p>{item.description}</p>
 
-          <h4>₦{item.price}</h4>
+                <h4>₦{item.price}</h4>
 
-          <button className="view-menu-btn">
-            Add to Cart
-          </button>
-        </div>
-      ))}
-    </div>
-  )}
-</div>
-  </section>
-);
+                <button
+                  className="view-menu-btn"
+                  onClick={() => handleAddToCart(item.id)}
+                >
+                  Add to Cart
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  );
 }
 
 export default RestaurantDetails;

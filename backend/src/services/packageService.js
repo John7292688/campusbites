@@ -26,6 +26,10 @@ const getPackagesByRestaurant = (restaurantId) => {
   );
 };
 
+const getAllPackages = () => {
+  return packageModel.getAllPackages();
+};
+
 const updatePackage = (
   packageId,
   packageData
@@ -122,6 +126,7 @@ const getPackageItems = async (packageId) => {
 
 module.exports = {
   createPackage,
+  getAllPackages,
   getPackageById,
   getPackagesByRestaurant,
   updatePackage,

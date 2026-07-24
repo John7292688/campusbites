@@ -20,6 +20,7 @@ function FeaturedRestaurants() {
 
     fetchRestaurants();
     }, []);
+    
   return (
     <section className="restaurants">
       <div className="container">
