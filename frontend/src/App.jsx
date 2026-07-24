@@ -13,6 +13,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // Owner Dashboard
 import OwnerLayout from "./layouts/OwnerLayout";
 import Dashboard from "./pages/owner/Dashboard";
+import ComboPackages from "./pages/owner/ComboPackages";
 
 function App() {
   return (
@@ -85,6 +86,11 @@ function App() {
           <Route
             index
             element={<Dashboard />}
+          />
+
+          <Route
+            path="packages"
+            element={<ComboPackages />}
           />
         </Route>
       </Routes>
