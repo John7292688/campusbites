@@ -1,7 +1,7 @@
 const packageModel = require("../models/packageModel");
 const restaurantModel = require("../models/restaurantModel");
-const menuModel = require("../models/menuModel");
 
+// Create a new combo package
 const createPackage = async (ownerId, packageData) => {
   const restaurant =
     await restaurantModel.getRestaurantByOwnerId(ownerId);
@@ -12,44 +12,38 @@ const createPackage = async (ownerId, packageData) => {
 
   return await packageModel.createPackage({
     restaurantId: restaurant.id,
-    ...packageData,
+    categoryId: packageData.categoryId,
+    name: packageData.name,
+    description: packageData.description,
+    price: packageData.price,
+    image: packageData.image,
+    itemsIncluded: Array.isArray(packageData.itemsIncluded)
+      ? packageData.itemsIncluded.join("\n")
+      : packageData.itemsIncluded,
   });
 };
 
-const getPackageById = (packageId) => {
-  return packageModel.getPackageById(packageId);
-};
-
-const getPackagesByRestaurant = (restaurantId) => {
-  return packageModel.getPackagesByRestaurant(
-    restaurantId
-  );
-};
-
+// Get all packages
 const getAllPackages = () => {
   return packageModel.getAllPackages();
 };
 
-const updatePackage = (
+// Get package by ID
+const getPackageById = (packageId) => {
+  return packageModel.getPackageById(packageId);
+};
+
+// Get packages for a restaurant
+const getPackagesByRestaurant = (restaurantId) => {
+  return packageModel.getPackagesByRestaurant(restaurantId);
+};
+
+// Update package (Owner only)
+const updatePackage = async (
+  ownerId,
   packageId,
   packageData
 ) => {
-  return packageModel.updatePackage(
-    packageId,
-    packageData
-  );
-};
-
-const deletePackage = (packageId) => {
-  return packageModel.deletePackage(packageId);
-};
-
-const addMenuItemToPackage = async (
-  ownerId,
-  packageId,
-  menuId,
-  quantity
-) => {
   const restaurant =
     await restaurantModel.getRestaurantByOwnerId(ownerId);
 
@@ -57,43 +51,34 @@ const addMenuItemToPackage = async (
     throw new Error("Restaurant not found");
   }
 
-  const packageData =
+  const existingPackage =
     await packageModel.getPackageById(packageId);
 
-  if (!packageData) {
+  if (!existingPackage) {
     throw new Error("Package not found");
   }
 
-  if (packageData.restaurant_id !== restaurant.id) {
+  if (existingPackage.restaurant_id !== restaurant.id) {
     throw new Error(
-      "You can only modify your own packages."
+      "You are not authorized to update this package."
     );
   }
 
-  const menuItem =
-    await menuModel.getMenuItemByRestaurant(
-      menuId,
-      restaurant.id
-    );
-
-  if (!menuItem) {
-    throw new Error(
-      "Menu item does not belong to your restaurant."
-    );
-  }
-
-  return await packageModel.addMenuItemToPackage(
-    packageId,
-    menuId,
-    quantity
-  );
+  return await packageModel.updatePackage(packageId, {
+    categoryId: packageData.categoryId,
+    name: packageData.name,
+    description: packageData.description,
+    price: packageData.price,
+    image: packageData.image,
+    itemsIncluded: Array.isArray(packageData.itemsIncluded)
+      ? packageData.itemsIncluded.join("\n")
+      : packageData.itemsIncluded,
+    isAvailable: packageData.isAvailable,
+  });
 };
 
-const removeMenuItemFromPackage = async (
-  ownerId,
-  packageId,
-  menuId
-) => {
+// Delete package (Owner only)
+const deletePackage = async (ownerId, packageId) => {
   const restaurant =
     await restaurantModel.getRestaurantByOwnerId(ownerId);
 
@@ -101,27 +86,20 @@ const removeMenuItemFromPackage = async (
     throw new Error("Restaurant not found");
   }
 
-  const packageData =
+  const existingPackage =
     await packageModel.getPackageById(packageId);
 
-  if (!packageData) {
+  if (!existingPackage) {
     throw new Error("Package not found");
   }
 
-  if (packageData.restaurant_id !== restaurant.id) {
+  if (existingPackage.restaurant_id !== restaurant.id) {
     throw new Error(
-      "You can only modify your own packages."
+      "You are not authorized to delete this package."
     );
   }
 
-  await packageModel.removeMenuItemFromPackage(
-    packageId,
-    menuId
-  );
-};
-
-const getPackageItems = async (packageId) => {
-  return await packageModel.getPackageItems(packageId);
+  return await packageModel.deletePackage(packageId);
 };
 
 module.exports = {
@@ -131,7 +109,4 @@ module.exports = {
   getPackagesByRestaurant,
   updatePackage,
   deletePackage,
-  addMenuItemToPackage,
-  removeMenuItemFromPackage,
-  getPackageItems,
 };

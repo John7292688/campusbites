@@ -1,5 +1,6 @@
 const pool = require("../config/database");
 
+// Create Package
 const createPackage = async ({
   restaurantId,
   categoryId,
@@ -20,7 +21,7 @@ const createPackage = async ({
       image,
       items_included
     )
-    VALUES ($1,$2,$3,$4,$5,$6,$7)
+    VALUES ($1, $2, $3, $4, $5, $6, $7)
     RETURNING *;
     `,
     [
@@ -37,12 +38,36 @@ const createPackage = async ({
   return result.rows[0];
 };
 
+// Get All Packages
+const getAllPackages = async () => {
+  const result = await pool.query(
+    `
+    SELECT
+      cp.*,
+      r.name AS restaurant_name,
+      r.image_url AS restaurant_image,
+      cc.name AS category_name
+    FROM combo_packages cp
+    JOIN restaurants r
+      ON cp.restaurant_id = r.id
+    JOIN combo_categories cc
+      ON cp.category_id = cc.id
+    WHERE cp.is_available = TRUE
+    ORDER BY cp.created_at DESC;
+    `
+  );
+
+  return result.rows;
+};
+
+// Get Package By ID
 const getPackageById = async (packageId) => {
   const result = await pool.query(
     `
     SELECT
       cp.*,
       r.name AS restaurant_name,
+      r.image_url AS restaurant_image,
       cc.name AS category_name
     FROM combo_packages cp
     JOIN restaurants r
@@ -57,6 +82,7 @@ const getPackageById = async (packageId) => {
   return result.rows[0];
 };
 
+// Get Packages By Restaurant
 const getPackagesByRestaurant = async (restaurantId) => {
   const result = await pool.query(
     `
@@ -75,27 +101,7 @@ const getPackagesByRestaurant = async (restaurantId) => {
   return result.rows;
 };
 
-const getAllPackages = async () => {
-  const result = await pool.query(
-    `
-    SELECT
-      cp.*,
-      r.name AS restaurant_name,
-      r.logo,
-      cc.name AS category_name
-    FROM combo_packages cp
-    JOIN restaurants r
-      ON cp.restaurant_id = r.id
-    JOIN combo_categories cc
-      ON cp.category_id = cc.id
-    WHERE cp.is_available = TRUE
-    ORDER BY cp.created_at DESC;
-    `
-  );
-
-  return result.rows;
-};
-
+// Update Package
 const updatePackage = async (
   packageId,
   {
@@ -138,72 +144,15 @@ const updatePackage = async (
   return result.rows[0];
 };
 
+// Delete Package
 const deletePackage = async (packageId) => {
   await pool.query(
     `
-    DELETE FROM packages
+    DELETE FROM combo_packages
     WHERE id = $1;
     `,
     [packageId]
   );
-};
-
-const addMenuItemToPackage = async (
-  packageId,
-  menuId,
-  quantity
-) => {
-  const result = await pool.query(
-    `
-    INSERT INTO package_items (
-      package_id,
-      menu_id,
-      quantity
-    )
-    VALUES ($1, $2, $3)
-    RETURNING *;
-    `,
-    [packageId, menuId, quantity]
-  );
-
-  return result.rows[0];
-};
-
-const removeMenuItemFromPackage = async (
-  packageId,
-  menuId
-) => {
-  await pool.query(
-    `
-    DELETE FROM package_items
-    WHERE package_id = $1
-      AND menu_id = $2;
-    `,
-    [packageId, menuId]
-  );
-};
-
-const getPackageItems = async (packageId) => {
-  const result = await pool.query(
-    `
-    SELECT
-      pi.id,
-      pi.quantity,
-      m.id AS menu_id,
-      m.name,
-      m.description,
-      m.price,
-      m.image_url
-    FROM package_items pi
-    JOIN menus m
-      ON pi.menu_id = m.id
-    WHERE pi.package_id = $1
-    ORDER BY m.name;
-    `,
-    [packageId]
-  );
-
-  return result.rows;
 };
 
 module.exports = {
@@ -213,7 +162,4 @@ module.exports = {
   getPackagesByRestaurant,
   updatePackage,
   deletePackage,
-  addMenuItemToPackage,
-  removeMenuItemFromPackage,
-  getPackageItems,
 };

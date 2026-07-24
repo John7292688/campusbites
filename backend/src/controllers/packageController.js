@@ -1,14 +1,28 @@
 const packageService = require("../services/packageService");
+const uploadToCloudinary = require("../utils/uploadToCloudinary");
+const deleteFromCloudinary = require("../utils/deleteFromCloudinary");
 
+// ==============================
+// Create Package
+// ==============================
 const createPackage = async (req, res) => {
   try {
     const ownerId = req.owner.id;
 
+    let imageUrl = null;
+
+    if (req.file) {
+      const result = await uploadToCloudinary(req.file.buffer);
+      imageUrl = result.secure_url;
+    }
+
     const packageData = {
+      categoryId: req.body.categoryId,
       name: req.body.name,
       description: req.body.description,
       price: req.body.price,
-      imageUrl: req.body.imageUrl,
+      image: imageUrl,
+      itemsIncluded: req.body.itemsIncluded,
     };
 
     const newPackage = await packageService.createPackage(
@@ -31,6 +45,9 @@ const createPackage = async (req, res) => {
   }
 };
 
+// ==============================
+// Get All Packages
+// ==============================
 const getAllPackages = async (req, res) => {
   try {
     const packages = await packageService.getAllPackages();
@@ -50,6 +67,9 @@ const getAllPackages = async (req, res) => {
   }
 };
 
+// ==============================
+// Get Package By ID
+// ==============================
 const getPackageById = async (req, res) => {
   try {
     const packageData = await packageService.getPackageById(
@@ -77,6 +97,9 @@ const getPackageById = async (req, res) => {
   }
 };
 
+// ==============================
+// Get Packages By Restaurant
+// ==============================
 const getPackagesByRestaurant = async (req, res) => {
   try {
     const packages =
@@ -98,12 +121,50 @@ const getPackagesByRestaurant = async (req, res) => {
   }
 };
 
+// ==============================
+// Update Package
+// ==============================
 const updatePackage = async (req, res) => {
   try {
+    const ownerId = req.owner.id;
+
+    const existingPackage =
+      await packageService.getPackageById(req.params.packageId);
+
+    if (!existingPackage) {
+      return res.status(404).json({
+        success: false,
+        message: "Package not found",
+      });
+    }
+
+    let imageUrl = existingPackage.image;
+
+    if (req.file) {
+      await deleteFromCloudinary(existingPackage.image);
+
+      const uploadedImage = await uploadToCloudinary(
+        req.file.buffer
+      );
+
+      imageUrl = uploadedImage.secure_url;
+    }
+
+    const packageData = {
+      categoryId: req.body.categoryId,
+      name: req.body.name,
+      description: req.body.description,
+      price: req.body.price,
+      image: imageUrl,
+      itemsIncluded: req.body.itemsIncluded,
+      isAvailable: req.body.isAvailable,
+    };
+
     const updatedPackage =
       await packageService.updatePackage(
+        ownerId,
         req.params.packageId,
-        req.body
+        packageData
       );
 
     res.json({
@@ -121,92 +182,33 @@ const updatePackage = async (req, res) => {
   }
 };
 
+// ==============================
+// Delete Package
+// ==============================
 const deletePackage = async (req, res) => {
   try {
+    const ownerId = req.owner.id;
+
+    const existingPackage =
+      await packageService.getPackageById(req.params.packageId);
+
+    if (!existingPackage) {
+      return res.status(404).json({
+        success: false,
+        message: "Package not found",
+      });
+    }
+
+    await deleteFromCloudinary(existingPackage.image);
+
     await packageService.deletePackage(
+      ownerId,
       req.params.packageId
     );
 
     res.json({
       success: true,
       message: "Package deleted successfully",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-const addMenuItemToPackage = async (req, res) => {
-  try {
-    const ownerId = req.owner.id;
-
-    const { packageId } = req.params;
-    const { menuId, quantity } = req.body;
-
-    const item =
-      await packageService.addMenuItemToPackage(
-        ownerId,
-        packageId,
-        menuId,
-        quantity
-      );
-
-    res.status(201).json({
-      success: true,
-      message: "Menu item added to package successfully",
-      data: item,
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-const removeMenuItemFromPackage = async (req, res) => {
-  try {
-    const ownerId = req.owner.id;
-
-    const { packageId, menuId } = req.params;
-
-    await packageService.removeMenuItemFromPackage(
-      ownerId,
-      packageId,
-      menuId
-    );
-
-    res.json({
-      success: true,
-      message: "Menu item removed from package successfully",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-};
-
-const getPackageItems = async (req, res) => {
-  try {
-    const items =
-      await packageService.getPackageItems(
-        req.params.packageId
-      );
-
-    res.json({
-      success: true,
-      data: items,
     });
   } catch (error) {
     console.error(error);
@@ -225,7 +227,4 @@ module.exports = {
   getPackagesByRestaurant,
   updatePackage,
   deletePackage,
-  addMenuItemToPackage,
-  removeMenuItemFromPackage,
-  getPackageItems,
 };
