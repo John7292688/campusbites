@@ -1,4 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+
 import Home from "./pages/Home";
 import RestaurantDetails from "./pages/RestaurantDetails";
 import Login from "./pages/Login";
@@ -6,12 +7,21 @@ import Cart from "./pages/Cart";
 import OrderSuccess from "./pages/OrderSuccess";
 import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
+
 import ProtectedRoute from "./components/ProtectedRoute";
+
+// Owner Dashboard
+import OwnerLayout from "./layouts/OwnerLayout";
+import Dashboard from "./pages/owner/Dashboard";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
+        {/* ==========================
+            CUSTOMER ROUTES
+        ========================== */}
+
         <Route path="/" element={<Home />} />
 
         <Route
@@ -59,6 +69,24 @@ function App() {
             </ProtectedRoute>
           }
         />
+
+        {/* ==========================
+            OWNER DASHBOARD
+        ========================== */}
+
+        <Route
+          path="/owner"
+          element={
+            <ProtectedRoute>
+              <OwnerLayout />
+            </ProtectedRoute>
+          }
+        >
+          <Route
+            index
+            element={<Dashboard />}
+          />
+        </Route>
       </Routes>
     </BrowserRouter>
   );

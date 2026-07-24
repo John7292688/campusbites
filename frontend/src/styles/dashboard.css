@@ -1,0 +1,36 @@
+.dashboard-header {
+  margin-bottom: 30px;
+}
+
+.dashboard-header h1 {
+  margin: 0;
+  font-size: 34px;
+}
+
+.dashboard-header p {
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.stat-card {
+  background: white;
+  padding: 25px;
+  border-radius: 16px;
+  box-shadow: 0 8px 25px rgba(0,0,0,.05);
+}
+
+.stat-card h4 {
+  margin: 0;
+  color: #6b7280;
+}
+
+.stat-card h2 {
+  margin-top: 18px;
+  font-size: 32px;
+}
