@@ -1,18 +1,46 @@
-const API_URL = "http://localhost:5000/api";
+import api from "./api";
 
-export async function getRestaurantMenu(restaurantId) {
-  try {
-    const response = await fetch(`${API_URL}/menus/${restaurantId}`);
+// Get restaurant menu
+export const getRestaurantMenu = async (restaurantId) => {
+  const response = await api.get(`/menus/${restaurantId}`);
+  return response.data;
+};
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch menu");
-    }
+// Get one menu item
+export const getMenuItemById = async (menuItemId) => {
+  const response = await api.get(`/menus/item/${menuItemId}`);
+  return response.data;
+};
 
-    const data = await response.json();
+// Create menu item
+// Create menu item
+export const createMenuItem = async (menuItemData) => {
+  const response = await api.post(
+    "/menus",
+    menuItemData
+  );
 
-    return data.menuItems;
-  } catch (error) {
-    console.error("Menu Service Error:", error);
-    throw error;
-  }
-}
+  return response.data;
+};
+
+// Update menu item
+export const updateMenuItem = async (
+  menuItemId,
+  menuItemData
+) => {
+  const response = await api.put(
+    `/menus/${menuItemId}`,
+    menuItemData
+  );
+
+  return response.data;
+};
+
+// Delete menu item
+export const deleteMenuItem = async (menuItemId) => {
+  const response = await api.delete(
+    `/menus/${menuItemId}`
+  );
+
+  return response.data;
+};

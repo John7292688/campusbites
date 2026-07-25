@@ -76,10 +76,12 @@ body {
 
 /* Main */
 
-.main-content {
+.page-content {
   flex: 1;
-  display: flex;
-  flex-direction: column;
+  padding: 16px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
 }
 
 /* =========================
@@ -102,18 +104,10 @@ body {
 /* Search */
 
 .search-box {
-  width: 420px;
-
-  display: flex;
-  align-items: center;
-
-  background: #f3f4f6;
-
-  border-radius: 14px;
-
-  padding: 12px 18px;
+  flex: 1;
+  width: auto;
+  min-width: 0;
 }
-
 .search-icon {
   color: #9ca3af;
 }
@@ -252,4 +246,166 @@ body {
 .logout-btn:hover {
   background: rgba(239,68,68,.15);
   color: #ef4444;
+}
+
+/* =========================
+   Responsive Layout
+========================= */
+
+.sidebar-overlay {
+  display: none;
+}
+
+.menu-btn,
+.close-sidebar {
+  display: none;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* =========================
+   Tablet
+========================= */
+
+@media (max-width: 1024px) {
+  .sidebar {
+    width: 240px;
+  }
+
+  .search-box {
+    width: 300px;
+  }
+
+  .page-content {
+    padding: 24px;
+  }
+}
+
+/* =========================
+   Mobile
+========================= */
+
+@media (max-width: 768px) {
+
+  .owner-layout {
+    position: relative;
+  }
+
+  .sidebar {
+    position: fixed;
+    top: 0;
+    left: -280px;
+
+    width: 280px;
+    height: 100vh;
+
+    z-index: 1001;
+
+    transition: left .3s ease;
+  }
+
+  .sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0,0,0,.45);
+
+    z-index: 1000;
+  }
+
+  .menu-btn {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    width: 44px;
+    height: 44px;
+
+    margin-right: 12px;
+
+    border-radius: 10px;
+
+    background: #f3f4f6;
+  }
+
+  .close-sidebar {
+    display: flex;
+
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+  }
+
+  .logo {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .topbar-left {
+    display: flex;
+    align-items: center;
+    flex: 1;
+  }
+
+  .search-box {
+    width: 100%;
+  }
+
+  .topbar-right {
+    gap: 12px;
+  }
+
+  .profile-info {
+    display: none;
+  }
+
+  .page-content {
+    padding: 16px;
+  }
+}
+
+/* =========================
+   Small Phones
+========================= */
+
+@media (max-width: 480px) {
+
+  .notification-btn {
+    width: 40px;
+    height: 40px;
+  }
+
+  .avatar {
+    width: 40px;
+    height: 40px;
+  }
+
+  .search-box input {
+    font-size: 14px;
+  }
+
+  .page-content {
+    padding: 12px;
+  }
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }

@@ -1,17 +1,27 @@
 import NotificationsNoneRoundedIcon from "@mui/icons-material/NotificationsNoneRounded";
 import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
+import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
-const Topbar = () => {
+const Topbar = ({ setSidebarOpen }) => {
   return (
     <header className="topbar">
-      <div className="search-box">
-        <SearchRoundedIcon className="search-icon" />
+      <div className="topbar-left">
+        <button
+          className="menu-btn"
+          onClick={() => setSidebarOpen(true)}
+        >
+          <MenuRoundedIcon />
+        </button>
 
-        <input
-          type="text"
-          placeholder="Search packages, orders, customers..."
-        />
+        <div className="search-box">
+          <SearchRoundedIcon className="search-icon" />
+
+          <input
+            type="text"
+            placeholder="Search packages, orders, customers..."
+          />
+        </div>
       </div>
 
       <div className="topbar-right">

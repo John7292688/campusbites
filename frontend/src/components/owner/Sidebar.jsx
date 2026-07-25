@@ -7,6 +7,7 @@ import ShoppingBagRoundedIcon from "@mui/icons-material/ShoppingBagRounded";
 import PeopleRoundedIcon from "@mui/icons-material/PeopleRounded";
 import SettingsRoundedIcon from "@mui/icons-material/SettingsRounded";
 import LogoutRoundedIcon from "@mui/icons-material/LogoutRounded";
+import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 
 const menuItems = [
   {
@@ -19,11 +20,29 @@ const menuItems = [
     path: "/owner/restaurant",
     icon: <StoreRoundedIcon />,
   },
+
+  {
+    name: "Package Categories",
+    path: "/owner/package-categories",
+    icon: <RestaurantMenuRoundedIcon />,
+  },
   {
     name: "Combo Packages",
     path: "/owner/packages",
     icon: <RestaurantMenuRoundedIcon />,
   },
+
+  {
+    name: "Menu Categories",
+    path: "/owner/menu-categories",
+    icon: <RestaurantMenuRoundedIcon />,
+  },
+  {
+    name: "Menu Items",
+    path: "/owner/menu-items",
+    icon: <RestaurantMenuRoundedIcon />,
+  },
+
   {
     name: "Orders",
     path: "/owner/orders",
@@ -41,11 +60,27 @@ const menuItems = [
   },
 ];
 
-const Sidebar = () => {
+const Sidebar = ({
+  sidebarOpen,
+  setSidebarOpen,
+}) => {
   return (
-    <aside className="sidebar">
+    <aside
+      className={`sidebar ${
+        sidebarOpen ? "open" : ""
+      }`}
+    >
       <div className="logo">
         <h2>CampusBites</h2>
+
+        <button
+          className="close-sidebar"
+          onClick={() =>
+            setSidebarOpen(false)
+          }
+        >
+          <CloseRoundedIcon />
+        </button>
       </div>
 
       <nav>
@@ -54,11 +89,18 @@ const Sidebar = () => {
             key={item.path}
             to={item.path}
             end={item.path === "/owner"}
+            onClick={() =>
+              setSidebarOpen(false)
+            }
             className={({ isActive }) =>
-              `sidebar-link ${isActive ? "active" : ""}`
+              `sidebar-link ${
+                isActive ? "active" : ""
+              }`
             }
           >
-            <span className="sidebar-icon">{item.icon}</span>
+            <span className="sidebar-icon">
+              {item.icon}
+            </span>
 
             <span>{item.name}</span>
           </NavLink>

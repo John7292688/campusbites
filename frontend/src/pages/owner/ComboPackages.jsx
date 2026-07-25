@@ -2,14 +2,30 @@ import { useEffect, useState } from "react";
 import { AddRounded } from "@mui/icons-material";
 
 import PackageCard from "../../components/owner/PackageCard";
-import AddPackageDialog from "../../components/owner/AddPackageDialog";
+import PackageDialog from "../../components/owner/PackageDialog";
 
 import { getAllPackages } from "../../services/packageService";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import { deletePackage } from "../../services/packageService";
 
 const ComboPackages = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
   const [openDialog, setOpenDialog] = useState(false);
+  const [dialogMode, setDialogMode] = useState("create");
+  const [selectedPackage, setSelectedPackage] = useState(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [packageToDelete, setPackageToDelete] = useState(null);
+  const handleDeleteClick = (pkg) => {
+    setPackageToDelete(pkg);
+    setDeleteDialogOpen(true);
+  };
 
   useEffect(() => {
     fetchPackages();
@@ -29,6 +45,36 @@ const ComboPackages = () => {
   if (loading) {
     return <h2>Loading packages...</h2>;
   }
+
+  const handleAddPackage = () => {
+  setDialogMode("create");
+  setSelectedPackage(null);
+  setOpenDialog(true);
+};
+
+const handleEditPackage = (pkg) => {
+  setDialogMode("edit");
+  setSelectedPackage(pkg);
+  setOpenDialog(true);
+};
+
+const handleDeletePackage = async () => {
+  try {
+    await deletePackage(packageToDelete.id);
+
+    setDeleteDialogOpen(false);
+    setPackageToDelete(null);
+
+    await fetchPackages();
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to delete package."
+    );
+  }
+};
 
   return (
     <>
@@ -52,7 +98,7 @@ const ComboPackages = () => {
           </div>
 
           <button
-            onClick={() => setOpenDialog(true)}
+            onClick={handleAddPackage}
             style={{
               display: "flex",
               alignItems: "center",
@@ -76,19 +122,61 @@ const ComboPackages = () => {
         ) : (
           packages.map((pkg) => (
             <PackageCard
-              key={pkg.id}
-              pkg={pkg}
+                pkg={pkg}
+                onEdit={() => handleEditPackage(pkg)}
+                onDelete={() => handleDeleteClick(pkg)}
             />
           ))
         )}
       </div>
 
-      <AddPackageDialog
+      <PackageDialog
+        mode={dialogMode}
+        selectedPackage={selectedPackage}
         open={openDialog}
         onClose={() => setOpenDialog(false)}
         onPackageCreated={fetchPackages}
       />
+
+      <Dialog
+        open={deleteDialogOpen}
+        onClose={() => setDeleteDialogOpen(false)}
+      >
+        <DialogTitle>
+          Delete Package
+        </DialogTitle>
+
+        <DialogContent>
+          Are you sure you want to delete{" "}
+          <strong>
+            {packageToDelete?.name}
+          </strong>
+          ?
+          <br />
+          <br />
+          This action cannot be undone.
+        </DialogContent>
+
+        <DialogActions>
+          <Button
+            onClick={() =>
+              setDeleteDialogOpen(false)
+            }
+          >
+            Cancel
+          </Button>
+
+          <Button
+            color="error"
+            variant="contained"
+            onClick={handleDeletePackage}
+          >
+            Delete
+          </Button>
+        </DialogActions>
+      </Dialog>
     </>
+
   );
 };
 

@@ -6,7 +6,11 @@ import {
 } from "@mui/icons-material";
 import "../../styles/packageCard.css";
 
-const PackageCard = ({ pkg }) => {
+const PackageCard = ({
+  pkg,
+  onEdit,
+  onDelete,
+}) => {
   return (
     <div className="package-card">
       <img
@@ -42,12 +46,18 @@ const PackageCard = ({ pkg }) => {
       </div>
 
       <div className="package-actions">
-        <button className="edit-btn">
+        <button
+          className="edit-btn"
+          onClick={onEdit}
+        >
           <EditRounded />
           Edit
         </button>
 
-        <button className="delete-btn">
+        <button
+          className="delete-btn"
+          onClick={onDelete}
+        >
           <DeleteRounded />
           Delete
         </button>

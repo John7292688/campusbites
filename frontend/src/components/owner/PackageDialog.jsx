@@ -12,15 +12,22 @@ import {
 } from "@mui/material";
 
 import { getAllCategories } from "../../services/categoryService";
-import { createPackage } from "../../services/packageService";
+import {
+  createPackage,
+  updatePackage,
+} from "../../services/packageService";
 
-const AddPackageDialog = ({
+const PackageDialog = ({
+  mode = "create",
+  selectedPackage = null,
   open,
   onClose,
   onPackageCreated,
 }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentImage, setCurrentImage] = useState("");
+  
 
   const [formData, setFormData] = useState({
     name: "",
@@ -32,20 +39,47 @@ const AddPackageDialog = ({
     isAvailable: true,
   });
 
-  useEffect(() => {
-    if (open) {
-      fetchCategories();
-    }
-  }, [open]);
 
-  const fetchCategories = async () => {
-    try {
-      const response = await getAllCategories();
-      setCategories(response.data);
-    } catch (error) {
-      console.error("Failed to load categories:", error);
-    }
-  };
+useEffect(() => {
+  if (!open) return;
+
+  fetchCategories();
+
+  if (mode === "edit" && selectedPackage) {
+    setFormData({
+      name: selectedPackage.name || "",
+      categoryId: selectedPackage.category_id || "",
+      price: selectedPackage.price || "",
+      description: selectedPackage.description || "",
+      itemsIncluded: selectedPackage.items_included || "",
+      image: null,
+      isAvailable: selectedPackage.is_available,
+    });
+
+    setCurrentImage(selectedPackage.image || "");
+  } else {
+    setFormData({
+      name: "",
+      categoryId: "",
+      price: "",
+      description: "",
+      itemsIncluded: "",
+      image: null,
+      isAvailable: true,
+    });
+
+    setCurrentImage("");
+  }
+}, [open, mode, selectedPackage]);
+
+const fetchCategories = async () => {
+  try {
+    const response = await getAllCategories();
+    setCategories(response.data);
+  } catch (error) {
+    console.error("Failed to load categories:", error);
+  }
+};
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -66,6 +100,9 @@ const AddPackageDialog = ({
   const handleSubmit = async (e) => {
   e.preventDefault();
 
+  console.log("Mode:", mode);
+  console.log("Selected Package:", selectedPackage);
+
   try {
     setLoading(true);
 
@@ -76,26 +113,22 @@ const AddPackageDialog = ({
     data.append("description", formData.description);
     data.append("price", formData.price);
     data.append("itemsIncluded", formData.itemsIncluded);
+    data.append("isAvailable", formData.isAvailable);
 
+    // Only send a new image if one was selected
     if (formData.image) {
       data.append("image", formData.image);
     }
 
-    await createPackage(data);
+    if (mode === "create") {
+      await createPackage(data);
+    } else {
+      await updatePackage(selectedPackage.id, data);
+    }
 
     if (onPackageCreated) {
       await onPackageCreated();
     }
-
-    setFormData({
-      name: "",
-      categoryId: "",
-      price: "",
-      description: "",
-      itemsIncluded: "",
-      image: null,
-      isAvailable: true,
-    });
 
     onClose();
   } catch (error) {
@@ -103,7 +136,9 @@ const AddPackageDialog = ({
 
     alert(
       error.response?.data?.message ||
-      "Failed to create package."
+        `Failed to ${
+          mode === "create" ? "create" : "update"
+        } package.`
     );
   } finally {
     setLoading(false);
@@ -117,7 +152,11 @@ const AddPackageDialog = ({
       fullWidth
       maxWidth="sm"
     >
-      <DialogTitle>Add Combo Package</DialogTitle>
+      <DialogTitle>
+        {mode === "create"
+          ? "Add Combo Package"
+          : "Edit Combo Package"}
+      </DialogTitle>
 
       <form onSubmit={handleSubmit}>
         <DialogContent>
@@ -179,6 +218,25 @@ const AddPackageDialog = ({
               helperText="Separate items with commas."
             />
 
+            {mode === "edit" && currentImage && (
+              <div style={{ marginBottom: "16px" }}>
+                <p style={{ marginBottom: "8px", fontWeight: "bold" }}>
+                  Current Image
+                </p>
+
+                <img
+                  src={currentImage}
+                  alt="Package"
+                  style={{
+                    width: "100%",
+                    maxHeight: "220px",
+                    objectFit: "cover",
+                    borderRadius: "8px",
+                  }}
+                />
+              </div>
+            )}
+
             <Button
               variant="outlined"
               component="label"
@@ -215,7 +273,9 @@ const AddPackageDialog = ({
                 color="inherit"
               />
             ) : (
-              "Save Package"
+              mode === "create"
+                ? "Save Package"
+                : "Update Package"
             )}
           </Button>
         </DialogActions>
@@ -224,4 +284,4 @@ const AddPackageDialog = ({
   );
 };
 
-export default AddPackageDialog;
+export default PackageDialog;

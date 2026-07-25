@@ -16,6 +16,8 @@ import OwnerLayout from "./layouts/OwnerLayout";
 import Dashboard from "./pages/owner/Dashboard";
 import ComboPackages from "./pages/owner/ComboPackages";
 import OwnerLogin from "./pages/owner/OwnerLogin";
+import MenuItems from "./pages/owner/MenuItems";
+import MenuCategories from "./pages/owner/MenuCategories";
 
 function App() {
   return (
@@ -103,6 +105,16 @@ function App() {
           <Route
             path="packages"
             element={<ComboPackages />}
+          />
+
+          <Route
+            path="menu-categories"
+            element={<MenuCategories />}
+          />
+
+          <Route
+            path="menu-items"
+            element={<MenuItems />}
           />
         </Route>
       </Routes>

@@ -1,35 +1,19 @@
-const API_URL = "http://localhost:5000/api";
+import api from "./api";
 
-export async function getRestaurants() {
-  try {
-    const response = await fetch(`${API_URL}/restaurants`);
+// Get all restaurants
+export const getRestaurants = async () => {
+  const response = await api.get("/restaurants");
+  return response.data.restaurants;
+};
 
-    if (!response.ok) {
-      throw new Error("Failed to fetch restaurants");
-    }
+// Get restaurant by ID
+export const getRestaurantById = async (id) => {
+  const response = await api.get(`/restaurants/${id}`);
+  return response.data.restaurant;
+};
 
-    const data = await response.json();
-
-    return data.restaurants;
-  } catch (error) {
-    console.error("Restaurant Service Error:", error);
-    throw error;
-  }
-}
-
-export async function getRestaurantById(id) {
-  try {
-    const response = await fetch(`${API_URL}/restaurants/${id}`);
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch restaurant");
-    }
-
-    const data = await response.json();
-
-    return data.restaurant;
-  } catch (error) {
-    console.error("Restaurant Service Error:", error);
-    throw error;
-  }
-}
+// Get logged-in owner's restaurant
+export const getMyRestaurant = async () => {
+  const response = await api.get("/restaurants/my-restaurant");
+  return response.data.restaurant;
+};
