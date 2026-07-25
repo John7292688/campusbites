@@ -12,8 +12,13 @@ const getRestaurantById = (id) => {
   return restaurantModel.getRestaurantById(id);
 };
 
+const getRestaurantByOwnerId = (ownerId) => {
+  return restaurantModel.getRestaurantByOwnerId(ownerId);
+};
+
 module.exports = {
   createRestaurant,
   getAllRestaurants,
   getRestaurantById,
+  getRestaurantByOwnerId,
 };

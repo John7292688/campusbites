@@ -11,7 +11,7 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const packageRoutes = require("./routes/packageRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
-
+const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const errorHandler = require("./middleware/errorHandler");
 
@@ -49,6 +49,7 @@ app.use("/api/restaurant-auth", restaurantOwnerAuthRoutes);
 // Feature Routes
 app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menus", menuRoutes);
+app.use("/api/menu-categories", menuCategoryRoutes);
 app.use("/api/cart", cartRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);

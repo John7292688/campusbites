@@ -5,11 +5,19 @@ const {
   createRestaurant,
   getAllRestaurants,
   getRestaurantById,
+  getMyRestaurant,
 } = require("../controllers/restaurantController");
 
 const restaurantOwnerAuthMiddleware = require("../middleware/restaurantOwnerAuthMiddleware");
 
 router.get("/", getAllRestaurants);
+
+router.get(
+  "/my-restaurant",
+  restaurantOwnerAuthMiddleware,
+  getMyRestaurant
+);
+
 router.get("/:id", getRestaurantById);
 
 router.post(

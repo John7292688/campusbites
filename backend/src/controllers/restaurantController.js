@@ -52,8 +52,25 @@ const getRestaurantById = asyncHandler(async (req, res) => {
   });
 });
 
+const getMyRestaurant = asyncHandler(async (req, res) => {
+  const restaurant =
+    await restaurantService.getRestaurantByOwnerId(
+      req.owner.id
+    );
+
+  if (!restaurant) {
+    throw new AppError("Restaurant not found", 404);
+  }
+
+  return res.status(200).json({
+    success: true,
+    restaurant,
+  });
+});
+
 module.exports = {
   createRestaurant,
   getAllRestaurants,
   getRestaurantById,
+  getMyRestaurant,
 };

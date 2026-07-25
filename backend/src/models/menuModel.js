@@ -3,23 +3,32 @@ const pool = require("../config/database");
 const createMenuItem = async (menuData) => {
   const {
     restaurant_id,
+    menu_category_id,
     name,
-    description,
     price,
-    image_url,
+    unit,
+    is_available,
   } = menuData;
 
   const result = await pool.query(
     `INSERT INTO menus
-    (restaurant_id, name, description, price, image_url)
-    VALUES ($1, $2, $3, $4, $5)
+    (
+      restaurant_id,
+      menu_category_id,
+      name,
+      price,
+      unit,
+      is_available
+    )
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *`,
     [
       restaurant_id,
+      menu_category_id,
       name,
-      description,
       price,
-      image_url,
+      unit,
+      is_available,
     ]
   );
 
@@ -28,10 +37,14 @@ const createMenuItem = async (menuData) => {
 
 const getRestaurantMenu = async (restaurantId) => {
   const result = await pool.query(
-    `SELECT *
-     FROM menus
-     WHERE restaurant_id = $1
-     ORDER BY created_at DESC`,
+    `SELECT
+        m.*,
+        mc.name AS category_name
+     FROM menus m
+     JOIN menu_categories mc
+       ON mc.id = m.menu_category_id
+     WHERE m.restaurant_id = $1
+     ORDER BY mc.id ASC, m.name ASC`,
     [restaurantId]
   );
 
@@ -54,42 +67,43 @@ const getMenuItemByRestaurant = async (
   restaurantId
 ) => {
   const result = await pool.query(
-    `
-    SELECT *
-    FROM menus
-    WHERE id = $1
-      AND restaurant_id = $2
-    `,
+    `SELECT *
+     FROM menus
+     WHERE id = $1
+       AND restaurant_id = $2`,
     [menuItemId, restaurantId]
   );
 
   return result.rows[0];
 };
 
-const updateMenuItem = async (menuItemId, menuData) => {
+const updateMenuItem = async (
+  menuItemId,
+  menuData
+) => {
   const {
+    menu_category_id,
     name,
-    description,
     price,
-    image_url,
+    unit,
     is_available,
   } = menuData;
 
   const result = await pool.query(
     `UPDATE menus
      SET
-       name = $1,
-       description = $2,
+       menu_category_id = $1,
+       name = $2,
        price = $3,
-       image_url = $4,
+       unit = $4,
        is_available = $5
      WHERE id = $6
      RETURNING *`,
     [
+      menu_category_id,
       name,
-      description,
       price,
-      image_url,
+      unit,
       is_available,
       menuItemId,
     ]

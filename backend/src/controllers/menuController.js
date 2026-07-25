@@ -15,22 +15,24 @@ const createMenuItem = asyncHandler(async (req, res) => {
 
   const {
     restaurant_id,
+    menu_category_id,
     name,
-    description,
     price,
-    image_url,
+    unit,
+    is_available,
   } = req.body;
 
   const menuItem = await menuService.createMenuItem(
-  {
-    restaurant_id,
-    name,
-    description,
-    price,
-    image_url,
-  },
-  req.owner.id
-);
+    {
+      restaurant_id,
+      menu_category_id,
+      name,
+      price,
+      unit,
+      is_available,
+    },
+    req.owner.id
+  );
 
   res.status(201).json({
     success: true,
@@ -42,7 +44,8 @@ const createMenuItem = asyncHandler(async (req, res) => {
 const getRestaurantMenu = asyncHandler(async (req, res) => {
   const { restaurantId } = req.params;
 
-  const menuItems = await menuService.getRestaurantMenu(restaurantId);
+  const menuItems =
+    await menuService.getRestaurantMenu(restaurantId);
 
   res.status(200).json({
     success: true,
@@ -53,7 +56,8 @@ const getRestaurantMenu = asyncHandler(async (req, res) => {
 const getMenuItemById = asyncHandler(async (req, res) => {
   const { menuItemId } = req.params;
 
-  const menuItem = await menuService.getMenuItemById(menuItemId);
+  const menuItem =
+    await menuService.getMenuItemById(menuItemId);
 
   if (!menuItem) {
     throw new AppError("Menu item not found", 404);
@@ -66,13 +70,20 @@ const getMenuItemById = asyncHandler(async (req, res) => {
 });
 
 const updateMenuItem = asyncHandler(async (req, res) => {
+  const { error } = createMenuItemSchema.validate(req.body);
+
+  if (error) {
+    throw new AppError(error.details[0].message, 400);
+  }
+
   const { menuItemId } = req.params;
 
-  const updatedMenuItem = await menuService.updateMenuItem(
-    menuItemId,
-    req.body,
-    req.owner.id
-  );
+  const updatedMenuItem =
+    await menuService.updateMenuItem(
+      menuItemId,
+      req.body,
+      req.owner.id
+    );
 
   res.status(200).json({
     success: true,
