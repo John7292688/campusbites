@@ -21,14 +21,13 @@ const getCartByStudentId = async (studentId) => {
   const result = await pool.query(
     `
     SELECT
-      cart_items.id,
-      cart_items.quantity,
-      menus.id AS menu_item_id,
-      menus.name,
-      menus.description,
-      menus.price,
-      menus.image_url,
-      restaurants.name AS restaurant_name
+  cart_items.id,
+  cart_items.quantity,
+  menus.id AS menu_item_id,
+  menus.name,
+  menus.price,
+  menus.unit,
+  restaurants.name AS restaurant_name
     FROM cart_items
     JOIN menus
       ON cart_items.menu_item_id = menus.id
