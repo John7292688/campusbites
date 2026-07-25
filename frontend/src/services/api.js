@@ -2,15 +2,15 @@ import axios from "axios";
 
 const api = axios.create({
   baseURL: "http://localhost:5000/api",
-  headers: {
-    "Content-Type": "application/json",
-  },
 });
 
-// Automatically attach the token if it exists
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const ownerToken = localStorage.getItem("ownerToken");
+    const studentToken = localStorage.getItem("token");
+
+    // Use owner token if available, otherwise student token
+    const token = ownerToken || studentToken;
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;

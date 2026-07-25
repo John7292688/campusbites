@@ -1,20 +1,20 @@
-import api from "./api";
+import ownerApi from "./ownerApi";
 
 // Get all packages
 export const getAllPackages = async () => {
-  const response = await api.get("/packages");
+  const response = await ownerApi.get("/packages");
   return response.data;
 };
 
 // Get one package
 export const getPackageById = async (packageId) => {
-  const response = await api.get(`/packages/${packageId}`);
+  const response = await ownerApi.get(`/packages/${packageId}`);
   return response.data;
 };
 
 // Get packages for a restaurant
 export const getRestaurantPackages = async (restaurantId) => {
-  const response = await api.get(
+  const response = await ownerApi.get(
     `/packages/restaurant/${restaurantId}`
   );
 
@@ -23,7 +23,7 @@ export const getRestaurantPackages = async (restaurantId) => {
 
 // Create package
 export const createPackage = async (formData) => {
-  const response = await api.post(
+  const response = await ownerApi.post(
     "/packages",
     formData,
     {
@@ -41,7 +41,7 @@ export const updatePackage = async (
   packageId,
   formData
 ) => {
-  const response = await api.put(
+  const response = await ownerApi.put(
     `/packages/${packageId}`,
     formData,
     {
@@ -56,7 +56,7 @@ export const updatePackage = async (
 
 // Delete package
 export const deletePackage = async (packageId) => {
-  const response = await api.delete(
+  const response = await ownerApi.delete(
     `/packages/${packageId}`
   );
 

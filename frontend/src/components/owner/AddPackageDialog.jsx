@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -8,26 +8,44 @@ import {
   Button,
   MenuItem,
   Stack,
+  CircularProgress,
 } from "@mui/material";
 
-const categories = [
-  "Breakfast",
-  "Lunch",
-  "Dinner",
-  "Student Special",
-  "Family Combo",
-];
+import { getAllCategories } from "../../services/categoryService";
+import { createPackage } from "../../services/packageService";
 
-const AddPackageDialog = ({ open, onClose }) => {
+const AddPackageDialog = ({
+  open,
+  onClose,
+  onPackageCreated,
+}) => {
+  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
-    category: "",
+    categoryId: "",
     price: "",
     description: "",
-    items_included: "",
-    is_available: true,
+    itemsIncluded: "",
     image: null,
+    isAvailable: true,
   });
+
+  useEffect(() => {
+    if (open) {
+      fetchCategories();
+    }
+  }, [open]);
+
+  const fetchCategories = async () => {
+    try {
+      const response = await getAllCategories();
+      setCategories(response.data);
+    } catch (error) {
+      console.error("Failed to load categories:", error);
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -45,14 +63,52 @@ const AddPackageDialog = ({ open, onClose }) => {
     }));
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // We'll connect this to the backend next.
-    console.log(formData);
+  try {
+    setLoading(true);
+
+    const data = new FormData();
+
+    data.append("categoryId", formData.categoryId);
+    data.append("name", formData.name);
+    data.append("description", formData.description);
+    data.append("price", formData.price);
+    data.append("itemsIncluded", formData.itemsIncluded);
+
+    if (formData.image) {
+      data.append("image", formData.image);
+    }
+
+    await createPackage(data);
+
+    if (onPackageCreated) {
+      await onPackageCreated();
+    }
+
+    setFormData({
+      name: "",
+      categoryId: "",
+      price: "",
+      description: "",
+      itemsIncluded: "",
+      image: null,
+      isAvailable: true,
+    });
 
     onClose();
-  };
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to create package."
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Dialog
@@ -78,18 +134,18 @@ const AddPackageDialog = ({ open, onClose }) => {
             <TextField
               select
               label="Category"
-              name="category"
-              value={formData.category}
+              name="categoryId"
+              value={formData.categoryId}
               onChange={handleChange}
               fullWidth
               required
             >
               {categories.map((category) => (
                 <MenuItem
-                  key={category}
-                  value={category}
+                  key={category.id}
+                  value={category.id}
                 >
-                  {category}
+                  {category.name}
                 </MenuItem>
               ))}
             </TextField>
@@ -115,8 +171,8 @@ const AddPackageDialog = ({ open, onClose }) => {
 
             <TextField
               label="Items Included"
-              name="items_included"
-              value={formData.items_included}
+              name="itemsIncluded"
+              value={formData.itemsIncluded}
               onChange={handleChange}
               multiline
               rows={3}
@@ -151,8 +207,16 @@ const AddPackageDialog = ({ open, onClose }) => {
           <Button
             type="submit"
             variant="contained"
+            disabled={loading}
           >
-            Save Package
+            {loading ? (
+              <CircularProgress
+                size={22}
+                color="inherit"
+              />
+            ) : (
+              "Save Package"
+            )}
           </Button>
         </DialogActions>
       </form>

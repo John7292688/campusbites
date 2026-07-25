@@ -86,6 +86,7 @@ const ComboPackages = () => {
       <AddPackageDialog
         open={openDialog}
         onClose={() => setOpenDialog(false)}
+        onPackageCreated={fetchPackages}
       />
     </>
   );

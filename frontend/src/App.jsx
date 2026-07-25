@@ -9,11 +9,13 @@ import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
 
 import ProtectedRoute from "./components/ProtectedRoute";
+import OwnerProtectedRoute from "./components/OwnerProtectedRoute";
 
-// Owner Dashboard
+// Owner Pages
 import OwnerLayout from "./layouts/OwnerLayout";
 import Dashboard from "./pages/owner/Dashboard";
 import ComboPackages from "./pages/owner/ComboPackages";
+import OwnerLogin from "./pages/owner/OwnerLogin";
 
 function App() {
   return (
@@ -33,6 +35,11 @@ function App() {
         <Route
           path="/login"
           element={<Login />}
+        />
+
+        <Route
+          path="/owner/login"
+          element={<OwnerLogin />}
         />
 
         <Route
@@ -72,19 +79,24 @@ function App() {
         />
 
         {/* ==========================
-            OWNER DASHBOARD
+            OWNER ROUTES
         ========================== */}
 
         <Route
           path="/owner"
           element={
-            <ProtectedRoute>
+            <OwnerProtectedRoute>
               <OwnerLayout />
-            </ProtectedRoute>
+            </OwnerProtectedRoute>
           }
         >
           <Route
             index
+            element={<Dashboard />}
+          />
+
+          <Route
+            path="dashboard"
             element={<Dashboard />}
           />
 
