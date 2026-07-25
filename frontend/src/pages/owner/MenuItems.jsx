@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { getRestaurantMenu } from "../../services/menuService";
+import {
+  getRestaurantMenu,
+  deleteMenuItem,
+} from "../../services/menuService";
 import { getMyRestaurant } from "../../services/restaurantService";
 import { Button } from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
@@ -187,12 +190,34 @@ const fetchMenuItems = async () => {
 </Button>
 
         <Button
-          variant="contained"
-          color="error"
-          size="small"
-        >
-          Delete
-        </Button>
+  variant="contained"
+  color="error"
+  size="small"
+  onClick={async () => {
+    const confirmed = window.confirm(
+      `Delete "${item.name}"?`
+    );
+
+    if (!confirmed) return;
+
+    try {
+      await deleteMenuItem(item.id);
+
+await fetchMenuItems();
+
+alert("Menu item deleted successfully!");
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.response?.data?.message ||
+          "Failed to delete menu item."
+      );
+    }
+  }}
+>
+  Delete
+</Button>
       </div>
     </div>
   </div>
