@@ -3,6 +3,9 @@ import { useParams } from "react-router-dom";
 import { getRestaurantById } from "../services/restaurantService";
 import { getRestaurantMenu } from "../services/menuService";
 import { addToCart } from "../services/cartService";
+import "../styles/restaurantDetails.css";
+import { getRestaurantComboPackages } from "../services/comboPackageService";
+import { createCustomPlate } from "../services/customPlateService";
 
 function RestaurantDetails() {
   const { id } = useParams();
@@ -11,6 +14,15 @@ function RestaurantDetails() {
   const [menuItems, setMenuItems] = useState([]);
   const [groupedMenu, setGroupedMenu] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
+  const [comboPackages, setComboPackages] = useState([]);
+  const selectedPlateItems = Object.values(selectedItems).filter(
+    (item) => item.quantity > 0
+  );
+
+  const plateTotal = selectedPlateItems.reduce(
+    (total, item) => total + item.price * item.quantity,
+    0
+  );
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,19 +31,30 @@ function RestaurantDetails() {
         const data = await getRestaurantById(id);
         setRestaurant(data);
 
-        const menu = await getRestaurantMenu(id);
+        const [menu, combos] = await Promise.all([
+          getRestaurantMenu(id),
+          getRestaurantComboPackages(id),
+        ]);
+
+        console.log("Restaurant ID:", id);
+        console.log("Menu Response:", menu);
+        console.log("Combo Response:", combos);
+
+        setComboPackages(combos.data);
 
         setMenuItems(menu.menuItems);
 
         const grouped = menu.menuItems.reduce((acc, item) => {
-  if (!acc[item.category_name]) {
-    acc[item.category_name] = [];
-  }
+          if (!acc[item.category_name]) {
+            acc[item.category_name] = [];
+          }
 
-  acc[item.category_name].push(item);
+          acc[item.category_name].push(item);
 
-  return acc;
-}, {});
+          return acc;
+        }, {});
+
+        setGroupedMenu(grouped);
 
 setGroupedMenu(grouped);
       } catch (error) {
@@ -46,15 +69,51 @@ setGroupedMenu(grouped);
 
   
 
-  async function handleAddToCart(menuItemId) {
-    try {
-      await addToCart(menuItemId);
+  async function handleAddCombo(combo) {
+  try {
+    await addToCart({
+      comboPackageId: combo.id,
+      quantity: 1,
+    });
 
-      alert("Item added to cart successfully!");
-    } catch (error) {
-      alert(error.message);
-    }
+    alert("Combo package added to cart!");
+  } catch (error) {
+    alert(error.message);
   }
+}
+
+async function handleCreateCustomPlate() {
+  try {
+    const items = Object.values(selectedItems)
+      .filter((item) => item.quantity > 0)
+      .map((item) => ({
+        menuItemId: item.id,
+        quantity: item.quantity,
+      }));
+
+    if (items.length === 0) {
+      alert("Please select at least one item.");
+      return;
+    }
+
+    await createCustomPlate(
+      Number(id),
+      items
+    );
+
+    alert("Custom plate created successfully!");
+
+    // Clear the current selection
+    setSelectedItems({});
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.message ||
+        "Failed to create custom plate."
+    );
+  }
+}
 
   const increaseQuantity = (item) => {
   setSelectedItems((prev) => ({
@@ -122,180 +181,130 @@ const decreaseQuantity = (itemId) => {
       <div className="restaurant-menu">
   <h2>Menu</h2>
 
-  <div
-    style={{
-      display: "grid",
-      gridTemplateColumns: "35% 65%",
-      gap: "30px",
-      alignItems: "start",
-      marginTop: "20px",
-    }}
-  >
+  <div className="restaurant-layout">
     {/* LEFT COLUMN */}
-    <div>
-      <h3
-        style={{
-          marginBottom: "16px",
-        }}
-      >
-        Preset Combos & Packages
-      </h3>
-
+<div className="preset-combos-panel">
+  {comboPackages.length === 0 ? (
+    <p
+      style={{
+        textAlign: "center",
+        color: "#6b7280",
+        padding: "30px 0",
+      }}
+    >
+      No combo packages available.
+    </p>
+  ) : (
+    comboPackages.map((combo) => (
       <div
-        style={{
-          background: "#fff",
-          borderRadius: "12px",
-          padding: "20px",
-          boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
-          minHeight: "500px",
-        }}
+        key={combo.id}
+        className="combo-card"
       >
-        <p
-          style={{
-            color: "#6b7280",
-            textAlign: "center",
-          }}
+        <div className="combo-content">
+          <div>
+            <h4 className="combo-title">
+              {combo.name}
+            </h4>
+
+            <p className="combo-description">
+              {combo.items_included}
+            </p>
+
+            <strong className="combo-price">
+              ₦
+              {Number(combo.price).toLocaleString()}
+            </strong>
+          </div>
+
+          <img
+            className="combo-image"
+            src={
+              combo.image ||
+              "https://images.unsplash.com/photo-1544025162-d76694265947?w=300&q=80"
+            }
+            alt={combo.name}
+          />
+        </div>
+
+        <button
+          className="combo-btn"
+          onClick={() => handleAddCombo(combo)}
         >
-          Combo packages will appear here.
-        </p>
+          Add Combo
+        </button>
       </div>
-    </div>
+    ))
+  )}
+</div>
+      {/* RIGHT COLUMN */}
+      <div>
+        <h3 className="restaurant-panel-title">
+          Build Your Own Plate
+        </h3>
 
-    {/* RIGHT COLUMN */}
-    <div>
-      <h3
-        style={{
-          marginBottom: "16px",
-        }}
-      >
-        Build Your Own Plate
-      </h3>
-
-      {menuItems.length === 0 ? (
-        <p>No menu items available.</p>
-      ) : (
-        <div>
-          {Object.entries(groupedMenu).map(
-            ([categoryName, items]) => (
-              <div
-                key={categoryName}
-                style={{
-                  marginBottom: "30px",
-                }}
-              >
-                <h3
-                  style={{
-                    borderBottom:
-                      "2px solid #f59e0b",
-                    paddingBottom: "8px",
-                    marginBottom: "16px",
-                  }}
-                >
-                  {categoryName}
-                </h3>
-
+        {menuItems.length === 0 ? (
+          <p>No menu items available.</p>
+        ) : (
+          <div className="build-plate-container">
+            {Object.entries(groupedMenu).map(
+              ([categoryName, items]) => (
                 <div
-                  style={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: "12px",
-                  }}
+                  key={categoryName}
+                  className="build-category"
                 >
-                  {items.map((item) => (
+                  <h4 className="build-category-title">
+                    CHOOSE YOUR{" "}
+                    {categoryName.toUpperCase()}
+                  </h4>
+
+                  {items.map((item, index) => (
                     <div
                       key={item.id}
+                      className="build-row"
                       style={{
-                        background: "#fff",
-                        borderRadius: "12px",
-                        padding: "16px 20px",
-                        boxShadow:
-                          "0 4px 12px rgba(0,0,0,0.08)",
-                        display: "flex",
-                        justifyContent:
-                          "space-between",
-                        alignItems: "center",
+                        borderBottom:
+                          index !== items.length - 1
+                            ? "1px solid #ececec"
+                            : "none",
                       }}
                     >
-                      <div>
-                        <h4
-                          style={{
-                            margin: 0,
-                          }}
-                        >
+                      <div className="build-item-info">
+                        <span className="build-item-name">
                           {item.name}
-                        </h4>
+                        </span>
 
-                        <p
-                          style={{
-                            margin: "6px 0",
-                            color: "#6b7280",
-                            fontSize: "14px",
-                          }}
-                        >
-                          {item.unit}
-                        </p>
+                        <span className="build-item-unit">
+                          ({item.unit})
+                        </span>
 
-                        <strong
-                          style={{
-                            color: "#f59e0b",
-                          }}
-                        >
+                        <span className="build-item-price">
                           ₦
                           {Number(
                             item.price
                           ).toLocaleString()}
-                        </strong>
+                        </span>
                       </div>
 
-                      <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "12px",
-                        }}
-                      >
+                      <div className="quantity-control">
                         <button
+                          className="qty-btn minus"
                           onClick={() =>
-                            decreaseQuantity(
-                              item.id
-                            )
+                            decreaseQuantity(item.id)
                           }
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderRadius: "50%",
-                            border: "none",
-                            background:
-                              "#e5e7eb",
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
                         >
                           −
                         </button>
 
-                        <strong>
+                        <span className="qty-value">
                           {selectedItems[item.id]
                             ?.quantity || 0}
-                        </strong>
+                        </span>
 
                         <button
+                          className="qty-btn plus"
                           onClick={() =>
-                            increaseQuantity(
-                              item
-                            )
+                            increaseQuantity(item)
                           }
-                          style={{
-                            width: "36px",
-                            height: "36px",
-                            borderRadius: "50%",
-                            border: "none",
-                            background:
-                              "#f59e0b",
-                            color: "#fff",
-                            cursor: "pointer",
-                            fontSize: "20px",
-                          }}
                         >
                           +
                         </button>
@@ -303,15 +312,83 @@ const decreaseQuantity = (itemId) => {
                     </div>
                   ))}
                 </div>
-              </div>
-            )
-          )}
-        </div>
-      )}
+              )
+            )}
+
+            <div className="plate-summary">
+              <h4>Plate Summary</h4>
+
+              {selectedPlateItems.length === 0 ? (
+                <p
+                  style={{
+                    color: "#6b7280",
+                    margin: "16px 0",
+                  }}
+                >
+                  No items selected.
+                </p>
+              ) : (
+                <>
+                  {selectedPlateItems.map((item) => (
+                    <div
+                      key={item.id}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        margin: "10px 0",
+                      }}
+                    >
+                      <span>
+                        {item.name} × {item.quantity}
+                      </span>
+
+                      <strong>
+                        ₦
+                        {(
+                          item.price * item.quantity
+                        ).toLocaleString()}
+                      </strong>
+                    </div>
+                  ))}
+
+                  <hr
+                    style={{
+                      margin: "18px 0",
+                      border: "none",
+                      borderTop: "1px solid #e5e7eb",
+                    }}
+                  />
+
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      alignItems: "center",
+                    }}
+                  >
+                    <strong>Total</strong>
+
+                    <strong className="plate-total">
+                      ₦{plateTotal.toLocaleString()}
+                    </strong>
+                  </div>
+                </>
+              )}
+
+              <button
+                className="create-plate-btn"
+                disabled={selectedPlateItems.length === 0}
+                onClick={handleCreateCustomPlate}
+              >
+                Create Custom Plate
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     </div>
   </div>
-</div>
-    </section>
+</section>
   );
 }
 
