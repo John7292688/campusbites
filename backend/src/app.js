@@ -14,6 +14,7 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const authMiddleware = require("./middleware/authMiddleware");
 const errorHandler = require("./middleware/errorHandler");
+const customPlateRoutes = require("./routes/customPlateRoutes");
 
 const app = express();
 
@@ -51,9 +52,15 @@ app.use("/api/restaurants", restaurantRoutes);
 app.use("/api/menus", menuRoutes);
 app.use("/api/menu-categories", menuCategoryRoutes);
 app.use("/api/cart", cartRoutes);
+app.use("/api/custom-plates", customPlateRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
-app.use("/api/packages", packageRoutes);
+const comboPackageRoutes = require("./routes/comboPackageRoutes");
+
+app.use(
+  "/api/combo-packages",
+  comboPackageRoutes
+);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/reviews", reviewRoutes);
 

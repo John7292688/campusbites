@@ -4,11 +4,25 @@ const AppError = require("../utils/AppError");
 
 const addToCart = asyncHandler(async (req, res) => {
   const studentId = req.student.id;
-  const { menuItemId, quantity } = req.body;
+
+  const {
+    menuItemId,
+    comboPackageId,
+    quantity = 1,
+  } = req.body;
+
+  // Make sure at least one item is provided
+  if (!menuItemId && !comboPackageId) {
+    throw new AppError(
+      "Please provide a menu item or combo package.",
+      400
+    );
+  }
 
   const cartItem = await cartService.addToCart({
     student_id: studentId,
-    menu_item_id: menuItemId,
+    menu_item_id: menuItemId || null,
+    combo_package_id: comboPackageId || null,
     quantity,
   });
 
