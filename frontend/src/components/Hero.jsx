@@ -1,4 +1,4 @@
-import heroFood from "../assets/images/hero-food.jpg";
+import heroFood from "../assets/images/transparent.png";
 function Hero() {
   return (
     <section className="hero">

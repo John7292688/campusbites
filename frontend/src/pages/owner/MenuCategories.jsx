@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react";
-import { Button } from "@mui/material";
+import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+} from "@mui/material";
 import AddRoundedIcon from "@mui/icons-material/AddRounded";
 
 import {
   getAllMenuCategories,
+  deleteMenuCategory,
 } from "../../services/menuCategoryService";
 
 import MenuCategoryDialog from "../../components/owner/MenuCategoryDialog";
@@ -12,6 +19,12 @@ import LocalOfferRoundedIcon from "@mui/icons-material/LocalOfferRounded";
 const MenuCategories = () => {
   const [categories, setCategories] = useState([]);
   const [openDialog, setOpenDialog] = useState(false);
+
+  const [dialogMode, setDialogMode] = useState("create");
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [categoryToDelete, setCategoryToDelete] = useState(null);
 
   useEffect(() => {
     fetchCategories();
@@ -25,6 +38,35 @@ const MenuCategories = () => {
       console.error(error);
     }
   };
+
+  const handleEditCategory = (category) => {
+  setDialogMode("edit");
+  setSelectedCategory(category);
+  setOpenDialog(true);
+};
+
+const handleDeleteCategory = (category) => {
+  setCategoryToDelete(category);
+  setDeleteDialogOpen(true);
+};
+
+const handleDeleteCategoryConfirm = async () => {
+  try {
+    await deleteMenuCategory(categoryToDelete.id);
+
+    setDeleteDialogOpen(false);
+    setCategoryToDelete(null);
+
+    await fetchCategories();
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to delete category."
+    );
+  }
+};
 
   return (
     <>
@@ -123,18 +165,20 @@ const MenuCategories = () => {
                 }}
                 >
                 <Button
-                    variant="outlined"
-                    size="small"
+                  variant="outlined"
+                  size="small"
+                  onClick={() => handleEditCategory(category)}
                 >
-                    Edit
+                  Edit
                 </Button>
 
                 <Button
-                    variant="contained"
-                    color="error"
-                    size="small"
+                  variant="contained"
+                  color="error"
+                  size="small"
+                  onClick={() => handleDeleteCategory(category)}
                 >
-                    Delete
+                  Delete
                 </Button>
                 </div>
             </div>
@@ -144,9 +188,52 @@ const MenuCategories = () => {
 
       <MenuCategoryDialog
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        mode={dialogMode}
+        selectedCategory={selectedCategory}
+        onClose={() => {
+          setOpenDialog(false);
+          setSelectedCategory(null);
+          setDialogMode("create");
+        }}
         onCategoryCreated={fetchCategories}
       />
+      <Dialog
+  open={deleteDialogOpen}
+  onClose={() => setDeleteDialogOpen(false)}
+>
+  <DialogTitle>
+    Delete Category
+  </DialogTitle>
+
+  <DialogContent>
+    Are you sure you want to delete{" "}
+    <strong>
+      {categoryToDelete?.name}
+    </strong>
+    ?
+    <br />
+    <br />
+    This action cannot be undone.
+  </DialogContent>
+
+  <DialogActions>
+    <Button
+      onClick={() =>
+        setDeleteDialogOpen(false)
+      }
+    >
+      Cancel
+    </Button>
+
+    <Button
+      color="error"
+      variant="contained"
+      onClick={handleDeleteCategoryConfirm}
+    >
+      Delete
+    </Button>
+  </DialogActions>
+</Dialog>
     </>
   );
 };

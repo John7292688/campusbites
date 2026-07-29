@@ -7,6 +7,7 @@ import Cart from "./pages/Cart";
 import OrderSuccess from "./pages/OrderSuccess";
 import MyOrders from "./pages/MyOrders";
 import OrderDetails from "./pages/OrderDetails";
+import CustomerLayout from "./layouts/CustomerLayout";
 
 import ProtectedRoute from "./components/ProtectedRoute";
 import OwnerProtectedRoute from "./components/OwnerProtectedRoute";
@@ -24,61 +25,63 @@ function App() {
     <BrowserRouter>
       <Routes>
         {/* ==========================
-            CUSTOMER ROUTES
-        ========================== */}
+    CUSTOMER ROUTES
+========================== */}
 
-        <Route path="/" element={<Home />} />
+<Route element={<CustomerLayout />}>
+  <Route path="/" element={<Home />} />
 
-        <Route
-          path="/restaurants/:id"
-          element={<RestaurantDetails />}
-        />
+  <Route
+    path="/restaurants/:id"
+    element={<RestaurantDetails />}
+  />
 
-        <Route
-          path="/login"
-          element={<Login />}
-        />
+  <Route
+    path="/login"
+    element={<Login />}
+  />
 
-        <Route
-          path="/owner/login"
-          element={<OwnerLogin />}
-        />
+  <Route
+    path="/cart"
+    element={
+      <ProtectedRoute>
+        <Cart />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route
-          path="/cart"
-          element={
-            <ProtectedRoute>
-              <Cart />
-            </ProtectedRoute>
-          }
-        />
+  <Route
+    path="/order-success"
+    element={
+      <ProtectedRoute>
+        <OrderSuccess />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route
-          path="/order-success"
-          element={
-            <ProtectedRoute>
-              <OrderSuccess />
-            </ProtectedRoute>
-          }
-        />
+  <Route
+    path="/my-orders"
+    element={
+      <ProtectedRoute>
+        <MyOrders />
+      </ProtectedRoute>
+    }
+  />
 
-        <Route
-          path="/my-orders"
-          element={
-            <ProtectedRoute>
-              <MyOrders />
-            </ProtectedRoute>
-          }
-        />
+  <Route
+    path="/orders/:orderId"
+    element={
+      <ProtectedRoute>
+        <OrderDetails />
+      </ProtectedRoute>
+    }
+  />
+</Route>
 
-        <Route
-          path="/orders/:orderId"
-          element={
-            <ProtectedRoute>
-              <OrderDetails />
-            </ProtectedRoute>
-          }
-        />
+<Route
+  path="/owner/login"
+  element={<OwnerLogin />}
+/>
 
         {/* ==========================
             OWNER ROUTES

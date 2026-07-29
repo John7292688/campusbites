@@ -4,6 +4,7 @@ const API_URL = "http://localhost:5000/api";
 export async function addToCart({
   menuItemId = null,
   comboPackageId = null,
+  customPlateId = null,
   quantity = 1,
 }) {
   const token = localStorage.getItem("token");
@@ -17,6 +18,7 @@ export async function addToCart({
     body: JSON.stringify({
       menuItemId,
       comboPackageId,
+      customPlateId,
       quantity,
     }),
   });

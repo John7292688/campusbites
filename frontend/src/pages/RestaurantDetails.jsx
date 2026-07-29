@@ -6,6 +6,7 @@ import { addToCart } from "../services/cartService";
 import "../styles/restaurantDetails.css";
 import { getRestaurantComboPackages } from "../services/comboPackageService";
 import { createCustomPlate } from "../services/customPlateService";
+import { useCart } from "../context/CartContext";
 
 function RestaurantDetails() {
   const { id } = useParams();
@@ -15,6 +16,7 @@ function RestaurantDetails() {
   const [groupedMenu, setGroupedMenu] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
   const [comboPackages, setComboPackages] = useState([]);
+  const { refreshCart } = useCart();
   const selectedPlateItems = Object.values(selectedItems).filter(
     (item) => item.quantity > 0
   );
@@ -76,6 +78,8 @@ setGroupedMenu(grouped);
       quantity: 1,
     });
 
+    await refreshCart();
+
     alert("Combo package added to cart!");
   } catch (error) {
     alert(error.message);
@@ -96,15 +100,26 @@ async function handleCreateCustomPlate() {
       return;
     }
 
-    await createCustomPlate(
+    // Step 1: Create the custom plate
+    const response = await createCustomPlate(
       Number(id),
       items
     );
 
-    alert("Custom plate created successfully!");
+    const customPlateId = response.customPlate.id;
 
-    // Clear the current selection
+    // Step 2: Add it to the cart
+    await addToCart({
+      customPlateId,
+      quantity: 1,
+    });
+
+    await refreshCart();
+
+    // Step 3: Clear current selections
     setSelectedItems({});
+
+    alert("Custom plate created and added to cart!");
   } catch (error) {
     console.error(error);
 
@@ -127,17 +142,20 @@ async function handleCreateCustomPlate() {
 
 const decreaseQuantity = (itemId) => {
   setSelectedItems((prev) => {
-    const updated = { ...prev };
+    if (!prev[itemId]) return prev;
 
-    if (!updated[itemId]) return updated;
-
-    if (updated[itemId].quantity <= 1) {
-      delete updated[itemId];
-    } else {
-      updated[itemId].quantity--;
+    if (prev[itemId].quantity <= 1) {
+      const { [itemId]: _, ...rest } = prev;
+      return rest;
     }
 
-    return updated;
+    return {
+      ...prev,
+      [itemId]: {
+        ...prev[itemId],
+        quantity: prev[itemId].quantity - 1,
+      },
+    };
   });
 };
 

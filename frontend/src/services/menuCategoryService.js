@@ -14,3 +14,29 @@ export const createMenuCategory = async (name) => {
 
   return response.data;
 };
+
+// Update a menu category
+export const updateMenuCategory = async (
+  categoryId,
+  name
+) => {
+  const response = await api.put(
+    `/menu-categories/${categoryId}`,
+    {
+      name,
+    }
+  );
+
+  return response.data;
+};
+
+// Delete a menu category
+export const deleteMenuCategory = async (
+  categoryId
+) => {
+  const response = await api.delete(
+    `/menu-categories/${categoryId}`
+  );
+
+  return response.data;
+};

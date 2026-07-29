@@ -1,30 +1,9 @@
-import { useEffect, useState } from "react";
-import { getCart } from "../services/cartService";
+import { useCart } from "../context/CartContext";
+import { useNavigate } from "react-router-dom";
 
-function Navbar() {
-  const [cartCount, setCartCount] = useState(0);
-
-  useEffect(() => {
-    async function fetchCart() {
-      const token = localStorage.getItem("token");
-
-      if (!token) return;
-
-      try {
-        const cartItems = await getCart();
-        setCartCount(
-          cartItems.reduce(
-            (total, item) => total + item.quantity,
-            0
-          )
-        );
-      } catch (error) {
-        console.error(error);
-      }
-    }
-
-    fetchCart();
-  }, []);
+function Navbar({ openCart }) {
+  const { cartCount } = useCart();
+  const navigate = useNavigate();
 
   return (
     <header className="navbar">
@@ -46,7 +25,10 @@ function Navbar() {
             🌙
           </button>
 
-          <button className="cart-btn">
+          <button
+            className="cart-btn"
+            onClick={openCart}
+          >
             🛒
             <span>{cartCount}</span>
           </button>

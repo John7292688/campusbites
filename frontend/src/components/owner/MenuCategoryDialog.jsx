@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Dialog,
   DialogTitle,
@@ -9,42 +9,65 @@ import {
   CircularProgress,
 } from "@mui/material";
 
-import { createMenuCategory } from "../../services/menuCategoryService";
+import {
+  createMenuCategory,
+  updateMenuCategory,
+} from "../../services/menuCategoryService";
 
 const MenuCategoryDialog = ({
   open,
+  mode,
+  selectedCategory,
   onClose,
   onCategoryCreated,
 }) => {
   const [name, setName] = useState("");
+  useEffect(() => {
+  if (mode === "edit" && selectedCategory) {
+    setName(selectedCategory.name);
+  } else {
+    setName("");
+  }
+}, [mode, selectedCategory]);
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
+    if (mode === "create") {
       await createMenuCategory(name);
-
-      setName("");
-
-      if (onCategoryCreated) {
-        await onCategoryCreated();
-      }
-
-      onClose();
-    } catch (error) {
-      console.error(error);
-
-      alert(
-        error.response?.data?.message ||
-          "Failed to create category."
+    } else {
+      await updateMenuCategory(
+        selectedCategory.id,
+        name
       );
-    } finally {
-      setLoading(false);
     }
-  };
+
+    setName("");
+
+    if (onCategoryCreated) {
+      await onCategoryCreated();
+    }
+
+    onClose();
+  } catch (error) {
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+        `Failed to ${
+          mode === "create"
+            ? "create"
+            : "update"
+        } category.`
+    );
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <Dialog

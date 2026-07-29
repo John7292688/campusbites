@@ -2,20 +2,20 @@ import ownerApi from "./ownerApi";
 
 // Get all packages
 export const getAllPackages = async () => {
-  const response = await ownerApi.get("/packages");
+  const response = await ownerApi.get("/combo-packages");
   return response.data;
 };
 
 // Get one package
 export const getPackageById = async (packageId) => {
-  const response = await ownerApi.get(`/packages/${packageId}`);
+  const response = await ownerApi.get(`/combo-packages/${packageId}`);
   return response.data;
 };
 
 // Get packages for a restaurant
 export const getRestaurantPackages = async (restaurantId) => {
   const response = await ownerApi.get(
-    `/packages/restaurant/${restaurantId}`
+    `/combo-packages/restaurant/${restaurantId}`
   );
 
   return response.data;
@@ -24,7 +24,7 @@ export const getRestaurantPackages = async (restaurantId) => {
 // Create package
 export const createPackage = async (formData) => {
   const response = await ownerApi.post(
-    "/packages",
+    "/combo-packages",
     formData,
     {
       headers: {
@@ -42,7 +42,7 @@ export const updatePackage = async (
   formData
 ) => {
   const response = await ownerApi.put(
-    `/packages/${packageId}`,
+    `/combo-packages/${packageId}`,
     formData,
     {
       headers: {
@@ -57,7 +57,7 @@ export const updatePackage = async (
 // Delete package
 export const deletePackage = async (packageId) => {
   const response = await ownerApi.delete(
-    `/packages/${packageId}`
+    `/combo-packages/${packageId}`
   );
 
   return response.data;
