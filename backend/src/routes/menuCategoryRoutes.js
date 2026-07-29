@@ -15,4 +15,16 @@ router.post(
   menuCategoryController.createMenuCategory
 );
 
+// Update a menu category
+router.put(
+  "/:categoryId",
+  menuCategoryController.updateMenuCategory
+);
+
+// Delete a menu category
+router.delete(
+  "/:categoryId",
+  menuCategoryController.deleteMenuCategory
+);
+
 module.exports = router;

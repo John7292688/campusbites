@@ -51,7 +51,64 @@ const createMenuCategory = async (req, res) => {
   }
 };
 
+const updateMenuCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+    const { name } = req.body;
+
+    if (!name || !name.trim()) {
+      return res.status(400).json({
+        success: false,
+        message: "Category name is required",
+      });
+    }
+
+    const category =
+      await menuCategoryService.updateMenuCategory(
+        categoryId,
+        name.trim()
+      );
+
+    res.status(200).json({
+      success: true,
+      message: "Menu category updated successfully",
+      data: category,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+const deleteMenuCategory = async (req, res) => {
+  try {
+    const { categoryId } = req.params;
+
+    await menuCategoryService.deleteMenuCategory(
+      categoryId
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Menu category deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   getAllMenuCategories,
   createMenuCategory,
+  updateMenuCategory,
+  deleteMenuCategory,
 };

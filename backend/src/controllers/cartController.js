@@ -8,13 +8,13 @@ const addToCart = asyncHandler(async (req, res) => {
   const {
     menuItemId,
     comboPackageId,
+    customPlateId,
     quantity = 1,
   } = req.body;
 
-  // Make sure at least one item is provided
-  if (!menuItemId && !comboPackageId) {
+  if (!menuItemId && !comboPackageId && !customPlateId) {
     throw new AppError(
-      "Please provide a menu item or combo package.",
+      "Please provide a menu item, combo package, or custom plate.",
       400
     );
   }
@@ -23,6 +23,7 @@ const addToCart = asyncHandler(async (req, res) => {
     student_id: studentId,
     menu_item_id: menuItemId || null,
     combo_package_id: comboPackageId || null,
+    custom_plate_id: customPlateId || null,
     quantity,
   });
 

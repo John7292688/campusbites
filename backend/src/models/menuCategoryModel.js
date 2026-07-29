@@ -23,7 +23,39 @@ const createMenuCategory = async (name) => {
   return result.rows[0];
 };
 
+const updateMenuCategory = async (
+  categoryId,
+  name
+) => {
+  const result = await pool.query(
+    `
+    UPDATE menu_categories
+    SET name = $1
+    WHERE id = $2
+    RETURNING *;
+    `,
+    [name, categoryId]
+  );
+
+  return result.rows[0];
+};
+
+const deleteMenuCategory = async (categoryId) => {
+  const result = await pool.query(
+    `
+    DELETE FROM menu_categories
+    WHERE id = $1
+    RETURNING *;
+    `,
+    [categoryId]
+  );
+
+  return result.rows[0];
+};
+
 module.exports = {
   getAllMenuCategories,
   createMenuCategory,
+  updateMenuCategory,
+  deleteMenuCategory,
 };

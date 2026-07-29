@@ -2,51 +2,68 @@ const pool = require("../config/database");
 
 const addToCart = async (cartData) => {
   const {
-  student_id,
-  menu_item_id,
-  combo_package_id,
-  quantity,
-} = cartData;
+    student_id,
+    menu_item_id,
+    combo_package_id,
+    custom_plate_id,
+    quantity,
+  } = cartData;
 
   let result;
 
-if (menu_item_id) {
-  result = await pool.query(
-    `
-    INSERT INTO cart_items (
-      student_id,
-      menu_item_id,
-      quantity
-    )
-    VALUES ($1, $2, $3)
-    ON CONFLICT (student_id, menu_item_id)
-    DO UPDATE
-    SET quantity = cart_items.quantity + EXCLUDED.quantity
-    RETURNING *;
-    `,
-    [student_id, menu_item_id, quantity]
-  );
-} else {
-  result = await pool.query(
-    `
-    INSERT INTO cart_items (
-      student_id,
-      combo_package_id,
-      quantity
-    )
-    VALUES ($1, $2, $3)
-    ON CONFLICT (
-      student_id,
-      combo_package_id
-    )
-    WHERE combo_package_id IS NOT NULL
-    DO UPDATE
-    SET quantity = cart_items.quantity + EXCLUDED.quantity
-    RETURNING *;
-    `,
-    [student_id, combo_package_id, quantity]
-  );
-}
+  if (menu_item_id) {
+    result = await pool.query(
+      `
+      INSERT INTO cart_items (
+        student_id,
+        menu_item_id,
+        quantity
+      )
+      VALUES ($1, $2, $3)
+      ON CONFLICT (student_id, menu_item_id)
+      DO UPDATE
+      SET quantity = cart_items.quantity + EXCLUDED.quantity
+      RETURNING *;
+      `,
+      [student_id, menu_item_id, quantity]
+    );
+  } else if (combo_package_id) {
+    result = await pool.query(
+      `
+      INSERT INTO cart_items (
+        student_id,
+        combo_package_id,
+        quantity
+      )
+      VALUES ($1, $2, $3)
+      ON CONFLICT (student_id, combo_package_id)
+      WHERE combo_package_id IS NOT NULL
+      DO UPDATE
+      SET quantity = cart_items.quantity + EXCLUDED.quantity
+      RETURNING *;
+      `,
+      [student_id, combo_package_id, quantity]
+    );
+  } else if (custom_plate_id) {
+    result = await pool.query(
+      `
+      INSERT INTO cart_items (
+        student_id,
+        custom_plate_id,
+        quantity
+      )
+      VALUES ($1, $2, $3)
+      ON CONFLICT (student_id, custom_plate_id)
+      WHERE custom_plate_id IS NOT NULL
+      DO UPDATE
+      SET quantity = cart_items.quantity + EXCLUDED.quantity
+      RETURNING *;
+      `,
+      [student_id, custom_plate_id, quantity]
+    );
+  } else {
+    throw new Error("No valid item provided.");
+  }
 
   return result.rows[0];
 };
@@ -55,20 +72,45 @@ const getCartByStudentId = async (studentId) => {
   const result = await pool.query(
     `
     SELECT
-  cart_items.id,
-  cart_items.quantity,
-  menus.id AS menu_item_id,
-  menus.name,
-  menus.price,
-  menus.unit,
-  restaurants.name AS restaurant_name
-    FROM cart_items
-    JOIN menus
-      ON cart_items.menu_item_id = menus.id
-    JOIN restaurants
-      ON menus.restaurant_id = restaurants.id
-    WHERE cart_items.student_id = $1
-    ORDER BY cart_items.created_at DESC;
+      ci.id,
+      ci.quantity,
+
+      ci.menu_item_id,
+      m.name,
+      m.price,
+      m.unit,
+
+      ci.combo_package_id,
+      cp.name AS combo_name,
+      cp.price AS combo_price,
+      cp.image AS combo_image,
+
+      ci.custom_plate_id,
+      cplt.total_price AS custom_plate_price,
+      'Custom Plate' AS custom_plate_name,
+
+      r.name AS restaurant_name
+
+    FROM cart_items ci
+
+    LEFT JOIN menus m
+      ON ci.menu_item_id = m.id
+
+    LEFT JOIN combo_packages cp
+      ON ci.combo_package_id = cp.id
+
+    LEFT JOIN custom_plates cplt
+      ON ci.custom_plate_id = cplt.id  
+
+    LEFT JOIN restaurants r
+      ON r.id = COALESCE(
+        m.restaurant_id,
+        cp.restaurant_id
+      )
+
+    WHERE ci.student_id = $1
+
+    ORDER BY ci.created_at DESC;
     `,
     [studentId]
   );

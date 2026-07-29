@@ -8,7 +8,6 @@ const menuRoutes = require("./routes/menuRoutes");
 const cartRoutes = require("./routes/cartRoutes");
 const orderRoutes = require("./routes/orderRoutes");
 const paymentRoutes = require("./routes/paymentRoutes");
-const packageRoutes = require("./routes/packageRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
@@ -55,12 +54,9 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/custom-plates", customPlateRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
-const comboPackageRoutes = require("./routes/comboPackageRoutes");
+const packageRoutes = require("./routes/packageRoutes");
 
-app.use(
-  "/api/combo-packages",
-  comboPackageRoutes
-);
+app.use("/api/combo-packages", packageRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/reviews", reviewRoutes);
 
