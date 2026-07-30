@@ -10,7 +10,11 @@ const upload = require("../middleware/upload");
 // ==============================
 
 // Get all combo packages
-router.get("/", packageController.getAllPackages);
+router.get(
+  "/",
+  restaurantOwnerAuthMiddleware,
+  packageController.getAllPackages
+);
 
 // Get packages belonging to a restaurant
 router.get(

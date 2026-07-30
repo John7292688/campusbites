@@ -24,6 +24,10 @@ router.delete(
 );
 
 router.get("/item/:menuItemId", menuController.getMenuItemById);
+router.get(
+  "/restaurant/:restaurantId/available",
+  menuController.getAvailableRestaurantMenu
+);
 router.get("/:restaurantId", menuController.getRestaurantMenu);
 
 module.exports = router;

@@ -87,7 +87,12 @@ const getCartByStudentId = async (studentId) => {
 
       ci.custom_plate_id,
       cplt.total_price AS custom_plate_price,
-      'Custom Plate' AS custom_plate_name,
+
+      CASE
+        WHEN cplt.id IS NOT NULL
+        THEN 'Custom Plate (' || r.name || ')'
+        ELSE NULL
+      END AS custom_plate_name,
 
       r.name AS restaurant_name
 
@@ -105,7 +110,8 @@ const getCartByStudentId = async (studentId) => {
     LEFT JOIN restaurants r
       ON r.id = COALESCE(
         m.restaurant_id,
-        cp.restaurant_id
+        cp.restaurant_id,
+        cplt.restaurant_id
       )
 
     WHERE ci.student_id = $1

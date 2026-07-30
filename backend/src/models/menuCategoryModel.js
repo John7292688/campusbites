@@ -2,9 +2,14 @@ const pool = require("../config/database");
 
 const getAllMenuCategories = async () => {
   const result = await pool.query(`
-    SELECT *
-    FROM menu_categories
-    ORDER BY id ASC
+    SELECT
+      mc.*,
+      COUNT(m.id) AS menu_count
+    FROM menu_categories mc
+    LEFT JOIN menus m
+      ON mc.id = m.menu_category_id
+    GROUP BY mc.id
+    ORDER BY mc.id ASC
   `);
 
   return result.rows;

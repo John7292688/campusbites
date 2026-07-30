@@ -39,7 +39,17 @@ const createPackage = async ({
 };
 
 // Get All Packages
-const getAllPackages = async () => {
+const restaurantModel = require("./restaurantModel");
+
+const getAllPackages = async (ownerId) => {
+  // Find the restaurant owned by this user
+  const restaurant =
+    await restaurantModel.getRestaurantByOwnerId(ownerId);
+
+  if (!restaurant) {
+    return [];
+  }
+
   const result = await pool.query(
     `
     SELECT
@@ -52,9 +62,10 @@ const getAllPackages = async () => {
       ON cp.restaurant_id = r.id
     JOIN combo_categories cc
       ON cp.category_id = cc.id
-    WHERE cp.is_available = TRUE
+    WHERE cp.restaurant_id = $1
     ORDER BY cp.created_at DESC;
-    `
+    `,
+    [restaurant.id]
   );
 
   return result.rows;
@@ -93,6 +104,7 @@ const getPackagesByRestaurant = async (restaurantId) => {
     JOIN combo_categories cc
       ON cp.category_id = cc.id
     WHERE cp.restaurant_id = $1
+      AND cp.is_available = TRUE
     ORDER BY cp.created_at DESC;
     `,
     [restaurantId]

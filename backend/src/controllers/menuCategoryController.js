@@ -97,13 +97,22 @@ const deleteMenuCategory = async (req, res) => {
       message: "Menu category deleted successfully",
     });
   } catch (error) {
-    console.error(error);
+  console.error(error);
 
-    res.status(500).json({
+  // Category is being used by menu items
+  if (error.code === "23001") {
+    return res.status(400).json({
       success: false,
-      message: error.message,
+      message:
+        "This category cannot be deleted because it contains menu items. Please move or delete those menu items first.",
     });
   }
+
+  res.status(500).json({
+    success: false,
+    message: error.message || "Failed to delete menu category.",
+  });
+}
 };
 
 module.exports = {

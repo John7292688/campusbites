@@ -50,7 +50,10 @@ const createPackage = async (req, res) => {
 // ==============================
 const getAllPackages = async (req, res) => {
   try {
-    const packages = await packageService.getAllPackages();
+    const ownerId = req.owner.id;
+
+    const packages =
+      await packageService.getAllPackages(ownerId);
 
     res.json({
       success: true,

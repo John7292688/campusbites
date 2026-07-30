@@ -53,6 +53,22 @@ const getRestaurantMenu = asyncHandler(async (req, res) => {
   });
 });
 
+const getAvailableRestaurantMenu = asyncHandler(
+  async (req, res) => {
+    const { restaurantId } = req.params;
+
+    const menuItems =
+      await menuService.getAvailableRestaurantMenu(
+        restaurantId
+      );
+
+    res.status(200).json({
+      success: true,
+      menuItems,
+    });
+  }
+);
+
 const getMenuItemById = asyncHandler(async (req, res) => {
   const { menuItemId } = req.params;
 
@@ -109,6 +125,7 @@ const deleteMenuItem = asyncHandler(async (req, res) => {
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
+  getAvailableRestaurantMenu,
   getMenuItemById,
   updateMenuItem,
   deleteMenuItem,

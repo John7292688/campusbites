@@ -86,10 +86,17 @@ const deleteMenuItem = async (menuItemId, ownerId) => {
   return await menuModel.deleteMenuItem(menuItemId);
 };
 
+const getAvailableRestaurantMenu = (restaurantId) => {
+  return menuModel.getAvailableRestaurantMenu(
+    restaurantId
+  );
+};
+
 module.exports = {
   createMenuItem,
   getRestaurantMenu,
   getMenuItemById,
   updateMenuItem,
   deleteMenuItem,
+  getAvailableRestaurantMenu,
 };

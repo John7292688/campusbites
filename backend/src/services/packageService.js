@@ -24,8 +24,8 @@ const createPackage = async (ownerId, packageData) => {
 };
 
 // Get all packages
-const getAllPackages = () => {
-  return packageModel.getAllPackages();
+const getAllPackages = (ownerId) => {
+  return packageModel.getAllPackages(ownerId);
 };
 
 // Get package by ID

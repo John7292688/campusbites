@@ -44,6 +44,7 @@ const getRestaurantComboPackages = async (req, res) => {
       JOIN combo_categories cc
         ON cp.category_id = cc.id
       WHERE cp.restaurant_id = $1
+        AND cp.is_available = true
       ORDER BY cp.created_at DESC;
       `,
       [restaurantId]
