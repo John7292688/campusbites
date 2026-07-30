@@ -6,6 +6,16 @@ export const getRestaurantMenu = async (restaurantId) => {
   return response.data;
 };
 
+export const getAvailableRestaurantMenu = async (
+  restaurantId
+) => {
+  const response = await api.get(
+    `/menus/restaurant/${restaurantId}/available`
+  );
+
+  return response.data;
+};
+
 // Get one menu item
 export const getMenuItemById = async (menuItemId) => {
   const response = await api.get(`/menus/item/${menuItemId}`);

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import {
   getRestaurantMenu,
+  updateMenuItem,
   deleteMenuItem,
 } from "../../services/menuService";
 import { getMyRestaurant } from "../../services/restaurantService";
@@ -29,6 +30,45 @@ const fetchMenuItems = async () => {
     setMenuItems(response.menuItems);
   } catch (error) {
     console.error(error);
+  }
+};
+console.log(menuItems);
+
+const handleToggleAvailability = async (item) => {
+  // Save the current state in case we need to roll back
+  const previousItems = [...menuItems];
+
+  // Instantly update the UI
+  setMenuItems((prev) =>
+    prev.map((menuItem) =>
+      menuItem.id === item.id
+        ? {
+            ...menuItem,
+            is_available: !menuItem.is_available,
+          }
+        : menuItem
+    )
+  );
+
+  try {
+    await updateMenuItem(item.id, {
+      restaurant_id: item.restaurant_id,
+      name: item.name,
+      price: item.price,
+      unit: item.unit,
+      menu_category_id: item.menu_category_id,
+      is_available: !item.is_available,
+    });
+  } catch (error) {
+    // Restore previous state if the request fails
+    setMenuItems(previousItems);
+
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+      "Failed to update menu item."
+    );
   }
 };
 
@@ -131,25 +171,33 @@ const fetchMenuItems = async () => {
         {item.category_name} • {item.unit}
       </p>
 
-      <span
+      <button
+        onClick={() =>
+          handleToggleAvailability(item)
+        }
         style={{
           display: "inline-block",
           padding: "6px 12px",
           borderRadius: "999px",
           fontSize: "13px",
           fontWeight: "600",
+          border: "none",
+          cursor: "pointer",
+          transition: "0.2s",
+
           background: item.is_available
             ? "#DCFCE7"
             : "#FEE2E2",
+
           color: item.is_available
             ? "#15803D"
             : "#B91C1C",
         }}
       >
         {item.is_available
-          ? "Available"
-          : "Unavailable"}
-      </span>
+          ? "🟢 Available"
+          : "🔴 Unavailable"}
+      </button>
     </div>
 
     {/* Right */}

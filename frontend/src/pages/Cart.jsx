@@ -1,64 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  getCart,
-  updateCartItemQuantity,
-  removeCartItem,
-} from "../services/cartService";
+import { useCart } from "../context/CartContext";
 import { checkout } from "../services/orderService";
 import "../styles/cart.css";
 
 function Cart() {
-  const [cartItems, setCartItems] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const {
+  cartItems,
+  increaseQuantity,
+  decreaseQuantity,
+  removeItem,
+} = useCart();
   const [checkingOut, setCheckingOut] = useState(false);
 
   const navigate = useNavigate();
 
-  useEffect(() => {
-    async function fetchCart() {
-      try {
-        const items = await getCart();
-        setCartItems(items);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    fetchCart();
-  }, []);
-
-  async function handleQuantityChange(cartItemId, newQuantity) {
-    if (newQuantity < 1) return;
-
-    try {
-      await updateCartItemQuantity(cartItemId, newQuantity);
-
-      setCartItems((items) =>
-        items.map((item) =>
-          item.id === cartItemId
-            ? { ...item, quantity: newQuantity }
-            : item
-        )
-      );
-    } catch (error) {
-      alert(error.message);
-    }
-  }
-
-  async function handleRemove(cartItemId) {
-    try {
-      await removeCartItem(cartItemId);
-
-      setCartItems((items) =>
-        items.filter((item) => item.id !== cartItemId)
-      );
-    } catch (error) {
-      alert(error.message);
-    }
-  }
 
   async function handleCheckout() {
     if (cartItems.length === 0) {
@@ -87,10 +43,6 @@ function Cart() {
   const deliveryFee = 500;
   const total = subtotal + deliveryFee;
 
-  if (loading) {
-    return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
-  }
-
   return (
     <section className="cart-page">
       <div className="container">
@@ -114,12 +66,7 @@ function Cart() {
                   <div className="cart-item-actions">
                     <div className="quantity-controls">
                       <button
-                        onClick={() =>
-                          handleQuantityChange(
-                            item.id,
-                            item.quantity - 1
-                          )
-                        }
+                        onClick={() => decreaseQuantity(item)}
                       >
                         −
                       </button>
@@ -127,12 +74,7 @@ function Cart() {
                       <span>{item.quantity}</span>
 
                       <button
-                        onClick={() =>
-                          handleQuantityChange(
-                            item.id,
-                            item.quantity + 1
-                          )
-                        }
+                        onClick={() => increaseQuantity(item)}
                       >
                         +
                       </button>
@@ -147,7 +89,7 @@ function Cart() {
 
                     <button
                       className="remove-btn"
-                      onClick={() => handleRemove(item.id)}
+                      onClick={() => removeItem(item)}
                     >
                       Remove
                     </button>

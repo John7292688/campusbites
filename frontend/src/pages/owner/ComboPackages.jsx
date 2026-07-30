@@ -4,7 +4,10 @@ import { AddRounded } from "@mui/icons-material";
 import PackageCard from "../../components/owner/PackageCard";
 import PackageDialog from "../../components/owner/PackageDialog";
 
-import { getAllPackages } from "../../services/packageService";
+import {
+  getAllPackages,
+  updatePackage,
+} from "../../services/packageService";
 import {
   Dialog,
   DialogTitle,
@@ -76,6 +79,45 @@ const handleDeletePackage = async () => {
   }
 };
 
+const handleToggleAvailability = async (pkg) => {
+  // Save previous state for rollback
+  const previousPackages = [...packages];
+
+  // Optimistic UI update
+  setPackages((prev) =>
+    prev.map((item) =>
+      item.id === pkg.id
+        ? {
+            ...item,
+            is_available: !item.is_available,
+          }
+        : item
+    )
+  );
+
+  try {
+    await updatePackage(pkg.id, {
+      categoryId: pkg.category_id,
+      name: pkg.name,
+      description: pkg.description,
+      price: pkg.price,
+      image: pkg.image,
+      itemsIncluded: pkg.items_included,
+      isAvailable: !pkg.is_available,
+    });
+  } catch (error) {
+    // Roll back if the update fails
+    setPackages(previousPackages);
+
+    console.error(error);
+
+    alert(
+      error.response?.data?.message ||
+        "Failed to update package."
+    );
+  }
+};
+
   return (
     <>
       <div className="packages-page">
@@ -122,9 +164,10 @@ const handleDeletePackage = async () => {
         ) : (
           packages.map((pkg) => (
             <PackageCard
-                pkg={pkg}
-                onEdit={() => handleEditPackage(pkg)}
-                onDelete={() => handleDeleteClick(pkg)}
+              pkg={pkg}
+              onEdit={() => handleEditPackage(pkg)}
+              onDelete={() => handleDeleteClick(pkg)}
+              onToggleAvailability={handleToggleAvailability}
             />
           ))
         )}

@@ -141,22 +141,40 @@ const handleDeleteCategoryConfirm = async () => {
                 }}
             >
                 <div
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "10px",
-                    fontWeight: 600,
-                    fontSize: "16px",
-                }}
-                >
-                <LocalOfferRoundedIcon
-                    sx={{
-                    color: "#f59e0b",
-                    }}
-                />
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+  }}
+>
+  <LocalOfferRoundedIcon
+    sx={{
+      color: "#f59e0b",
+    }}
+  />
 
-                {category.name}
-                </div>
+  <div>
+    <div
+      style={{
+        fontWeight: 600,
+        fontSize: "16px",
+      }}
+    >
+      {category.name}
+    </div>
+
+    <div
+      style={{
+        fontSize: "13px",
+        color: "#6b7280",
+        marginTop: "4px",
+      }}
+    >
+      {category.menu_count} menu item
+      {Number(category.menu_count) !== 1 ? "s" : ""}
+    </div>
+  </div>
+</div>
 
                 <div
                 style={{
@@ -176,9 +194,12 @@ const handleDeleteCategoryConfirm = async () => {
                   variant="contained"
                   color="error"
                   size="small"
+                  disabled={Number(category.menu_count) > 0}
                   onClick={() => handleDeleteCategory(category)}
                 >
-                  Delete
+                  {Number(category.menu_count) > 0
+                    ? `Used (${category.menu_count})`
+                    : "Delete"}
                 </Button>
                 </div>
             </div>

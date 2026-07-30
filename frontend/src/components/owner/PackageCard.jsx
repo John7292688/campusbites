@@ -4,12 +4,15 @@ import {
   CheckCircleRounded,
   CancelRounded,
 } from "@mui/icons-material";
+
+import { Switch } from "@mui/material";
 import "../../styles/packageCard.css";
 
 const PackageCard = ({
   pkg,
   onEdit,
   onDelete,
+  onToggleAvailability,
 }) => {
   return (
     <div className="package-card">
@@ -43,6 +46,33 @@ const PackageCard = ({
             </>
           )}
         </span>
+        <div
+          style={{
+            marginTop: "12px",
+            display: "flex",
+            alignItems: "center",
+            gap: "10px",
+          }}
+        >
+          <Switch
+            checked={pkg.is_available}
+            onChange={() => onToggleAvailability(pkg)}
+            color="warning"
+          />
+
+          <span
+            style={{
+              fontWeight: 600,
+              color: pkg.is_available
+                ? "#16a34a"
+                : "#dc2626",
+            }}
+          >
+            {pkg.is_available
+              ? "Available"
+              : "Unavailable"}
+          </span>
+        </div>
       </div>
 
       <div className="package-actions">

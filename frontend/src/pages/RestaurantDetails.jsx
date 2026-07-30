@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getRestaurantById } from "../services/restaurantService";
-import { getRestaurantMenu } from "../services/menuService";
-import { addToCart } from "../services/cartService";
+import {
+  getAvailableRestaurantMenu,
+} from "../services/menuService";
 import "../styles/restaurantDetails.css";
 import { getRestaurantComboPackages } from "../services/comboPackageService";
 import { createCustomPlate } from "../services/customPlateService";
@@ -16,7 +17,7 @@ function RestaurantDetails() {
   const [groupedMenu, setGroupedMenu] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
   const [comboPackages, setComboPackages] = useState([]);
-  const { refreshCart } = useCart();
+  const { addItemToCart } = useCart();
   const selectedPlateItems = Object.values(selectedItems).filter(
     (item) => item.quantity > 0
   );
@@ -34,7 +35,7 @@ function RestaurantDetails() {
         setRestaurant(data);
 
         const [menu, combos] = await Promise.all([
-          getRestaurantMenu(id),
+          getAvailableRestaurantMenu(id),
           getRestaurantComboPackages(id),
         ]);
 
@@ -73,12 +74,10 @@ setGroupedMenu(grouped);
 
   async function handleAddCombo(combo) {
   try {
-    await addToCart({
+    await addItemToCart({
       comboPackageId: combo.id,
       quantity: 1,
     });
-
-    await refreshCart();
 
     alert("Combo package added to cart!");
   } catch (error) {
@@ -109,12 +108,10 @@ async function handleCreateCustomPlate() {
     const customPlateId = response.customPlate.id;
 
     // Step 2: Add it to the cart
-    await addToCart({
+    await addItemToCart({
       customPlateId,
       quantity: 1,
     });
-
-    await refreshCart();
 
     // Step 3: Clear current selections
     setSelectedItems({});
