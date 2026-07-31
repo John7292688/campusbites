@@ -1,57 +1,86 @@
+import { useNavigate } from "react-router-dom";
 import "./../styles/cart-drawer.css";
 import { useCart } from "../context/CartContext";
 import {
   updateCartItemQuantity,
   removeCartItem,
 } from "../services/cartService";
+import { checkout } from "../services/orderService";
 
 function CartDrawer({
   isOpen,
   closeCart,
 }) {
-    const {
-        cartItems,
-        cartCount,
-        refreshCart,
-    } = useCart();
+  const navigate = useNavigate();
 
-const total = cartItems.reduce((sum, item) => {
-  const price = Number(
-    item.price ||
-    item.combo_price ||
-    item.custom_plate_price ||
-    0
-  );
+  const {
+    cartItems,
+    cartCount,
+    refreshCart,
+  } = useCart();
 
-  return sum + price * item.quantity;
-}, 0);
-const handleQuantityChange = async (
-  item,
-  change
-) => {
-  const newQuantity = item.quantity + change;
+  const total = cartItems.reduce((sum, item) => {
+    const price = Number(
+      item.price ||
+        item.combo_price ||
+        item.custom_plate_price ||
+        0
+    );
 
-  try {
-    if (newQuantity <= 0) {
-      await removeCartItem(item.id);
-    } else {
-      await updateCartItemQuantity(
-        item.id,
-        newQuantity
-      );
+    return sum + price * item.quantity;
+  }, 0);
+
+  const handleQuantityChange = async (
+    item,
+    change
+  ) => {
+    const newQuantity = item.quantity + change;
+
+    try {
+      if (newQuantity <= 0) {
+        await removeCartItem(item.id);
+      } else {
+        await updateCartItemQuantity(
+          item.id,
+          newQuantity
+        );
+      }
+
+      refreshCart();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCheckout = async () => {
+    if (cartItems.length === 0) {
+      alert("Your tray is empty.");
+      return;
     }
 
-    refreshCart();
-  } catch (error) {
-    console.error(error);
-  }
-};
+    try {
+      await checkout();
+
+      closeCart();
+
+      refreshCart();
+
+      navigate("/order-success");
+    } catch (error) {
+      console.error(error);
+
+      alert(
+        error.message || "Checkout failed."
+      );
+    }
+  };
+
   return (
     <>
       {/* Overlay */}
       <div
         className={`cart-overlay ${
-            isOpen ? "show" : ""
+          isOpen ? "show" : ""
         }`}
         onClick={closeCart}
       />
@@ -59,9 +88,9 @@ const handleQuantityChange = async (
       {/* Drawer */}
       <div
         className={`cart-drawer ${
-            isOpen ? "open" : ""
+          isOpen ? "open" : ""
         }`}
-        >
+      >
         <div className="cart-header">
           <h2>Your Tray ({cartCount})</h2>
 
@@ -74,98 +103,105 @@ const handleQuantityChange = async (
         </div>
 
         <div className="cart-body">
-        {cartItems.length === 0 ? (
+          {cartItems.length === 0 ? (
             <div className="empty-cart">
-            <h3>Your tray is empty</h3>
+              <h3>Your tray is empty</h3>
 
-            <p>
+              <p>
                 Add some delicious meals to get started.
-            </p>
+              </p>
             </div>
-        ) : (
+          ) : (
             cartItems.map((item) => (
-            <div
+              <div
                 key={item.id}
                 className="cart-item"
-                >
+              >
                 <div className="cart-item-left">
-                    <h4>
+                  <h4>
                     {item.name ||
-                        item.combo_name ||
-                        item.custom_plate_name}
-                    </h4>
+                      item.combo_name ||
+                      item.custom_plate_name}
+                  </h4>
 
-                    <p className="cart-item-price">
-                        ₦
-                        {Number(
-                            item.price ||
-                            item.combo_price ||
-                            item.custom_plate_price ||
-                            0
-                        ).toLocaleString()}
-                    </p>
+                  <p className="cart-item-price">
+                    ₦
+                    {Number(
+                      item.price ||
+                        item.combo_price ||
+                        item.custom_plate_price ||
+                        0
+                    ).toLocaleString()}
+                  </p>
 
-                    <button
+                  <button
                     className="remove-btn"
                     onClick={() =>
-                        handleQuantityChange(
+                      handleQuantityChange(
                         item,
                         -item.quantity
-                        )
+                      )
                     }
-                    >
+                  >
                     Remove
-                    </button>
+                  </button>
                 </div>
 
                 <div className="cart-item-right">
-                    <button
+                  <button
                     onClick={() =>
-                        handleQuantityChange(item, -1)
+                      handleQuantityChange(item, -1)
                     }
-                    >
+                  >
                     −
-                    </button>
+                  </button>
 
-                    <span>{item.quantity}</span>
+                  <span>{item.quantity}</span>
 
-                    <button
+                  <button
                     onClick={() =>
-                        handleQuantityChange(item, 1)
+                      handleQuantityChange(item, 1)
                     }
-                    >
+                  >
                     +
-                    </button>
+                  </button>
                 </div>
-                </div>
+              </div>
             ))
-        )}
+          )}
         </div>
 
         <div className="cart-footer">
-        <div className="summary-row">
+          <div className="summary-row">
             <span>Subtotal</span>
-            <strong>₦{total.toLocaleString()}</strong>
-        </div>
 
-        <div className="summary-row">
+            <strong>
+              ₦{total.toLocaleString()}
+            </strong>
+          </div>
+
+          <div className="summary-row">
             <span>Delivery</span>
+
             <strong>₦0</strong>
-        </div>
+          </div>
 
-        <hr />
+          <hr />
 
-        <div className="cart-total">
+          <div className="cart-total">
             <span>Total</span>
 
             <strong>
-            ₦{total.toLocaleString()}
+              ₦{total.toLocaleString()}
             </strong>
-        </div>
+          </div>
 
-        <button className="checkout-btn">
+          <button
+            className="checkout-btn"
+            onClick={handleCheckout}
+          >
             Proceed to Checkout
-        </button>
+          </button>
         </div>
       </div>
     </>

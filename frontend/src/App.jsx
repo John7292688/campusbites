@@ -19,6 +19,7 @@ import ComboPackages from "./pages/owner/ComboPackages";
 import OwnerLogin from "./pages/owner/OwnerLogin";
 import MenuItems from "./pages/owner/MenuItems";
 import MenuCategories from "./pages/owner/MenuCategories";
+import Orders from "./pages/owner/Orders";
 
 function App() {
   return (
@@ -118,6 +119,11 @@ function App() {
           <Route
             path="menu-items"
             element={<MenuItems />}
+          />
+
+          <Route
+            path="orders"
+            element={<Orders />}
           />
         </Route>
       </Routes>

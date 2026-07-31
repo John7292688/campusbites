@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { checkout } from "../services/orderService";
@@ -17,23 +17,25 @@ function Cart() {
 
 
   async function handleCheckout() {
-    if (cartItems.length === 0) {
-      alert("Your cart is empty.");
-      return;
-    }
+  alert("Checkout button clicked");
 
-    try {
-      setCheckingOut(true);
-
-      await checkout();
-
-      navigate("/order-success");
-    } catch (error) {
-      alert(error.message);
-    } finally {
-      setCheckingOut(false);
-    }
+  if (cartItems.length === 0) {
+    alert("Your cart is empty.");
+    return;
   }
+
+  try {
+    setCheckingOut(true);
+
+    await checkout();
+
+    navigate("/order-success");
+  } catch (error) {
+    alert(error.message);
+  } finally {
+    setCheckingOut(false);
+  }
+}
 
   const subtotal = cartItems.reduce(
     (total, item) => total + Number(item.price) * item.quantity,
@@ -43,6 +45,7 @@ function Cart() {
   const deliveryFee = 500;
   const total = subtotal + deliveryFee;
 
+  console.log("checkingOut:", checkingOut);
   return (
     <section className="cart-page">
       <div className="container">
