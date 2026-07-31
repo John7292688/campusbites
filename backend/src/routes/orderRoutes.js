@@ -31,7 +31,11 @@ router.get(
 );
 
 // Shared Routes
-router.get("/:orderId/items", orderController.getOrderItems);
+router.get(
+  "/:orderId/items",
+  restaurantOwnerAuthMiddleware,
+  orderController.getOrderItems
+);
 router.get("/:orderId", orderController.getOrderById);
 
 module.exports = router;

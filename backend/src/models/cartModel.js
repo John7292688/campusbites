@@ -77,22 +77,25 @@ const getCartByStudentId = async (studentId) => {
 
       ci.menu_item_id,
       m.name,
-      m.price,
       m.unit,
 
       ci.combo_package_id,
       cp.name AS combo_name,
-      cp.price AS combo_price,
       cp.image AS combo_image,
 
       ci.custom_plate_id,
-      cplt.total_price AS custom_plate_price,
 
       CASE
         WHEN cplt.id IS NOT NULL
         THEN 'Custom Plate (' || r.name || ')'
         ELSE NULL
       END AS custom_plate_name,
+
+      COALESCE(
+        m.price,
+        cp.price,
+        cplt.total_price
+      ) AS price,
 
       r.name AS restaurant_name
 
@@ -105,7 +108,7 @@ const getCartByStudentId = async (studentId) => {
       ON ci.combo_package_id = cp.id
 
     LEFT JOIN custom_plates cplt
-      ON ci.custom_plate_id = cplt.id  
+      ON ci.custom_plate_id = cplt.id
 
     LEFT JOIN restaurants r
       ON r.id = COALESCE(
@@ -159,13 +162,35 @@ const getCartByStudentIdWithClient = async (client, studentId) => {
     SELECT
       ci.id,
       ci.quantity,
-      m.id AS menu_item_id,
+
+      ci.menu_item_id,
       m.name,
       m.price,
-      r.name AS restaurant_name
+
+      ci.combo_package_id,
+      cp.name AS combo_name,
+      cp.price AS combo_price,
+
+      ci.custom_plate_id,
+      cplt.total_price AS custom_plate_price,
+
+      COALESCE(
+        m.price,
+        cp.price,
+        cplt.total_price
+      ) AS price
+
     FROM cart_items ci
-    JOIN menus m ON ci.menu_item_id = m.id
-    JOIN restaurants r ON m.restaurant_id = r.id
+
+    LEFT JOIN menus m
+      ON ci.menu_item_id = m.id
+
+    LEFT JOIN combo_packages cp
+      ON ci.combo_package_id = cp.id
+
+    LEFT JOIN custom_plates cplt
+      ON ci.custom_plate_id = cplt.id
+
     WHERE ci.student_id = $1;
     `,
     [studentId]

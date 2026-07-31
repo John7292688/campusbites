@@ -89,9 +89,13 @@ for (const item of cartItems) {
   await orderModel.createOrderItemWithClient(
     client,
     order.id,
-    item.menu_item_id,
-    item.quantity,
-    item.price
+    {
+      menuItemId: item.menu_item_id,
+      comboPackageId: item.combo_package_id,
+      customPlateId: item.custom_plate_id,
+      quantity: item.quantity,
+      price: item.price,
+    }
   );
 }
 

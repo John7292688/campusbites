@@ -29,17 +29,35 @@ const createOrderWithClient = async (client, studentId, totalAmount) => {
 const createOrderItemWithClient = async (
   client,
   orderId,
-  menuItemId,
-  quantity,
-  price
+  {
+    menuItemId = null,
+    comboPackageId = null,
+    customPlateId = null,
+    quantity,
+    price,
+  }
 ) => {
   const result = await client.query(
     `
-    INSERT INTO order_items (order_id, menu_item_id, quantity, price)
-    VALUES ($1, $2, $3, $4)
+    INSERT INTO order_items (
+      order_id,
+      menu_item_id,
+      combo_package_id,
+      custom_plate_id,
+      quantity,
+      price
+    )
+    VALUES ($1, $2, $3, $4, $5, $6)
     RETURNING *;
     `,
-    [orderId, menuItemId, quantity, price]
+    [
+      orderId,
+      menuItemId,
+      comboPackageId,
+      customPlateId,
+      quantity,
+      price,
+    ]
   );
 
   return result.rows[0];
@@ -124,11 +142,41 @@ const getOrderItems = async (orderId) => {
       oi.id,
       oi.quantity,
       oi.price,
+
+      oi.menu_item_id,
       m.name AS menu_item_name,
+
+      oi.combo_package_id,
+      cp.name AS combo_package_name,
+
+      oi.custom_plate_id,
+
+      CASE
+        WHEN cplt.id IS NOT NULL
+        THEN 'Custom Plate (' || r.name || ')'
+        ELSE NULL
+      END AS custom_plate_name,
+
       r.name AS restaurant_name
+
     FROM order_items oi
-    JOIN menus m ON oi.menu_item_id = m.id
-    JOIN restaurants r ON m.restaurant_id = r.id
+
+    LEFT JOIN menus m
+      ON oi.menu_item_id = m.id
+
+    LEFT JOIN combo_packages cp
+      ON oi.combo_package_id = cp.id
+
+    LEFT JOIN custom_plates cplt
+      ON oi.custom_plate_id = cplt.id
+
+    LEFT JOIN restaurants r
+      ON r.id = COALESCE(
+        m.restaurant_id,
+        cp.restaurant_id,
+        cplt.restaurant_id
+      )
+
     WHERE oi.order_id = $1;
     `,
     [orderId]
@@ -159,12 +207,19 @@ const getOrdersByRestaurantId = async (restaurantId) => {
     SELECT DISTINCT
       o.id,
       o.student_id,
+      s.full_name,
+      s.phone,
+      s.email,
       o.total_amount,
       o.status,
       o.created_at
     FROM orders o
-    JOIN order_items oi ON o.id = oi.order_id
-    JOIN menus m ON oi.menu_item_id = m.id
+    JOIN students s
+      ON o.student_id = s.id
+    JOIN order_items oi
+      ON o.id = oi.order_id
+    JOIN menus m
+      ON oi.menu_item_id = m.id
     WHERE m.restaurant_id = $1
     ORDER BY o.created_at DESC;
     `,
