@@ -177,19 +177,31 @@ const decreaseQuantity = (itemId) => {
         />
 
         <div className="restaurant-hero-content">
-          <h1>{restaurant.name}</h1>
+          <div className="restaurant-header">
+            <div>
+              <h1>{restaurant.name}</h1>
 
-          <p className="restaurant-location">
-            📍 {restaurant.location}
-          </p>
+              <p className="restaurant-location">
+                📍 {restaurant.location}
+              </p>
 
-          <p className="restaurant-description">
-            {restaurant.description}
-          </p>
+              <p className="restaurant-description">
+                {restaurant.description}
+              </p>
 
-          <p className="restaurant-phone">
-            📞 {restaurant.phone}
-          </p>
+              <p className="restaurant-phone">
+                📞 {restaurant.phone}
+              </p>
+            </div>
+
+            {restaurant.logo_url && (
+              <img
+                src={restaurant.logo_url}
+                alt={`${restaurant.name} logo`}
+                className="restaurant-logo"
+              />
+            )}
+          </div>
         </div>
       </div>
 

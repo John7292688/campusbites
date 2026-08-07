@@ -11,9 +11,13 @@ const paymentRoutes = require("./routes/paymentRoutes");
 const categoryRoutes = require("./routes/categoryRoutes");
 const reviewRoutes = require("./routes/reviewRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
+const customPlateRoutes = require("./routes/customPlateRoutes");
+const dashboardRoutes = require("./routes/dashboardRoutes");
+const packageRoutes = require("./routes/packageRoutes");
+const uploadRoutes = require("./routes/uploadRoutes");
+
 const authMiddleware = require("./middleware/authMiddleware");
 const errorHandler = require("./middleware/errorHandler");
-const customPlateRoutes = require("./routes/customPlateRoutes");
 
 const app = express();
 
@@ -54,11 +58,11 @@ app.use("/api/cart", cartRoutes);
 app.use("/api/custom-plates", customPlateRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
-const packageRoutes = require("./routes/packageRoutes");
-
 app.use("/api/combo-packages", packageRoutes);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/reviews", reviewRoutes);
+app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/upload", uploadRoutes);
 
 // Protected Student Profile Route
 app.get("/api/profile", authMiddleware, (req, res) => {
@@ -69,7 +73,7 @@ app.get("/api/profile", authMiddleware, (req, res) => {
   });
 });
 
-// 404 Route
+// 404 Route (Keep this LAST)
 app.use((req, res) => {
   res.status(404).json({
     success: false,
@@ -77,7 +81,7 @@ app.use((req, res) => {
   });
 });
 
-// Global Error Handler
+// Global Error Handler (Always after all routes)
 app.use(errorHandler);
 
 module.exports = app;

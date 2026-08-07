@@ -93,14 +93,39 @@ const getOrderByIdAndStudent = async (orderId, studentId) => {
 const getOrdersByStudentId = async (studentId) => {
   const result = await pool.query(
     `
-    SELECT
-      id,
-      total_amount,
-      status,
-      created_at
-    FROM orders
-    WHERE student_id = $1
-    ORDER BY created_at DESC;
+    SELECT DISTINCT
+      o.id,
+      o.total_amount,
+      o.status,
+      o.created_at,
+
+      r.name AS restaurant_name,
+      r.image_url AS restaurant_image
+
+    FROM orders o
+
+    JOIN order_items oi
+      ON o.id = oi.order_id
+
+    LEFT JOIN menus m
+      ON oi.menu_item_id = m.id
+
+    LEFT JOIN combo_packages cp
+      ON oi.combo_package_id = cp.id
+
+    LEFT JOIN custom_plates cplt
+      ON oi.custom_plate_id = cplt.id
+
+    JOIN restaurants r
+      ON r.id = COALESCE(
+        m.restaurant_id,
+        cp.restaurant_id,
+        cplt.restaurant_id
+      )
+
+    WHERE o.student_id = $1
+
+    ORDER BY o.created_at DESC;
     `,
     [studentId]
   );

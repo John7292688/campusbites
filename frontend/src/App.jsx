@@ -20,6 +20,7 @@ import OwnerLogin from "./pages/owner/OwnerLogin";
 import MenuItems from "./pages/owner/MenuItems";
 import MenuCategories from "./pages/owner/MenuCategories";
 import Orders from "./pages/owner/Orders";
+import Restaurant from "./pages/owner/Restaurant";
 
 function App() {
   return (
@@ -104,6 +105,11 @@ function App() {
           <Route
             path="dashboard"
             element={<Dashboard />}
+          />
+
+          <Route
+            path="restaurant"
+            element={<Restaurant />}
           />
 
           <Route

@@ -3,26 +3,32 @@ import { Link } from "react-router-dom";
 import { getMyOrders } from "../services/orderService";
 import Navbar from "../components/Navbar";
 import "../styles/orders.css";
+import StatusBadge from "../components/StatusBadge";
 
 function MyOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const data = await getMyOrders();
-        setOrders(data);
-      } catch (error) {
-        console.error(error);
-        alert(error.message);
-      } finally {
-        setLoading(false);
-      }
+  const fetchOrders = async () => {
+    try {
+      const data = await getMyOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
     }
+  };
 
-    fetchOrders();
-  }, []);
+  // Load immediately
+  fetchOrders();
+
+  // Refresh every 10 seconds
+  const interval = setInterval(fetchOrders, 10000);
+
+  return () => clearInterval(interval);
+}, []);
 
   if (loading) {
     return (
@@ -49,20 +55,49 @@ function MyOrders() {
             <div className="orders-grid">
               {orders.map((order) => (
                 <div className="order-card" key={order.id}>
-                  <h3>Order #{order.id}</h3>
+                  <h3
+                    style={{
+                      marginBottom: "8px",
+                    }}
+                  >
+                    🍽 {order.restaurant_name}
+                  </h3>
 
-                  <p>
-                    <strong>Status:</strong> {order.status}
+                  <p
+                    style={{
+                      color: "#666",
+                      marginBottom: "16px",
+                    }}
+                  >
+                    Order #{order.id}
                   </p>
 
-                  <p>
-                    <strong>Total:</strong> ₦
-                    {Number(order.total_amount).toFixed(2)}
-                  </p>
+                  <div
+                    style={{
+                      marginBottom: "15px",
+                    }}
+                  >
+                    <StatusBadge
+                      status={order.status}
+                    />
+                  </div>
 
-                  <p>
-                    <strong>Date:</strong>{" "}
-                    {new Date(order.created_at).toLocaleDateString()}
+                  <h2
+                    style={{
+                      color: "#16A34A",
+                      margin: "15px 0",
+                    }}
+                  >
+                    ₦{Number(order.total_amount).toLocaleString()}
+                  </h2>
+
+                  <p
+                    style={{
+                      color: "#666",
+                      marginBottom: "20px",
+                    }}
+                  >
+                    {new Date(order.created_at).toLocaleString()}
                   </p>
 
                   <Link

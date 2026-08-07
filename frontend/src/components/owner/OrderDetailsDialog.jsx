@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 
 import { useEffect, useState } from "react";
+import StatusBadge from "../StatusBadge";
 
 import {
   getRestaurantOrderItems,
@@ -22,12 +23,14 @@ const OrderDetailsDialog = ({
 }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [currentOrder, setCurrentOrder] = useState(order);
 
   useEffect(() => {
-    if (open && order) {
-      fetchItems();
-    }
-  }, [open, order]);
+      if (open && order) {
+        setCurrentOrder(order);
+        fetchItems();
+      }
+    }, [open, order]);
 
   const fetchItems = async () => {
     try {
@@ -51,9 +54,14 @@ const OrderDetailsDialog = ({
       status
     );
 
+    // Refresh the Orders page
     await onStatusUpdated();
 
-    onClose();
+    // Update the dialog immediately
+    setCurrentOrder((prev) => ({
+      ...prev,
+      status,
+    }));
   } catch (error) {
     console.error(error);
 
@@ -72,7 +80,7 @@ const OrderDetailsDialog = ({
       maxWidth="sm"
     >
       <DialogTitle>
-        Order #{order?.id}
+        Order #{currentOrder?.id}
       </DialogTitle>
 
       <DialogContent>
@@ -80,17 +88,42 @@ const OrderDetailsDialog = ({
           <CircularProgress />
         ) : (
           <>
-            <h3>Customer</h3>
+            <div
+              style={{
+                background: "#F9FAFB",
+                border: "1px solid #E5E7EB",
+                borderRadius: "12px",
+                padding: "16px",
+                marginBottom: "20px",
+              }}
+            >
+              <h3
+                style={{
+                  marginTop: 0,
+                  marginBottom: "12px",
+                }}
+              >
+                Customer
+              </h3>
 
-            <p>
-              <strong>Name:</strong>{" "}
-              {order?.full_name}
-            </p>
+              <div
+                style={{
+                  marginBottom: "8px",
+                  fontSize: "16px",
+                  fontWeight: "600",
+                }}
+              >
+                👤 {currentOrder?.full_name}
+              </div>
 
-            <p>
-              <strong>Phone:</strong>{" "}
-              {order?.phone}
-            </p>
+              <div
+                style={{
+                  color: "#6B7280",
+                }}
+              >
+                📞 {currentOrder?.phone}
+              </div>
+            </div>
 
             <hr />
 
@@ -100,45 +133,92 @@ const OrderDetailsDialog = ({
               <div
                 key={item.id}
                 style={{
-                  marginBottom: "15px",
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  padding: "12px 0",
+                  borderBottom: "1px solid #eee",
                 }}
               >
+                <div>
+                  <strong>
+                    {item.menu_item_name ||
+                      item.combo_package_name ||
+                      item.custom_plate_name}
+                  </strong>
+
+                  <div
+                    style={{
+                      color: "#666",
+                      marginTop: "4px",
+                    }}
+                  >
+                    Qty: {item.quantity}
+                  </div>
+                </div>
+
                 <strong>
-                  {item.menu_item_name ||
-                    item.combo_package_name ||
-                    item.custom_plate_name}
+                  ₦{Number(item.price).toLocaleString()}
                 </strong>
-
-                <br />
-
-                Qty: {item.quantity}
-
-                <br />
-
-                ₦
-                {Number(item.price).toLocaleString()}
               </div>
             ))}
 
             <hr />
 
-            <h3>
-              Total: ₦
-              {Number(
-                order?.total_amount
-              ).toLocaleString()}
-            </h3>
+            <div
+              style={{
+                marginTop: "24px",
+                padding: "18px",
+                borderRadius: "12px",
+                background: "#F9FAFB",
+                border: "1px solid #E5E7EB",
+                display: "flex",
+                justifyContent: "space-between",
+                alignItems: "center",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "18px",
+                  fontWeight: "600",
+                }}
+              >
+                Total
+              </span>
 
-            <p>
-              Status: {order?.status}
-            </p>
+              <span
+                style={{
+                  fontSize: "24px",
+                  fontWeight: "700",
+                  color: "#16A34A",
+                }}
+              >
+                ₦
+                {Number(
+                  currentOrder?.total_amount
+                ).toLocaleString()}
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                alignItems: "center",
+                gap: "10px",
+                marginTop: "15px",
+              }}
+            >
+              <strong>Status:</strong>
+
+              <StatusBadge status={currentOrder?.status} />
+            </div>
           </>
         )}
       </DialogContent>
 
       <DialogActions>
 
-        {order?.status === "Pending" && (
+        {currentOrder?.status === "Pending" && (
             <>
             <Button
                 variant="contained"
@@ -162,7 +242,7 @@ const OrderDetailsDialog = ({
             </>
         )}
 
-        {order?.status === "Preparing" && (
+        {currentOrder?.status === "Preparing" && (
             <Button
             variant="contained"
             color="warning"
@@ -174,7 +254,7 @@ const OrderDetailsDialog = ({
             </Button>
         )}
 
-        {order?.status === "Ready" && (
+        {currentOrder?.status === "Ready" && (
             <Button
             variant="contained"
             color="success"

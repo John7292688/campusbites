@@ -1,0 +1,65 @@
+.restaurant-page {
+  padding: 30px;
+}
+
+.restaurant-page h1 {
+  margin-bottom: 30px;
+}
+
+.restaurant-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 30px;
+  align-items: start;
+}
+
+.restaurant-card {
+  background: #fff;
+  border-radius: 18px;
+  padding: 25px;
+  box-shadow: 0 4px 20px rgba(0,0,0,.08);
+}
+
+.restaurant-card h2 {
+  margin-bottom: 25px;
+}
+
+.restaurant-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.restaurant-form label {
+  margin-top: 18px;
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.restaurant-form input,
+.restaurant-form textarea {
+  padding: 14px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+.restaurant-form textarea {
+  resize: vertical;
+  min-height: 130px;
+}
+
+.save-btn {
+  margin-top: 30px;
+  background: #f97316;
+  color: white;
+  border: none;
+  padding: 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.save-btn:hover {
+  background: #ea580c;
+}
