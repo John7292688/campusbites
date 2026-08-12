@@ -3,28 +3,32 @@ import { useEffect, useState } from "react";
 import { getRestaurants } from "../services/restaurantService";
 
 function FeaturedRestaurants() {
-    const [restaurants, setRestaurants] = useState([]);
-    const [loading, setLoading] = useState(true);
+  const [restaurants, setRestaurants] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+  useEffect(() => {
     async function fetchRestaurants() {
-        try {
+      try {
         const data = await getRestaurants();
         setRestaurants(data);
-        } catch (error) {
+      } catch (error) {
         console.error(error);
-        } finally {
+      } finally {
         setLoading(false);
-        }
+      }
     }
 
     fetchRestaurants();
-    }, []);
-    
+  }, []);
+
+  if (loading) {
+    return <p>Loading restaurants...</p>;
+  }
+
   return (
-    <section className="restaurants">
+    <section className="featured-restaurants">
       <div className="container">
-        <div className="section-title">
+        <div className="section-header">
           <h2>Featured Restaurants</h2>
           <p>
             Discover the highest-rated restaurants around your campus.
@@ -32,38 +36,43 @@ function FeaturedRestaurants() {
         </div>
 
         <div className="restaurants-grid">
-          {restaurants.map((restaurant) => (
-            <div className="restaurant-card" key={restaurant.id}>
-               <img
-                src={
-                    restaurant.image_url ||
-                    "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80"
-                }
-                alt={restaurant.name}
-                />
+          <div className="restaurants-grid">
+            {restaurants.map((restaurant) => {
 
-              <div className="restaurant-content">
-                <h3>{restaurant.name}</h3>
+              return (
+                <div className="restaurant-card" key={restaurant.id}>
+                  <img
+                    src={
+                      restaurant.image_url ||
+                      "https://images.unsplash.com/photo-1504674900247-0877df9cc836?w=800&q=80"
+                    }
+                    alt={restaurant.name}
+                  />
 
-                <p className="restaurant-location">
-                📍 {restaurant.location}
-                </p>
+                  <div className="restaurant-content">
+                    <h3>{restaurant.name}</h3>
 
-                <p className="restaurant-description">
-                {restaurant.description}
-                </p>
+                    <p className="restaurant-location">
+                      📍 {restaurant.location}
+                    </p>
 
-                <div className="restaurant-info">
-                <Link
-                to={`/restaurants/${restaurant.id}`}
-                className="view-menu-btn"
-                >
-                View Menu
-                </Link>
+                    <p className="restaurant-description">
+                      {restaurant.description}
+                    </p>
+
+                    <div className="restaurant-info">
+                      <Link
+                        to={`/restaurants/${restaurant.id}`}
+                        className="view-menu-btn"
+                      >
+                        View Menu
+                      </Link>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </div>
-          ))}
+              );
+            })}
+          </div>
         </div>
       </div>
     </section>

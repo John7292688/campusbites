@@ -1,10 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import "./../styles/cart-drawer.css";
 import { useCart } from "../context/CartContext";
-import {
-  updateCartItemQuantity,
-  removeCartItem,
-} from "../services/cartService";
 import { checkout } from "../services/orderService";
 
 function CartDrawer({
@@ -14,10 +10,13 @@ function CartDrawer({
   const navigate = useNavigate();
 
   const {
-    cartItems,
-    cartCount,
-    refreshCart,
-  } = useCart();
+  cartItems,
+  cartCount,
+  refreshCart,
+  increaseQuantity,
+  decreaseQuantity,
+  removeItem,
+} = useCart();
 
   const total = cartItems.reduce((sum, item) => {
     const price = Number(
@@ -34,19 +33,14 @@ function CartDrawer({
     item,
     change
   ) => {
-    const newQuantity = item.quantity + change;
-
     try {
-      if (newQuantity <= 0) {
-        await removeCartItem(item.id);
-      } else {
-        await updateCartItemQuantity(
-          item.id,
-          newQuantity
-        );
+      if (change === 1) {
+        await increaseQuantity(item);
+      } else if (change === -1) {
+        await decreaseQuantity(item);
+      } else if (change === -item.quantity) {
+        await removeItem(item);
       }
-
-      refreshCart();
     } catch (error) {
       console.error(error);
     }

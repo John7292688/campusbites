@@ -5,6 +5,7 @@ import { checkout } from "../services/orderService";
 import "../styles/cart.css";
 
 function Cart() {
+  console.log("Cart component rendered");
   const {
   cartItems,
   increaseQuantity,

@@ -15,6 +15,7 @@ import {
 const CartContext = createContext();
 
 export function CartProvider({ children }) {
+  console.log("CartContext loaded");
   const [cartCount, setCartCount] = useState(0);
   const [cartItems, setCartItems] = useState([]);
 
@@ -104,6 +105,8 @@ const updateItemQuantityLocally = (
   cartItemId,
   quantity
 ) => {
+  console.log("updateItemQuantityLocally called");
+
   setCartItems((prev) => {
     const updatedItems = prev.map((item) =>
       item.id === cartItemId
@@ -114,15 +117,10 @@ const updateItemQuantityLocally = (
         : item
     );
 
-    const total = updatedItems.reduce(
-      (sum, item) => sum + item.quantity,
-      0
-    );
-
-    setCartCount(total);
-
     return updatedItems;
   });
+
+  setCartCount((prevCount) => prevCount);
 };
 
 const addItemToCart = async ({
@@ -142,37 +140,8 @@ const addItemToCart = async ({
       quantity,
     });
 
-    const serverItem = response.cartItem;
+    await refreshCart();
 
-    setCartItems((prev) => {
-      const existing = prev.find(
-        (item) => item.id === serverItem.id
-      );
-
-      let updated;
-
-      if (existing) {
-        updated = prev.map((item) =>
-          item.id === serverItem.id
-            ? {
-                ...item,
-                ...serverItem,
-              }
-            : item
-        );
-      } else {
-        updated = [...prev, serverItem];
-      }
-
-      setCartCount(
-        updated.reduce(
-          (sum, item) => sum + item.quantity,
-          0
-        )
-      );
-
-      return updated;
-    });
   } catch (error) {
     setCartItems(previousItems);
     setCartCount(previousCount);
@@ -181,6 +150,7 @@ const addItemToCart = async ({
 };
 
 const increaseQuantity = async (cartItem) => {
+  console.log("PLUS CLICKED", cartItem);
   const previousItems = [...cartItems];
 
   // Instant UI update
@@ -194,6 +164,7 @@ const increaseQuantity = async (cartItem) => {
       cartItem.id,
       cartItem.quantity + 1
     );
+
   } catch (error) {
     // Roll back if the API fails
     setCartItems(previousItems);
@@ -210,6 +181,7 @@ const increaseQuantity = async (cartItem) => {
 };
 
 const decreaseQuantity = async (cartItem) => {
+  console.log("MINUS CLICKED", cartItem);
   const previousItems = [...cartItems];
 
   if (cartItem.quantity === 1) {

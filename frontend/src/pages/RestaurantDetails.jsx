@@ -178,26 +178,26 @@ const decreaseQuantity = (itemId) => {
 
         <div className="restaurant-hero-content">
           <div className="restaurant-header">
-            <div>
+            <div className="restaurant-info">
               <h1>{restaurant.name}</h1>
 
-              <p className="restaurant-location">
-                📍 {restaurant.location}
-              </p>
+              <div className="restaurant-meta">
+                <span>📍 {restaurant.location}</span>
 
-              <p className="restaurant-description">
-                {restaurant.description}
-              </p>
+                <span>
+                  🍽️ {restaurant.description}
+                </span>
 
-              <p className="restaurant-phone">
-                📞 {restaurant.phone}
-              </p>
+                <span>
+                  📞 {restaurant.phone}
+                </span>
+              </div>
             </div>
 
             {restaurant.logo_url && (
               <img
                 src={restaurant.logo_url}
-                alt={`${restaurant.name} logo`}
+                alt={`${restaurant.name} Logo`}
                 className="restaurant-logo"
               />
             )}
@@ -303,13 +303,10 @@ const decreaseQuantity = (itemId) => {
                         <span className="build-item-unit">
                           ({item.unit})
                         </span>
+                      </div>
 
-                        <span className="build-item-price">
-                          ₦
-                          {Number(
-                            item.price
-                          ).toLocaleString()}
-                        </span>
+                      <div className="build-item-price">
+                        ₦{Number(item.price).toLocaleString()}
                       </div>
 
                       <div className="quantity-control">

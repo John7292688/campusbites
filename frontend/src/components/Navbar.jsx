@@ -1,5 +1,5 @@
 import { useCart } from "../context/CartContext";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 function Navbar({ openCart }) {
   const { cartCount } = useCart();
@@ -13,11 +13,12 @@ function Navbar({ openCart }) {
         </div>
 
         <nav className="nav-links">
-          <a href="#">Home</a>
-          <a href="#">Restaurants</a>
-          <a href="#">Categories</a>
-          <a href="#">Packages</a>
-          <a href="#">Contact</a>
+          <Link to="/">Home</Link>
+          <Link to="/restaurants">Restaurants</Link>
+          <Link to="/categories">Categories</Link>
+          <Link to="/packages">Packages</Link>
+          <Link to="/my-orders">My Orders</Link>
+          <Link to="/contact">Contact</Link>
         </nav>
 
         <div className="nav-actions">
