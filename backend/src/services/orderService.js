@@ -86,6 +86,9 @@ const order = await orderModel.createOrderWithClient(
 );
 
 for (const item of cartItems) {
+  console.log("CHECKOUT ITEM:");
+  console.log(item);
+
   await orderModel.createOrderItemWithClient(
     client,
     order.id,

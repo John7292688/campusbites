@@ -33,7 +33,7 @@ router.get(
 // Shared Routes
 router.get(
   "/:orderId/items",
-  restaurantOwnerAuthMiddleware,
+  authMiddleware,
   orderController.getOrderItems
 );
 router.get("/:orderId", orderController.getOrderById);

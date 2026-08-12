@@ -243,9 +243,21 @@ const getOrdersByRestaurantId = async (restaurantId) => {
       ON o.student_id = s.id
     JOIN order_items oi
       ON o.id = oi.order_id
-    JOIN menus m
+
+    LEFT JOIN menus m
       ON oi.menu_item_id = m.id
-    WHERE m.restaurant_id = $1
+
+    LEFT JOIN packages p
+      ON oi.combo_package_id = p.id
+
+    LEFT JOIN custom_plates cp
+      ON oi.custom_plate_id = cp.id
+
+    WHERE
+      m.restaurant_id = $1
+      OR p.restaurant_id = $1
+      OR cp.restaurant_id = $1
+
     ORDER BY o.created_at DESC;
     `,
     [restaurantId]
@@ -260,9 +272,25 @@ const getRestaurantOwnerByOrderId = async (orderId) => {
     SELECT DISTINCT
       r.owner_id
     FROM orders o
-    JOIN order_items oi ON o.id = oi.order_id
-    JOIN menus m ON oi.menu_item_id = m.id
-    JOIN restaurants r ON m.restaurant_id = r.id
+    JOIN order_items oi
+      ON o.id = oi.order_id
+
+    LEFT JOIN menus m
+      ON oi.menu_item_id = m.id
+
+    LEFT JOIN packages p
+      ON oi.combo_package_id = p.id
+
+    LEFT JOIN custom_plates cp
+      ON oi.custom_plate_id = cp.id
+
+    JOIN restaurants r
+      ON r.id = COALESCE(
+        m.restaurant_id,
+        p.restaurant_id,
+        cp.restaurant_id
+      )
+
     WHERE o.id = $1;
     `,
     [orderId]
