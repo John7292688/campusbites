@@ -14,9 +14,7 @@ import "./styles/responsive.css";
 import "./styles/cart-drawer.css";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
-  <React.StrictMode>
-    <CartProvider>
-      <App />
-    </CartProvider>
-  </React.StrictMode>
+  <CartProvider>
+    <App />
+  </CartProvider>
 );

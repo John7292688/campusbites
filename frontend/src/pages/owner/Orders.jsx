@@ -11,8 +11,14 @@ const Orders = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
+  fetchOrders();
+
+  const interval = setInterval(() => {
     fetchOrders();
-  }, []);
+  }, 2000);
+
+  return () => clearInterval(interval);
+}, []);
 
   const fetchOrders = async () => {
     try {

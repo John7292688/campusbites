@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, Link } from "react-router-dom";
 import { getOrderItems } from "../services/orderService";
+import OrderTracker from "../components/OrderTracker";
 import "../styles/orders.css";
 
 function OrderDetails() {
@@ -42,6 +43,9 @@ function OrderDetails() {
     <section className="orders-page">
       <div className="container">
         <h1>Order #{orderId}</h1>
+        <OrderTracker
+          status={items[0]?.status || "Pending"}
+        />
 
         {items.length > 0 && (
           <h3 style={{ marginBottom: "25px" }}>
@@ -52,11 +56,38 @@ function OrderDetails() {
         <div className="orders-grid">
           {items.map((item) => (
             <div className="order-card" key={item.id}>
-              <h3>
-                {item.menu_item_name ||
-                  item.combo_package_name ||
-                  item.custom_plate_name}
-              </h3>
+              {item.menu_item_name && (
+                <h3>{item.menu_item_name}</h3>
+              )}
+
+              {item.combo_package_name && (
+                <h3>
+                  Combo Package: {item.combo_package_name}
+                </h3>
+              )}
+
+              {item.custom_plate_id && (
+                <>
+                  <h3>Custom Plate</h3>
+
+                  <div
+                    style={{
+                      marginTop: "10px",
+                      marginBottom: "15px",
+                      paddingLeft: "10px",
+                    }}
+                  >
+                    {item.custom_plate_items?.map(
+                      (plateItem, index) => (
+                        <p key={index}>
+                          • {plateItem.name} ×{" "}
+                          {plateItem.quantity}
+                        </p>
+                      )
+                    )}
+                  </div>
+                </>
+              )}
 
               <p>
                 <strong>Quantity:</strong> {item.quantity}

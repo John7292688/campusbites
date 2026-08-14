@@ -1,33 +1,67 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { getMyOrders } from "../services/orderService";
 import "../styles/orders.css";
 import StatusBadge from "../components/StatusBadge";
+import { createSocket } from "../socket";
 
 function MyOrders() {
+  const socket = useMemo(
+    () =>
+      createSocket(
+        localStorage.getItem("token")
+      ),
+    []
+  );
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchOrders = async () => {
-      try {
-        const data = await getMyOrders();
-        setOrders(data);
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const fetchOrders = async () => {
+    try {
+      const data = await getMyOrders();
+      setOrders(data);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    // Load immediately
-    fetchOrders();
+  fetchOrders();
 
-    // Refresh every 10 seconds
-    const interval = setInterval(fetchOrders, 10000);
+  socket.on("connect", () => {
+    console.log(
+      "🟢 Student socket connected:",
+      socket.id
+    );
+  });
 
-    return () => clearInterval(interval);
-  }, []);
+  socket.on(
+    "order_status_updated",
+    ({ orderId, status }) => {
+      console.log(
+        "📦 Order updated:",
+        orderId,
+        status
+      );
+
+      setOrders((prevOrders) =>
+        prevOrders.map((order) =>
+          order.id === orderId
+            ? { ...order, status }
+            : order
+        )
+      );
+    }
+  );
+
+  return () => {
+    socket.off("connect");
+    socket.off("order_status_updated");
+    socket.disconnect();
+  };
+}, []);
 
   if (loading) {
     return (

@@ -33,19 +33,21 @@ const OrderDetailsDialog = ({
     }, [open, order]);
 
   const fetchItems = async () => {
-    try {
-      setLoading(true);
+  try {
+    setLoading(true);
 
-      const data =
-        await getRestaurantOrderItems(order.id);
+    const data =
+      await getRestaurantOrderItems(order.id);
 
-      setItems(data);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setLoading(false);
-    }
-  };
+    console.log("ORDER ITEMS:", data);
+
+    setItems(data);
+  } catch (error) {
+    console.error(error);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const handleStatusUpdate = async (status) => {
   try {
@@ -141,11 +143,76 @@ const OrderDetailsDialog = ({
                 }}
               >
                 <div>
-                  <strong>
-                    {item.menu_item_name ||
-                      item.combo_package_name ||
-                      item.custom_plate_name}
-                  </strong>
+                  <div
+                    key={item.id}
+                    style={{
+                      padding: "12px 0",
+                      borderBottom: "1px solid #eee",
+                    }}
+                  >
+                    {item.menu_item_name && (
+                      <>
+                        <strong>{item.menu_item_name}</strong>
+
+                        <div
+                          style={{
+                            color: "#666",
+                            marginTop: "4px",
+                          }}
+                        >
+                          Qty: {item.quantity}
+                        </div>
+                      </>
+                    )}
+
+                    {item.combo_package_name && (
+                      <>
+                        <strong>
+                          Combo Package: {item.combo_package_name}
+                        </strong>
+
+                        <div
+                          style={{
+                            color: "#666",
+                            marginTop: "4px",
+                          }}
+                        >
+                          Qty: {item.quantity}
+                        </div>
+                      </>
+                    )}
+
+                    {item.custom_plate_id && (
+                      <>
+                        <strong>Custom Plate</strong>
+
+                        <div
+                          style={{
+                            marginTop: "8px",
+                            paddingLeft: "15px",
+                          }}
+                        >
+                          {item.custom_plate_items?.map(
+                            (plateItem, index) => (
+                              <div key={index}>
+                                • {plateItem.name} ×{" "}
+                                {plateItem.quantity}
+                              </div>
+                            )
+                          )}
+                        </div>
+                      </>
+                    )}
+
+                    <div
+                      style={{
+                        marginTop: "8px",
+                        fontWeight: "600",
+                      }}
+                    >
+                      ₦{Number(item.price).toLocaleString()}
+                    </div>
+                  </div>
 
                   <div
                     style={{

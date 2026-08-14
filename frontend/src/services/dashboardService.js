@@ -13,3 +13,11 @@ export const getRecentOrders = async () => {
 
   return response.data.orders;
 };
+
+export async function getTopSellingMenuItem() {
+  const response = await ownerApi.get(
+    "/dashboard/top-selling-item"
+  );
+
+  return response.data.item;
+}
