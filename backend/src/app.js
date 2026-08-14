@@ -15,6 +15,9 @@ const customPlateRoutes = require("./routes/customPlateRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
 const packageRoutes = require("./routes/packageRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const notificationRoutes = require(
+  "./routes/notificationRoutes"
+);
 
 const authMiddleware = require("./middleware/authMiddleware");
 const errorHandler = require("./middleware/errorHandler");
@@ -63,6 +66,7 @@ app.use("/api/categories", categoryRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 // Protected Student Profile Route
 app.get("/api/profile", authMiddleware, (req, res) => {

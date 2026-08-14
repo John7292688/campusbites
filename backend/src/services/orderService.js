@@ -2,6 +2,9 @@ const cartModel = require("../models/cartModel");
 const orderModel = require("../models/orderModel");
 const restaurantModel = require("../models/restaurantModel");
 const pool = orderModel.getPool();
+const notificationService = require(
+  "./notificationService"
+);
 
 const createOrder = (studentId, totalAmount) => {
   return orderModel.createOrder(studentId, totalAmount);
@@ -39,7 +42,18 @@ const createOrderItem = async (orderId, menuItemId, quantity, price) => {
 };
 
 const getOrderItems = async (orderId) => {
-  return await orderModel.getOrderItems(orderId);
+  const items = await orderModel.getOrderItems(orderId);
+
+  for (const item of items) {
+    if (item.custom_plate_id) {
+      item.custom_plate_items =
+        await orderModel.getCustomPlateItems(
+          item.custom_plate_id
+        );
+    }
+  }
+
+  return items;
 };
 
 const getOrdersByRestaurantId = async (restaurantId) => {
@@ -104,8 +118,68 @@ for (const item of cartItems) {
 
 await cartModel.clearCartWithClient(client, studentId);
 
-    await client.query("COMMIT");
-    return order;
+await client.query("COMMIT");
+
+/*
+  Create notification for restaurant owner
+*/
+const firstItem = cartItems[0];
+
+let restaurantId = null;
+
+if (firstItem.menu_item_id) {
+  const result = await pool.query(
+    `
+    SELECT restaurant_id
+    FROM menus
+    WHERE id = $1;
+    `,
+    [firstItem.menu_item_id]
+  );
+
+  restaurantId = result.rows[0]?.restaurant_id;
+}
+
+if (firstItem.combo_package_id) {
+  const result = await pool.query(
+    `
+    SELECT restaurant_id
+    FROM combo_packages
+    WHERE id = $1;
+    `,
+    [firstItem.combo_package_id]
+  );
+
+  restaurantId = result.rows[0]?.restaurant_id;
+}
+
+if (firstItem.custom_plate_id) {
+  const result = await pool.query(
+    `
+    SELECT restaurant_id
+    FROM custom_plates
+    WHERE id = $1;
+    `,
+    [firstItem.custom_plate_id]
+  );
+
+  restaurantId = result.rows[0]?.restaurant_id;
+}
+
+if (restaurantId) {
+  const restaurant =
+    await restaurantModel.getRestaurantById(
+      restaurantId
+    );
+
+  await notificationService.createNotification(
+    restaurant.owner_id,
+    "New Order",
+    `Order #${order.id} has been placed.`
+  );
+}
+
+return order;
   } catch (error) {
     await client.query("ROLLBACK");
     throw error;

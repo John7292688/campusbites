@@ -182,9 +182,13 @@ const getOrderItems = async (orderId) => {
         ELSE NULL
       END AS custom_plate_name,
 
-      r.name AS restaurant_name
+      r.name AS restaurant_name,
+      o.status
 
     FROM order_items oi
+
+    JOIN orders o
+      ON oi.order_id = o.id
 
     LEFT JOIN menus m
       ON oi.menu_item_id = m.id
@@ -205,6 +209,24 @@ const getOrderItems = async (orderId) => {
     WHERE oi.order_id = $1;
     `,
     [orderId]
+  );
+
+  return result.rows;
+};
+
+const getCustomPlateItems = async (customPlateId) => {
+  const result = await pool.query(
+    `
+    SELECT
+      m.name,
+      cpi.quantity
+    FROM custom_plate_items cpi
+    JOIN menus m
+      ON cpi.menu_item_id = m.id
+    WHERE cpi.custom_plate_id = $1
+    ORDER BY m.name;
+    `,
+    [customPlateId]
   );
 
   return result.rows;
@@ -238,25 +260,28 @@ const getOrdersByRestaurantId = async (restaurantId) => {
       o.total_amount,
       o.status,
       o.created_at
+
     FROM orders o
+
     JOIN students s
       ON o.student_id = s.id
+
     JOIN order_items oi
       ON o.id = oi.order_id
 
     LEFT JOIN menus m
       ON oi.menu_item_id = m.id
 
-    LEFT JOIN packages p
-      ON oi.combo_package_id = p.id
+    LEFT JOIN combo_packages cp
+      ON oi.combo_package_id = cp.id
 
-    LEFT JOIN custom_plates cp
-      ON oi.custom_plate_id = cp.id
+    LEFT JOIN custom_plates cplt
+      ON oi.custom_plate_id = cplt.id
 
     WHERE
       m.restaurant_id = $1
-      OR p.restaurant_id = $1
       OR cp.restaurant_id = $1
+      OR cplt.restaurant_id = $1
 
     ORDER BY o.created_at DESC;
     `,
@@ -271,6 +296,7 @@ const getRestaurantOwnerByOrderId = async (orderId) => {
     `
     SELECT DISTINCT
       r.owner_id
+
     FROM orders o
     JOIN order_items oi
       ON o.id = oi.order_id
@@ -278,17 +304,17 @@ const getRestaurantOwnerByOrderId = async (orderId) => {
     LEFT JOIN menus m
       ON oi.menu_item_id = m.id
 
-    LEFT JOIN packages p
-      ON oi.combo_package_id = p.id
+    LEFT JOIN combo_packages cp
+      ON oi.combo_package_id = cp.id
 
-    LEFT JOIN custom_plates cp
-      ON oi.custom_plate_id = cp.id
+    LEFT JOIN custom_plates cplt
+      ON oi.custom_plate_id = cplt.id
 
-    JOIN restaurants r
+    LEFT JOIN restaurants r
       ON r.id = COALESCE(
         m.restaurant_id,
-        p.restaurant_id,
-        cp.restaurant_id
+        cp.restaurant_id,
+        cplt.restaurant_id
       )
 
     WHERE o.id = $1;
@@ -313,6 +339,7 @@ module.exports = {
   createOrderItem,
   createOrderItemWithClient,
   getOrderItems,
+  getCustomPlateItems,
   getOrdersByRestaurantId,
   getRestaurantIdByOrderId,
   getRestaurantOwnerByOrderId,

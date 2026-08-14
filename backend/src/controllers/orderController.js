@@ -1,6 +1,7 @@
 const orderService = require("../services/orderService");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
+const { getIO } = require("../socket");
 
 const createOrder = asyncHandler(async (req, res) => {
   const { studentId, totalAmount } = req.body;
@@ -76,13 +77,32 @@ const updateOrderStatus = asyncHandler(async (req, res) => {
   }
 
   // Update the order status
-  const order = await orderService.updateOrderStatus(orderId, status);
+  // Update the order status
+const order = await orderService.updateOrderStatus(
+  orderId,
+  status
+);
 
-  res.status(200).json({
-    success: true,
-    message: "Order status updated successfully",
-    order,
+// Get full order details
+const updatedOrder =
+  await orderService.getOrderById(orderId);
+
+const io = getIO();
+
+if (io) {
+  io.to(
+    `student_${updatedOrder.student_id}`
+  ).emit("order_status_updated", {
+    orderId: updatedOrder.id,
+    status: updatedOrder.status,
   });
+}
+
+res.status(200).json({
+  success: true,
+  message: "Order status updated successfully",
+  order,
+});
 });
 
 const createOrderItem = asyncHandler(async (req, res) => {

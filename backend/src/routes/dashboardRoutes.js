@@ -16,4 +16,9 @@ router.get(
   dashboardController.getRecentOrders
 );
 
+router.get(
+  "/top-selling-item",
+  restaurantOwnerAuthMiddleware,
+  dashboardController.getTopSellingMenuItem
+);
 module.exports = router;
