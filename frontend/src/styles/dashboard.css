@@ -5,39 +5,132 @@
 .dashboard-header h1 {
   margin: 0;
   font-size: 34px;
+  line-height: 1.2;
 }
 
 .dashboard-header p {
   color: #6b7280;
   margin-top: 8px;
+  font-size: 15px;
 }
+
+/* ==========================
+   STATS GRID
+========================== */
 
 .stats-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
   gap: 16px;
-}
-
-@media (min-width: 769px) {
-  .stats-grid {
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap: 25px;
-  }
+  grid-template-columns: repeat(2, 1fr);
 }
 
 .stat-card {
   background: white;
-  padding: 25px;
+  padding: 18px;
   border-radius: 16px;
-  box-shadow: 0 8px 25px rgba(0,0,0,.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+  min-height: 110px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 .stat-card h4 {
   margin: 0;
   color: #6b7280;
+  font-size: 14px;
+  font-weight: 600;
 }
 
 .stat-card h2 {
-  margin-top: 18px;
-  font-size: 32px;
+  margin: 12px 0 0;
+  font-size: 28px;
+  font-weight: 700;
+}
+
+/* ==========================
+   DESKTOP
+========================== */
+
+@media (min-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(
+      auto-fit,
+      minmax(220px, 1fr)
+    );
+    gap: 24px;
+  }
+
+  .stat-card {
+    min-height: 130px;
+    padding: 24px;
+  }
+}
+
+/* ==========================
+   TABLETS
+========================== */
+
+@media (max-width: 768px) {
+  .dashboard-header h1 {
+    font-size: 28px;
+  }
+
+  .dashboard-header p {
+    font-size: 14px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    min-height: 95px;
+    padding: 14px;
+  }
+
+  .stat-card h4 {
+    font-size: 12px;
+  }
+
+  .stat-card h2 {
+    font-size: 22px;
+    margin-top: 8px;
+  }
+}
+
+/* ==========================
+   SMALL PHONES
+========================== */
+
+@media (max-width: 480px) {
+  .dashboard-header h1 {
+    font-size: 24px;
+  }
+
+  .dashboard-header p {
+    font-size: 13px;
+  }
+
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+  }
+
+  .stat-card {
+    min-height: 85px;
+    padding: 12px;
+    border-radius: 12px;
+  }
+
+  .stat-card h4 {
+    font-size: 11px;
+  }
+
+  .stat-card h2 {
+    font-size: 20px;
+    margin-top: 6px;
+  }
 }

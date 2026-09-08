@@ -13,10 +13,25 @@ const reviewRoutes = require("./routes/reviewRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const customPlateRoutes = require("./routes/customPlateRoutes");
 const dashboardRoutes = require("./routes/dashboardRoutes");
+const contactRoutes = require("./routes/contactRoutes");
 const packageRoutes = require("./routes/packageRoutes");
 const uploadRoutes = require("./routes/uploadRoutes");
+const deliveryLocationRoutes = require(
+  "./routes/deliveryLocationRoutes"
+);
 const notificationRoutes = require(
   "./routes/notificationRoutes"
+);
+const studentNotificationRoutes = require(
+  "./routes/studentNotificationRoutes"
+);
+const packageCategoryRoutes = require(
+  "./routes/packageCategoryRoutes"
+);
+const adminRoutes = require("./routes/adminRoutes");
+
+const adminDashboardRoutes = require(
+  "./routes/adminDashboardRoutes"
 );
 
 const authMiddleware = require("./middleware/authMiddleware");
@@ -52,6 +67,11 @@ app.get("/api/health", (req, res) => {
 // Authentication Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/restaurant-auth", restaurantOwnerAuthRoutes);
+app.use("/api/admin", adminRoutes);
+app.use(
+  "/api/admin-dashboard",
+  adminDashboardRoutes
+);
 
 // Feature Routes
 app.use("/api/restaurants", restaurantRoutes);
@@ -62,11 +82,24 @@ app.use("/api/custom-plates", customPlateRoutes);
 app.use("/api/orders", orderRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/combo-packages", packageRoutes);
+app.use(
+  "/api/package-categories",
+  packageCategoryRoutes
+);
 app.use("/api/categories", categoryRoutes);
 app.use("/api/reviews", reviewRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/notifications", notificationRoutes);
+app.use(
+  "/api/student-notifications",
+  studentNotificationRoutes
+);
+app.use("/api/contact", contactRoutes);
+app.use(
+  "/api/delivery-locations",
+  deliveryLocationRoutes
+);
 
 // Protected Student Profile Route
 app.get("/api/profile", authMiddleware, (req, res) => {

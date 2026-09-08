@@ -1,0 +1,41 @@
+.restaurants-table-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.restaurants-table-wrapper table {
+  min-width: 700px;
+}
+
+@media (max-width: 768px) {
+  .restaurants-table-wrapper {
+    overflow-x: scroll;
+  }
+
+  .restaurants-table-wrapper table {
+    min-width: 900px;
+  }
+}
+
+.restaurants-search-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+@media (max-width: 768px) {
+  .restaurants-search-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.mobile-restaurants-list {
+  display: none;
+}
+
+.mobile-restaurant-card {
+  display: none;
+}

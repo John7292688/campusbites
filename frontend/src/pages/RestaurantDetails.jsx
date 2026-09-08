@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { getRestaurantById } from "../services/restaurantService";
+import RestaurantDetailsSkeleton from "../components/loaders/RestaurantDetailsSkeleton";
 import {
   getAvailableRestaurantMenu,
 } from "../services/menuService";
@@ -8,6 +9,7 @@ import "../styles/restaurantDetails.css";
 import { getRestaurantComboPackages } from "../services/comboPackageService";
 import { createCustomPlate } from "../services/customPlateService";
 import { useCart } from "../context/CartContext";
+import { toast } from "react-toastify";
 
 function RestaurantDetails() {
   const { id } = useParams();
@@ -74,14 +76,15 @@ setGroupedMenu(grouped);
 
   async function handleAddCombo(combo) {
   try {
+    toast.success("Combo package added to cart!");
+
     await addItemToCart({
       comboPackageId: combo.id,
       quantity: 1,
     });
-
-    alert("Combo package added to cart!");
-  } catch (error) {
-    alert(error.message);
+  } 
+  catch (error) {
+    toast.error(error.message);
   }
 }
 
@@ -95,34 +98,41 @@ async function handleCreateCustomPlate() {
       }));
 
     if (items.length === 0) {
-      alert("Please select at least one item.");
+      toast.error("Please select at least one item.");
       return;
     }
 
-    // Step 1: Create the custom plate
+    const toastId = toast.loading(
+      "Creating custom plate..."
+    );
+
     const response = await createCustomPlate(
       Number(id),
       items
     );
 
-    const customPlateId = response.customPlate.id;
+    const customPlateId =
+      response.customPlate.id;
 
-    // Step 2: Add it to the cart
     await addItemToCart({
       customPlateId,
       quantity: 1,
     });
 
-    // Step 3: Clear current selections
     setSelectedItems({});
 
-    alert("Custom plate created and added to cart!");
-  } catch (error) {
-    console.error(error);
+    toast.update(toastId, {
+      render:
+        "Custom plate created and added to cart!",
+      type: "success",
+      isLoading: false,
+      autoClose: 2000,
+    });
 
-    alert(
+  } catch (error) {
+    toast.error(
       error.message ||
-        "Failed to create custom plate."
+      "Failed to create custom plate."
     );
   }
 }
@@ -157,8 +167,8 @@ const decreaseQuantity = (itemId) => {
 };
 
   if (loading) {
-    return <h2 style={{ textAlign: "center" }}>Loading...</h2>;
-  }
+  return <RestaurantDetailsSkeleton />;
+}
 
   if (!restaurant) {
     return <h2 style={{ textAlign: "center" }}>Restaurant not found.</h2>;
@@ -192,6 +202,20 @@ const decreaseQuantity = (itemId) => {
                   📞 {restaurant.phone}
                 </span>
               </div>
+              {!restaurant.is_open && (
+              <div
+                style={{
+                  marginTop: "15px",
+                  padding: "12px 16px",
+                  background: "#FEE2E2",
+                  color: "#B91C1C",
+                  borderRadius: "8px",
+                  fontWeight: "600",
+                }}
+              >
+                🔴 This restaurant is currently closed and is not accepting orders.
+              </div>
+            )}
             </div>
 
             {restaurant.logo_url && (
@@ -255,9 +279,12 @@ const decreaseQuantity = (itemId) => {
 
         <button
           className="combo-btn"
+          disabled={!restaurant.is_open}
           onClick={() => handleAddCombo(combo)}
         >
-          Add Combo
+          {restaurant.is_open
+            ? "Add Combo"
+            : "Restaurant Closed"}
         </button>
       </div>
     ))
@@ -312,6 +339,7 @@ const decreaseQuantity = (itemId) => {
                       <div className="quantity-control">
                         <button
                           className="qty-btn minus"
+                          disabled={!restaurant.is_open}
                           onClick={() =>
                             decreaseQuantity(item.id)
                           }
@@ -326,6 +354,7 @@ const decreaseQuantity = (itemId) => {
 
                         <button
                           className="qty-btn plus"
+                          disabled={!restaurant.is_open}
                           onClick={() =>
                             increaseQuantity(item)
                           }
@@ -401,10 +430,15 @@ const decreaseQuantity = (itemId) => {
 
               <button
                 className="create-plate-btn"
-                disabled={selectedPlateItems.length === 0}
+                disabled={
+                  selectedPlateItems.length === 0 ||
+                  !restaurant.is_open
+                }
                 onClick={handleCreateCustomPlate}
               >
-                Create Custom Plate
+                {restaurant.is_open
+                  ? "Create Custom Plate"
+                  : "Restaurant Closed"}
               </button>
             </div>
           </div>

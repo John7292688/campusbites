@@ -1,5 +1,19 @@
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import heroFood from "../assets/images/transparent.png";
+
 function Hero() {
+  const navigate = useNavigate();
+  const [searchTerm, setSearchTerm] = useState("");
+
+  function handleSearch() {
+    if (!searchTerm.trim()) return;
+
+    navigate(
+      `/search?q=${encodeURIComponent(searchTerm)}`
+    );
+  }
+
   return (
     <section className="hero">
       <div className="container hero-container">
@@ -26,22 +40,37 @@ function Hero() {
             <input
               type="text"
               placeholder="Search restaurants, meals or categories..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  handleSearch();
+                }
+              }}
             />
 
-            <button>
+            <button onClick={handleSearch}>
               Search
             </button>
 
           </div>
 
           <div className="hero-buttons">
-            <button className="primary-btn">
+
+            <button
+              className="primary-btn"
+              onClick={() => navigate("/restaurants")}
+            >
               Browse Restaurants
             </button>
 
-            <button className="secondary-btn">
+            <button
+              className="secondary-btn"
+              onClick={() => navigate("/partner")}
+            >
               Become a Vendor
             </button>
+
           </div>
 
           <div className="hero-stats">

@@ -102,6 +102,10 @@ const deletePackage = async (ownerId, packageId) => {
   return await packageModel.deletePackage(packageId);
 };
 
+const getPublicPackages = () => {
+  return packageModel.getPublicPackages();
+};
+
 module.exports = {
   createPackage,
   getAllPackages,
@@ -109,4 +113,5 @@ module.exports = {
   getPackagesByRestaurant,
   updatePackage,
   deletePackage,
+  getPublicPackages,
 };

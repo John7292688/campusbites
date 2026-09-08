@@ -10,6 +10,7 @@ import {
   Stack,
   CircularProgress,
 } from "@mui/material";
+import { toast } from "react-toastify";
 
 import { getAllCategories } from "../../services/categoryService";
 import {
@@ -26,8 +27,9 @@ const PackageDialog = ({
 }) => {
   const [categories, setCategories] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [currentImage, setCurrentImage] = useState("");
-  
+
+  const [currentImage, setCurrentImage] =
+    useState("");
 
   const [formData, setFormData] = useState({
     name: "",
@@ -39,47 +41,63 @@ const PackageDialog = ({
     isAvailable: true,
   });
 
+  useEffect(() => {
+    if (!open) return;
 
-useEffect(() => {
-  if (!open) return;
+    fetchCategories();
 
-  fetchCategories();
+    if (
+      mode === "edit" &&
+      selectedPackage
+    ) {
+      setFormData({
+        name: selectedPackage.name || "",
+        categoryId:
+          selectedPackage.category_id || "",
+        price:
+          selectedPackage.price || "",
+        description:
+          selectedPackage.description || "",
+        itemsIncluded:
+          selectedPackage.items_included ||
+          "",
+        image: null,
+        isAvailable:
+          selectedPackage.is_available,
+      });
 
-  if (mode === "edit" && selectedPackage) {
-    setFormData({
-      name: selectedPackage.name || "",
-      categoryId: selectedPackage.category_id || "",
-      price: selectedPackage.price || "",
-      description: selectedPackage.description || "",
-      itemsIncluded: selectedPackage.items_included || "",
-      image: null,
-      isAvailable: selectedPackage.is_available,
-    });
+      setCurrentImage(
+        selectedPackage.image || ""
+      );
+    } else {
+      setFormData({
+        name: "",
+        categoryId: "",
+        price: "",
+        description: "",
+        itemsIncluded: "",
+        image: null,
+        isAvailable: true,
+      });
 
-    setCurrentImage(selectedPackage.image || "");
-  } else {
-    setFormData({
-      name: "",
-      categoryId: "",
-      price: "",
-      description: "",
-      itemsIncluded: "",
-      image: null,
-      isAvailable: true,
-    });
+      setCurrentImage("");
+    }
+  }, [open, mode, selectedPackage]);
 
-    setCurrentImage("");
-  }
-}, [open, mode, selectedPackage]);
+  const fetchCategories = async () => {
+    try {
+      const response =
+        await getAllCategories();
 
-const fetchCategories = async () => {
-  try {
-    const response = await getAllCategories();
-    setCategories(response.data);
-  } catch (error) {
-    console.error("Failed to load categories:", error);
-  }
-};
+      setCategories(response.data);
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        "Failed to load categories."
+      );
+    }
+  };
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -98,57 +116,98 @@ const fetchCategories = async () => {
   };
 
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  console.log("Mode:", mode);
-  console.log("Selected Package:", selectedPackage);
+    if (loading) return;
 
-  try {
-    setLoading(true);
+    try {
+      setLoading(true);
 
-    const data = new FormData();
+      const data = new FormData();
 
-    data.append("categoryId", formData.categoryId);
-    data.append("name", formData.name);
-    data.append("description", formData.description);
-    data.append("price", formData.price);
-    data.append("itemsIncluded", formData.itemsIncluded);
-    data.append("isAvailable", formData.isAvailable);
+      data.append(
+        "categoryId",
+        formData.categoryId
+      );
 
-    // Only send a new image if one was selected
-    if (formData.image) {
-      data.append("image", formData.image);
+      data.append(
+        "name",
+        formData.name
+      );
+
+      data.append(
+        "description",
+        formData.description
+      );
+
+      data.append(
+        "price",
+        formData.price
+      );
+
+      data.append(
+        "itemsIncluded",
+        formData.itemsIncluded
+      );
+
+      data.append(
+        "isAvailable",
+        formData.isAvailable
+      );
+
+      if (formData.image) {
+        data.append(
+          "image",
+          formData.image
+        );
+      }
+
+      if (mode === "create") {
+        await createPackage(data);
+
+        toast.success(
+          "Package created successfully."
+        );
+      } else {
+        await updatePackage(
+          selectedPackage.id,
+          data
+        );
+
+        toast.success(
+          "Package updated successfully."
+        );
+      }
+
+      if (onPackageCreated) {
+        await onPackageCreated();
+      }
+
+      onClose();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          `Failed to ${
+            mode === "create"
+              ? "create"
+              : "update"
+          } package.`
+      );
+    } finally {
+      setLoading(false);
     }
-
-    if (mode === "create") {
-      await createPackage(data);
-    } else {
-      await updatePackage(selectedPackage.id, data);
-    }
-
-    if (onPackageCreated) {
-      await onPackageCreated();
-    }
-
-    onClose();
-  } catch (error) {
-    console.error(error);
-
-    alert(
-      error.response?.data?.message ||
-        `Failed to ${
-          mode === "create" ? "create" : "update"
-        } package.`
-    );
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={() => {
+        if (!loading) {
+          onClose();
+        }
+      }}
       fullWidth
       maxWidth="sm"
     >
@@ -168,6 +227,7 @@ const fetchCategories = async () => {
               onChange={handleChange}
               fullWidth
               required
+              disabled={loading}
             />
 
             <TextField
@@ -178,15 +238,18 @@ const fetchCategories = async () => {
               onChange={handleChange}
               fullWidth
               required
+              disabled={loading}
             >
-              {categories.map((category) => (
-                <MenuItem
-                  key={category.id}
-                  value={category.id}
-                >
-                  {category.name}
-                </MenuItem>
-              ))}
+              {categories.map(
+                (category) => (
+                  <MenuItem
+                    key={category.id}
+                    value={category.id}
+                  >
+                    {category.name}
+                  </MenuItem>
+                )
+              )}
             </TextField>
 
             <TextField
@@ -197,6 +260,7 @@ const fetchCategories = async () => {
               onChange={handleChange}
               fullWidth
               required
+              disabled={loading}
             />
 
             <TextField
@@ -206,40 +270,56 @@ const fetchCategories = async () => {
               onChange={handleChange}
               multiline
               rows={3}
+              disabled={loading}
             />
 
             <TextField
               label="Items Included"
               name="itemsIncluded"
-              value={formData.itemsIncluded}
+              value={
+                formData.itemsIncluded
+              }
               onChange={handleChange}
               multiline
               rows={3}
               helperText="Separate items with commas."
+              disabled={loading}
             />
 
-            {mode === "edit" && currentImage && (
-              <div style={{ marginBottom: "16px" }}>
-                <p style={{ marginBottom: "8px", fontWeight: "bold" }}>
-                  Current Image
-                </p>
+            {mode === "edit" &&
+              currentImage && (
+                <div>
+                  <p
+                    style={{
+                      marginBottom:
+                        "8px",
+                      fontWeight:
+                        "bold",
+                    }}
+                  >
+                    Current Image
+                  </p>
 
-                <img
-                  src={currentImage}
-                  alt="Package"
-                  style={{
-                    width: "100%",
-                    maxHeight: "220px",
-                    objectFit: "cover",
-                    borderRadius: "8px",
-                  }}
-                />
-              </div>
-            )}
+                  <img
+                    src={currentImage}
+                    alt="Package"
+                    style={{
+                      width: "100%",
+                      maxHeight:
+                        "220px",
+                      objectFit:
+                        "cover",
+                      borderRadius:
+                        "8px",
+                    }}
+                  />
+                </div>
+              )}
 
             <Button
               variant="outlined"
               component="label"
+              disabled={loading}
             >
               Upload Image
 
@@ -247,18 +327,27 @@ const fetchCategories = async () => {
                 hidden
                 type="file"
                 accept="image/*"
-                onChange={handleImageChange}
+                onChange={
+                  handleImageChange
+                }
               />
             </Button>
 
             {formData.image && (
-              <p>{formData.image.name}</p>
+              <p>
+                Selected:
+                {" "}
+                {formData.image.name}
+              </p>
             )}
           </Stack>
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={onClose}>
+          <Button
+            onClick={onClose}
+            disabled={loading}
+          >
             Cancel
           </Button>
 
@@ -266,17 +355,22 @@ const fetchCategories = async () => {
             type="submit"
             variant="contained"
             disabled={loading}
+            startIcon={
+              loading ? (
+                <CircularProgress
+                  size={18}
+                  color="inherit"
+                />
+              ) : null
+            }
           >
-            {loading ? (
-              <CircularProgress
-                size={22}
-                color="inherit"
-              />
-            ) : (
-              mode === "create"
-                ? "Save Package"
-                : "Update Package"
-            )}
+            {loading
+              ? mode === "create"
+                ? "Saving..."
+                : "Updating..."
+              : mode === "create"
+              ? "Save Package"
+              : "Update Package"}
           </Button>
         </DialogActions>
       </form>

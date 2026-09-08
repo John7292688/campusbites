@@ -1,0 +1,263 @@
+.packages-page {
+  padding: 60px 0;
+  background: #f8fafc;
+  min-height: 100vh;
+}
+
+.packages-page h1 {
+  font-size: 2.8rem;
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.packages-page > .container > p {
+  color: #6b7280;
+  margin-bottom: 30px;
+  font-size: 1.05rem;
+}
+
+.category-filters {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 40px;
+  scrollbar-width: none;
+}
+
+.category-filters::-webkit-scrollbar {
+  display: none;
+}
+
+.category-btn {
+  border: none;
+  background: white;
+  padding: 12px 20px;
+  border-radius: 999px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.category-btn:hover {
+  transform: translateY(-2px);
+}
+
+.category-btn.active {
+  background: #ff7a00;
+  color: white;
+}
+
+.category-section {
+  margin-bottom: 60px;
+}
+
+.category-heading {
+  font-size: 1.8rem;
+  font-weight: 700;
+  margin-bottom: 24px;
+  color: #111827;
+}
+
+.packages-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(320px, 1fr)
+  );
+  gap: 28px;
+}
+
+.public-package-card {
+  background: white;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.06);
+  transition: all 0.35s ease;
+  position: relative;
+}
+
+.public-package-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 18px 35px rgba(0,0,0,0.12);
+}
+
+.public-package-card img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+}
+
+.public-package-content {
+  padding: 20px;
+}
+
+.public-package-content h3 {
+  margin-bottom: 10px;
+  color: #111827;
+  font-size: 1.3rem;
+}
+
+.public-package-content p {
+  color: #6b7280;
+  margin-bottom: 12px;
+  line-height: 1.5;
+}
+
+.package-restaurant {
+  display: inline-block;
+  background: #fff7ed;
+  color: #ea580c;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.package-status {
+  display: inline-block;
+  background: #dcfce7;
+  color: #15803d;
+  padding: 8px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-left: 10px;
+}
+
+.public-package-content h4 {
+  margin-top: 18px;
+  font-size: 1.5rem;
+  color: #ff7a00;
+  font-weight: 700;
+}
+
+.package-cart-btn {
+  width: 100%;
+  border: none;
+  background: #ff7a00;
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 15px;
+  margin-top: 16px;
+  transition: 0.3s ease;
+}
+
+.package-cart-btn:hover {
+  background: #ea580c;
+}
+
+.empty-packages {
+  text-align: center;
+  padding: 80px 20px;
+  background: white;
+  border-radius: 20px;
+}
+
+.empty-packages h3 {
+  margin-bottom: 10px;
+  color: #111827;
+}
+
+.empty-packages p {
+  color: #6b7280;
+}
+
+@media (max-width: 768px) {
+  .packages-page {
+    padding: 40px 0;
+  }
+
+  .packages-page h1 {
+    font-size: 2rem;
+  }
+
+  .packages-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .public-package-card img {
+    height: 200px;
+  }
+
+  .category-heading {
+    font-size: 1.4rem;
+  }
+}
+
+.public-package-card {
+  cursor: pointer;
+}
+
+.public-package-card:hover {
+  transform: translateY(-4px);
+}
+
+.loading-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fill,
+    minmax(280px, 1fr)
+  );
+  gap: 24px;
+}
+
+.loading-card {
+  background: #fff;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #e5e7eb;
+}
+
+.loading-image {
+  width: 100%;
+  height: 220px;
+  border-radius: 0;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+.loading-line {
+  height: 14px;
+  border-radius: 6px;
+  margin-bottom: 12px;
+  background: linear-gradient(
+    90deg,
+    #f1f5f9 25%,
+    #e2e8f0 50%,
+    #f1f5f9 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite linear;
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 200% 0;
+  }
+
+  to {
+    background-position: -200% 0;
+  }
+}
+
+.loading-content {
+  padding: 16px;
+}
+
+.loading-line.short {
+  width: 60%;
+}
+

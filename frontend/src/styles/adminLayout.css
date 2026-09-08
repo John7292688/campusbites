@@ -1,0 +1,197 @@
+.admin-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* =========================
+   SIDEBAR
+========================= */
+
+.admin-sidebar {
+  width: 280px;
+  background: #0f172a;
+  color: white;
+  padding: 28px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+
+  position: sticky;
+  top: 0;
+  height: 100vh;
+
+  transition: 0.3s ease;
+}
+
+.admin-logo {
+  padding-bottom: 20px;
+  border-bottom: 1px solid #334155;
+}
+
+.admin-logo h2 {
+  margin: 0;
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.admin-logo p {
+  color: #94a3b8;
+  margin-top: 8px;
+  margin-bottom: 0;
+  font-size: 14px;
+}
+
+.admin-user {
+  margin-top: 20px;
+  background: #1e293b;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.admin-user-name {
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.admin-user-role {
+  color: #94a3b8;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.admin-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 30px;
+  flex: 1;
+}
+
+.admin-link {
+  color: white;
+  text-decoration: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  font-weight: 600;
+  transition: 0.25s;
+}
+
+.admin-link:hover {
+  background: #334155;
+}
+
+.admin-link.active {
+  background: #2563eb;
+}
+
+.admin-divider {
+  height: 1px;
+  background: #334155;
+  margin-top: auto;
+  margin-bottom: 20px;
+}
+
+.logout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 12px 16px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  text-align: left;
+}
+
+.logout-btn:hover {
+  background: #dc2626;
+}
+
+/* =========================
+   CONTENT
+========================= */
+
+.admin-content {
+  flex: 1;
+  background: #f8fafc;
+  min-width: 0;
+}
+
+/* =========================
+   MOBILE TOPBAR
+========================= */
+
+.mobile-topbar {
+  display: none;
+}
+
+/* =========================
+   OVERLAY
+========================= */
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* =========================
+   TABLET & MOBILE
+========================= */
+
+@media (max-width: 768px) {
+  .admin-sidebar {
+    position: fixed;
+    left: -280px;
+    top: 0;
+
+    z-index: 1001;
+  }
+
+  .admin-sidebar.open {
+    left: 0;
+  }
+
+  .sidebar-overlay {
+    display: block;
+
+    position: fixed;
+    inset: 0;
+
+    background: rgba(0, 0, 0, 0.5);
+
+    z-index: 1000;
+  }
+
+  .mobile-topbar {
+    display: flex;
+
+    align-items: center;
+    gap: 16px;
+
+    height: 70px;
+
+    padding: 0 16px;
+
+    background: white;
+
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .mobile-topbar h2 {
+    margin: 0;
+    font-size: 22px;
+  }
+
+  .menu-btn {
+    border: none;
+    background: #f3f4f6;
+
+    width: 42px;
+    height: 42px;
+
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    font-size: 22px;
+  }
+}

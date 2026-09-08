@@ -61,12 +61,19 @@ const getRecentOrders = async (ownerId) => {
     `
     SELECT DISTINCT
       o.id,
+      o.receipt_number,
       o.total_amount,
       o.status,
       o.created_at,
 
       s.full_name,
-      s.phone
+      s.phone,
+
+      o.delivery_address,
+      o.address_note,
+
+      r.name AS restaurant_name,
+      r.location AS restaurant_address
 
     FROM restaurants r
 

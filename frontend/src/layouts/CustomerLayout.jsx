@@ -3,6 +3,7 @@ import { useState } from "react";
 
 import Navbar from "../components/Navbar";
 import CartDrawer from "../components/CartDrawer";
+import Footer from "../components/Footer";
 
 function CustomerLayout() {
   const [isCartOpen, setIsCartOpen] = useState(false);
@@ -14,11 +15,13 @@ function CustomerLayout() {
       <CartDrawer
         isOpen={isCartOpen}
         closeCart={() => setIsCartOpen(false)}
-     />
+      />
 
       <main>
         <Outlet />
       </main>
+
+      <Footer />
     </>
   );
 }

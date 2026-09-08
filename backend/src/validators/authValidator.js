@@ -16,7 +16,26 @@ const loginSchema = Joi.object({
   password: Joi.string().required(),
 });
 
+const verifyOtpSchema = Joi.object({
+  email: Joi.string().email().required(),
+  otp: Joi.string().length(6).required(),
+});
+
+const resetPasswordSchema = Joi.object({
+  email: Joi.string().email().required(),
+  otp: Joi.string().length(6).required(),
+  password: Joi.string().min(8).required(),
+  confirmPassword: Joi.string()
+    .valid(Joi.ref("password"))
+    .required()
+    .messages({
+      "any.only": "Passwords do not match",
+    }),
+});
+
 module.exports = {
   registerSchema,
   loginSchema,
+  verifyOtpSchema,
+  resetPasswordSchema,
 };

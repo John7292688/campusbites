@@ -6,10 +6,22 @@ const ownerApi = axios.create({
 
 ownerApi.interceptors.request.use(
   (config) => {
-    const ownerToken = localStorage.getItem("ownerToken");
+    const ownerToken =
+      localStorage.getItem("ownerToken");
+
+    console.log(
+      "OWNER API TOKEN:",
+      ownerToken
+    );
+
+    console.log(
+      "OWNER API URL:",
+      config.url
+    );
 
     if (ownerToken) {
-      config.headers.Authorization = `Bearer ${ownerToken}`;
+      config.headers.Authorization =
+        `Bearer ${ownerToken}`;
     }
 
     return config;

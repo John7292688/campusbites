@@ -8,7 +8,11 @@ const upload = require("../middleware/upload");
 // ==============================
 // Public Routes
 // ==============================
-
+// Public packages for students
+router.get(
+  "/public",
+  packageController.getPublicPackages
+);
 // Get all combo packages
 router.get(
   "/",

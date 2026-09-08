@@ -1,13 +1,6 @@
 import { useEffect, useState } from "react";
 import { AddRounded } from "@mui/icons-material";
-
-import PackageCard from "../../components/owner/PackageCard";
-import PackageDialog from "../../components/owner/PackageDialog";
-
-import {
-  getAllPackages,
-  updatePackage,
-} from "../../services/packageService";
+import CircularProgress from "@mui/material/CircularProgress";
 import {
   Dialog,
   DialogTitle,
@@ -15,20 +8,36 @@ import {
   DialogActions,
   Button,
 } from "@mui/material";
-import { deletePackage } from "../../services/packageService";
+import { toast } from "react-toastify";
+
+import PackageCard from "../../components/owner/PackageCard";
+import PackageDialog from "../../components/owner/PackageDialog";
+
+import {
+  getAllPackages,
+  updatePackage,
+  deletePackage,
+} from "../../services/packageService";
 
 const ComboPackages = () => {
   const [packages, setPackages] = useState([]);
   const [loading, setLoading] = useState(true);
+
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogMode, setDialogMode] = useState("create");
-  const [selectedPackage, setSelectedPackage] = useState(null);
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
-  const [packageToDelete, setPackageToDelete] = useState(null);
-  const handleDeleteClick = (pkg) => {
-    setPackageToDelete(pkg);
-    setDeleteDialogOpen(true);
-  };
+  const [selectedPackage, setSelectedPackage] =
+    useState(null);
+
+  const [deleteDialogOpen, setDeleteDialogOpen] =
+    useState(false);
+
+  const [packageToDelete, setPackageToDelete] =
+    useState(null);
+
+  const [deleting, setDeleting] = useState(false);
+
+  const [updatingPackageId, setUpdatingPackageId] =
+    useState(null);
 
   useEffect(() => {
     fetchPackages();
@@ -36,106 +45,156 @@ const ComboPackages = () => {
 
   const fetchPackages = async () => {
     try {
+      setLoading(true);
+
       const response = await getAllPackages();
+
       setPackages(response.data || []);
     } catch (error) {
-      console.error("Failed to fetch packages:", error);
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to fetch packages."
+      );
     } finally {
       setLoading(false);
     }
   };
 
-  if (loading) {
-    return <h2>Loading packages...</h2>;
-  }
-
   const handleAddPackage = () => {
-  setDialogMode("create");
-  setSelectedPackage(null);
-  setOpenDialog(true);
-};
+    setDialogMode("create");
+    setSelectedPackage(null);
+    setOpenDialog(true);
+  };
 
-const handleEditPackage = (pkg) => {
-  setDialogMode("edit");
-  setSelectedPackage(pkg);
-  setOpenDialog(true);
-};
+  const handleEditPackage = (pkg) => {
+    setDialogMode("edit");
+    setSelectedPackage(pkg);
+    setOpenDialog(true);
+  };
 
-const handleDeletePackage = async () => {
-  try {
-    await deletePackage(packageToDelete.id);
+  const handleDeleteClick = (pkg) => {
+    setPackageToDelete(pkg);
+    setDeleteDialogOpen(true);
+  };
 
-    setDeleteDialogOpen(false);
-    setPackageToDelete(null);
+  const handleDeletePackage = async () => {
+    try {
+      setDeleting(true);
 
-    await fetchPackages();
-  } catch (error) {
-    console.error(error);
+      await deletePackage(packageToDelete.id);
 
-    alert(
-      error.response?.data?.message ||
-        "Failed to delete package."
+      toast.success(
+        "Package deleted successfully."
+      );
+
+      setDeleteDialogOpen(false);
+      setPackageToDelete(null);
+
+      await fetchPackages();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to delete package."
+      );
+    } finally {
+      setDeleting(false);
+    }
+  };
+
+  const handleToggleAvailability = async (
+    pkg
+  ) => {
+    const previousPackages = [...packages];
+
+    setUpdatingPackageId(pkg.id);
+
+    setPackages((prev) =>
+      prev.map((item) =>
+        item.id === pkg.id
+          ? {
+              ...item,
+              is_available:
+                !item.is_available,
+            }
+          : item
+      )
+    );
+
+    try {
+      await updatePackage(pkg.id, {
+        categoryId: pkg.category_id,
+        name: pkg.name,
+        description: pkg.description,
+        price: pkg.price,
+        image: pkg.image,
+        itemsIncluded: pkg.items_included,
+        isAvailable: !pkg.is_available,
+      });
+
+      toast.success(
+        `Package ${
+          !pkg.is_available
+            ? "enabled"
+            : "disabled"
+        } successfully.`
+      );
+    } catch (error) {
+      setPackages(previousPackages);
+
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          "Failed to update package."
+      );
+    } finally {
+      setUpdatingPackageId(null);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "300px",
+          flexDirection: "column",
+          gap: "15px",
+        }}
+      >
+        <CircularProgress />
+
+        <h3>Loading packages...</h3>
+      </div>
     );
   }
-};
-
-const handleToggleAvailability = async (pkg) => {
-  // Save previous state for rollback
-  const previousPackages = [...packages];
-
-  // Optimistic UI update
-  setPackages((prev) =>
-    prev.map((item) =>
-      item.id === pkg.id
-        ? {
-            ...item,
-            is_available: !item.is_available,
-          }
-        : item
-    )
-  );
-
-  try {
-    await updatePackage(pkg.id, {
-      categoryId: pkg.category_id,
-      name: pkg.name,
-      description: pkg.description,
-      price: pkg.price,
-      image: pkg.image,
-      itemsIncluded: pkg.items_included,
-      isAvailable: !pkg.is_available,
-    });
-  } catch (error) {
-    // Roll back if the update fails
-    setPackages(previousPackages);
-
-    console.error(error);
-
-    alert(
-      error.response?.data?.message ||
-        "Failed to update package."
-    );
-  }
-};
 
   return (
     <>
       <div className="packages-page">
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            marginBottom: "30px",
-          }}
-        >
+        <div className="packages-header">
           <div>
-            <h1 style={{ marginBottom: "5px" }}>
+            <h1
+              style={{
+                marginBottom: "5px",
+              }}
+            >
               Combo Packages
             </h1>
 
-            <p style={{ color: "#6b7280" }}>
-              Manage your restaurant's combo packages
+            <p
+              style={{
+                color: "#6b7280",
+              }}
+            >
+              Manage your restaurant's
+              combo packages
             </p>
           </div>
 
@@ -164,10 +223,24 @@ const handleToggleAvailability = async (pkg) => {
         ) : (
           packages.map((pkg) => (
             <PackageCard
-              pkg={pkg}
-              onEdit={() => handleEditPackage(pkg)}
-              onDelete={() => handleDeleteClick(pkg)}
-              onToggleAvailability={handleToggleAvailability}
+              key={pkg.id}
+              pkg={{
+                ...pkg,
+                isUpdating:
+                  updatingPackageId ===
+                  pkg.id,
+              }}
+              onEdit={() =>
+                handleEditPackage(pkg)
+              }
+              onDelete={() =>
+                handleDeleteClick(pkg)
+              }
+              onToggleAvailability={() =>
+                handleToggleAvailability(
+                  pkg
+                )
+              }
             />
           ))
         )}
@@ -177,33 +250,43 @@ const handleToggleAvailability = async (pkg) => {
         mode={dialogMode}
         selectedPackage={selectedPackage}
         open={openDialog}
-        onClose={() => setOpenDialog(false)}
+        onClose={() =>
+          setOpenDialog(false)
+        }
         onPackageCreated={fetchPackages}
       />
 
       <Dialog
         open={deleteDialogOpen}
-        onClose={() => setDeleteDialogOpen(false)}
+        onClose={() =>
+          !deleting &&
+          setDeleteDialogOpen(false)
+        }
       >
         <DialogTitle>
           Delete Package
         </DialogTitle>
 
         <DialogContent>
-          Are you sure you want to delete{" "}
+          Are you sure you want to
+          delete{" "}
           <strong>
             {packageToDelete?.name}
           </strong>
           ?
           <br />
           <br />
-          This action cannot be undone.
+          This action cannot be
+          undone.
         </DialogContent>
 
         <DialogActions>
           <Button
+            disabled={deleting}
             onClick={() =>
-              setDeleteDialogOpen(false)
+              setDeleteDialogOpen(
+                false
+              )
             }
           >
             Cancel
@@ -212,14 +295,26 @@ const handleToggleAvailability = async (pkg) => {
           <Button
             color="error"
             variant="contained"
-            onClick={handleDeletePackage}
+            disabled={deleting}
+            onClick={
+              handleDeletePackage
+            }
+            startIcon={
+              deleting ? (
+                <CircularProgress
+                  size={18}
+                  color="inherit"
+                />
+              ) : null
+            }
           >
-            Delete
+            {deleting
+              ? "Deleting..."
+              : "Delete"}
           </Button>
         </DialogActions>
       </Dialog>
     </>
-
   );
 };
 

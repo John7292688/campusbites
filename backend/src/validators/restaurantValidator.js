@@ -10,6 +10,8 @@ const createRestaurantSchema = Joi.object({
   phone: Joi.string().trim().min(10).max(15).required(),
 
   image_url: Joi.string().uri().allow(null, ""),
+
+  logo_url: Joi.string().uri().allow(null, ""),
 });
 
 module.exports = {

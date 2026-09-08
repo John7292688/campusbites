@@ -3,13 +3,15 @@ import ownerApi from "./ownerApi";
 // Restaurant Owner Login
 export const loginRestaurantOwner = async (
   email,
-  password
+  password,
+  fcmToken
 ) => {
   const response = await ownerApi.post(
     "/restaurant-auth/login",
     {
       email,
       password,
+      fcmToken,
     }
   );
 

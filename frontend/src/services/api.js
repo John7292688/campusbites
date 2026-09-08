@@ -6,14 +6,12 @@ const api = axios.create({
 
 api.interceptors.request.use(
   (config) => {
-    const ownerToken = localStorage.getItem("ownerToken");
-    const studentToken = localStorage.getItem("token");
-
-    // Use owner token if available, otherwise student token
-    const token = ownerToken || studentToken;
+    const token =
+      localStorage.getItem("token");
 
     if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+      config.headers.Authorization =
+        `Bearer ${token}`;
     }
 
     return config;

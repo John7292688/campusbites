@@ -66,6 +66,7 @@ useEffect(() => {
     );
 
     setSummary(summaryData);
+    console.log("RECENT ORDERS:", ordersData);
     setRecentOrders(ordersData);
     setTopSellingItem(topItemData);
   } catch (error) {
@@ -80,16 +81,27 @@ useEffect(() => {
 }
 
 const handleViewOrder = (order) => {
+  console.log("SELECTED ORDER:", order);
+
   setSelectedOrder(order);
   setDialogOpen(true);
 };
 
+const currentHour = new Date().getHours();
+
+let greeting = "Good Evening";
+
+if (currentHour < 12) {
+  greeting = "Good Morning";
+} else if (currentHour < 18) {
+  greeting = "Good Afternoon";
+}
 
   return (
     <>
       <div className="dashboard-header">
         <div>
-          <h1>Good Afternoon 👋</h1>
+          <h1>{greeting} 👋</h1>
 
           <p>
             Welcome back! Here's what's happening in

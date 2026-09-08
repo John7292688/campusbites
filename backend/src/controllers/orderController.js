@@ -2,6 +2,9 @@ const orderService = require("../services/orderService");
 const asyncHandler = require("../utils/asyncHandler");
 const AppError = require("../utils/AppError");
 const { getIO } = require("../socket");
+const studentNotificationService = require(
+  "../services/studentNotificationService"
+);
 
 const createOrder = asyncHandler(async (req, res) => {
   const { studentId, totalAmount } = req.body;
@@ -87,6 +90,12 @@ const order = await orderService.updateOrderStatus(
 const updatedOrder =
   await orderService.getOrderById(orderId);
 
+await studentNotificationService.createNotification(
+  updatedOrder.student_id,
+  "Order Status Updated",
+  `Your order status has been updated to: ${updatedOrder.status}`
+);
+
 const io = getIO();
 
 if (io) {
@@ -136,7 +145,11 @@ const getOrderItems = asyncHandler(async (req, res) => {
 const getOrdersByRestaurantId = asyncHandler(async (req, res) => {
   const ownerId = req.owner.id;
 
-  const orders = await orderService.getOrdersForAuthenticatedOwner(ownerId);
+  const orders =
+    await orderService.getOrdersForAuthenticatedOwner(ownerId);
+
+  console.log("CONTROLLER:");
+  console.log(orders[0]);
 
   res.status(200).json({
     success: true,
@@ -144,10 +157,64 @@ const getOrdersByRestaurantId = asyncHandler(async (req, res) => {
   });
 });
 
+const getCustomers = async (
+  req,
+  res
+) => {
+  try {
+    const ownerId = req.owner.id;
+
+    const customers =
+      await orderService.getCustomersForAuthenticatedOwner(
+        ownerId
+      );
+
+    return res.status(200).json({
+      success: true,
+      data: customers,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      success: false,
+      message:
+        "Failed to fetch customers",
+    });
+  }
+};
+
+const getLatestDeliveryInfo =
+  asyncHandler(async (req, res) => {
+    const studentId = req.student.id;
+
+    const deliveryInfo =
+      await orderService.getLatestDeliveryInfoByStudentId(
+        studentId
+      );
+
+    res.status(200).json({
+      success: true,
+      deliveryInfo,
+    });
+  });
+
 const checkout = asyncHandler(async (req, res) => {
   const studentId = req.student.id;
 
-  const order = await orderService.checkout(studentId);
+  const {
+    deliveryLocationId,
+    deliveryAddress,
+    addressNote,
+  } = req.body;
+
+  const order =
+    await orderService.checkout(
+      studentId,
+      deliveryLocationId,
+      deliveryAddress,
+      addressNote
+    );
 
   res.status(201).json({
     success: true,
@@ -164,5 +231,7 @@ module.exports = {
   createOrderItem,
   getOrderItems,
   getOrdersByRestaurantId,
+  getCustomers,
+  getLatestDeliveryInfo,
   checkout,
 };

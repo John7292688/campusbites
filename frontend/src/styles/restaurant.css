@@ -37,6 +37,7 @@
 
 .restaurant-form input,
 .restaurant-form textarea {
+  width: 100%;
   padding: 14px;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -62,4 +63,80 @@
 
 .save-btn:hover {
   background: #ea580c;
+}
+
+/* ==========================
+   TABLET
+========================== */
+
+@media (max-width: 992px) {
+  .restaurant-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .restaurant-page {
+    padding: 24px;
+  }
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width: 768px) {
+  .restaurant-page {
+    padding: 16px;
+  }
+
+  .restaurant-page h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .restaurant-card {
+    padding: 18px;
+    border-radius: 14px;
+  }
+
+  .restaurant-card h2 {
+    font-size: 20px;
+    margin-bottom: 18px;
+  }
+
+  .restaurant-form input,
+  .restaurant-form textarea {
+    padding: 12px;
+    font-size: 14px;
+  }
+
+  .save-btn {
+    width: 100%;
+    padding: 14px;
+  }
+}
+
+/* ==========================
+   SMALL PHONES
+========================== */
+
+@media (max-width: 480px) {
+  .restaurant-page {
+    padding: 12px;
+  }
+
+  .restaurant-page h1 {
+    font-size: 24px;
+  }
+
+  .restaurant-card {
+    padding: 15px;
+  }
+
+  .restaurant-card h2 {
+    font-size: 18px;
+  }
+
+  .restaurant-form label {
+    font-size: 14px;
+  }
 }

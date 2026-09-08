@@ -167,6 +167,25 @@ const deletePackage = async (packageId) => {
   );
 };
 
+const getPublicPackages = async () => {
+  const result = await pool.query(`
+    SELECT
+      cp.*,
+      r.name AS restaurant_name,
+      r.image_url AS restaurant_image,
+      cc.name AS category_name
+    FROM combo_packages cp
+    JOIN restaurants r
+      ON cp.restaurant_id = r.id
+    JOIN combo_categories cc
+      ON cp.category_id = cc.id
+    WHERE cp.is_available = true
+    ORDER BY cp.created_at DESC;
+  `);
+
+  return result.rows;
+};
+
 module.exports = {
   createPackage,
   getAllPackages,
@@ -174,4 +193,5 @@ module.exports = {
   getPackagesByRestaurant,
   updatePackage,
   deletePackage,
+  getPublicPackages,
 };

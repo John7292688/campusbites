@@ -9,12 +9,18 @@ import {
   CircularProgress,
   MenuItem,
 } from "@mui/material";
+
+import { useEffect, useState } from "react";
+
+import { toast } from "react-toastify";
+
 import {
   createMenuItem,
   updateMenuItem,
 } from "../../services/menuService";
-import { useEffect, useState } from "react";
+
 import { getAllMenuCategories } from "../../services/menuCategoryService";
+
 import { getMyRestaurant } from "../../services/restaurantService";
 
 const MenuItemDialog = ({
@@ -23,49 +29,63 @@ const MenuItemDialog = ({
   menuItem = null,
   onMenuItemSaved,
 }) => {
-  const [loading] = useState(false);
-  const [categories, setCategories] = useState([]);
+  const [loading, setLoading] =
+    useState(false);
 
-  const [formData, setFormData] = useState({
-    name: "",
-    categoryId: "",
-    price: "",
-    unit: "",
-    isAvailable: true,
-  });
+  const [categories, setCategories] =
+    useState([]);
 
-  useEffect(() => {
-  fetchCategories();
-}, []);
-
-const fetchCategories = async () => {
-  try {
-    const response = await getAllMenuCategories();
-    setCategories(response.data);
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-useEffect(() => {
-  if (menuItem) {
-    setFormData({
-      name: menuItem.name || "",
-      categoryId: menuItem.menu_category_id || "",
-      price: menuItem.price || "",
-      unit: menuItem.unit || "",
-      isAvailable: menuItem.is_available,
-    });
-  } else {
-    setFormData({
+  const [formData, setFormData] =
+    useState({
       name: "",
       categoryId: "",
       price: "",
       unit: "",
       isAvailable: true,
     });
-  }
-}, [menuItem, open]);
+
+  useEffect(() => {
+    if (!open) return;
+
+    fetchCategories();
+  }, [open]);
+
+  const fetchCategories = async () => {
+    try {
+      const response =
+        await getAllMenuCategories();
+
+      setCategories(response.data);
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        "Failed to load categories."
+      );
+    }
+  };
+
+  useEffect(() => {
+    if (menuItem) {
+      setFormData({
+        name: menuItem.name || "",
+        categoryId:
+          menuItem.menu_category_id || "",
+        price: menuItem.price || "",
+        unit: menuItem.unit || "",
+        isAvailable:
+          menuItem.is_available,
+      });
+    } else {
+      setFormData({
+        name: "",
+        categoryId: "",
+        price: "",
+        unit: "",
+        isAvailable: true,
+      });
+    }
+  }, [menuItem, open]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -76,62 +96,79 @@ useEffect(() => {
     }));
   };
 
-  const handleImageChange = (e) => {
-    setFormData((prev) => ({
-      ...prev,
-      image: e.target.files[0],
-    }));
-  };
-
   const handleSubmit = async (e) => {
-  e.preventDefault();
+    e.preventDefault();
 
-  try {
-    const restaurant = await getMyRestaurant();
+    try {
+      setLoading(true);
 
-    const menuItemData = {
-    restaurant_id: restaurant.id,
-    menu_category_id: formData.categoryId,
-    name: formData.name,
-    price: Number(formData.price),
-    unit: formData.unit,
-    is_available: formData.isAvailable,
-    };
+      const restaurant =
+        await getMyRestaurant();
 
-    if (menuItem) {
-  await updateMenuItem(menuItem.id, menuItemData);
+      const menuItemData = {
+        restaurant_id: restaurant.id,
+        menu_category_id:
+          formData.categoryId,
+        name: formData.name,
+        price: Number(formData.price),
+        unit: formData.unit,
+        is_available:
+          formData.isAvailable,
+      };
 
-  alert("Menu item updated successfully!");
-} else {
-  await createMenuItem(menuItemData);
+      if (menuItem) {
+        await updateMenuItem(
+          menuItem.id,
+          menuItemData
+        );
 
-  alert("Menu item created successfully!");
-}
+        toast.success(
+          "Menu item updated successfully!"
+        );
+      } else {
+        await createMenuItem(
+          menuItemData
+        );
 
-if (onMenuItemSaved) {
-  await onMenuItemSaved();
-}
+        toast.success(
+          "Menu item created successfully!"
+        );
+      }
 
-onClose();
-  } catch (error) {
-    console.error(error);
+      if (onMenuItemSaved) {
+        await onMenuItemSaved();
+      }
 
-    alert(
-      error.response?.data?.message ||
-        "Failed to create menu item."
-    );
-  }
-};
+      onClose();
+    } catch (error) {
+      console.error(error);
+
+      toast.error(
+        error.response?.data?.message ||
+          `Failed to ${
+            menuItem
+              ? "update"
+              : "create"
+          } menu item.`
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <Dialog
       open={open}
-      onClose={onClose}
+      onClose={
+        loading ? undefined : onClose
+      }
       fullWidth
       maxWidth="sm"
     >
       <DialogTitle>
-        Add Menu Item
+        {menuItem
+          ? "Edit Menu Item"
+          : "Add Menu Item"}
       </DialogTitle>
 
       <form onSubmit={handleSubmit}>
@@ -144,25 +181,31 @@ onClose();
               onChange={handleChange}
               fullWidth
               required
+              disabled={loading}
             />
 
             <TextField
-            select
-            label="Category"
-            name="categoryId"
-            value={formData.categoryId}
-            onChange={handleChange}
-            fullWidth
-            required
+              select
+              label="Category"
+              name="categoryId"
+              value={
+                formData.categoryId
+              }
+              onChange={handleChange}
+              fullWidth
+              required
+              disabled={loading}
             >
-            {categories.map((category) => (
-                <MenuItem
-                key={category.id}
-                value={category.id}
-                >
-                {category.name}
-                </MenuItem>
-            ))}
+              {categories.map(
+                (category) => (
+                  <MenuItem
+                    key={category.id}
+                    value={category.id}
+                  >
+                    {category.name}
+                  </MenuItem>
+                )
+              )}
             </TextField>
 
             <TextField
@@ -173,55 +216,59 @@ onClose();
               onChange={handleChange}
               fullWidth
               required
+              disabled={loading}
             />
 
             <TextField
-                select
-                label="Unit"
-                name="unit"
-                value={formData.unit}
-                onChange={handleChange}
-                fullWidth
-                required
-                >
-                <MenuItem value="Per Spoon">
-                    Per Spoon
-                </MenuItem>
+              select
+              label="Unit"
+              name="unit"
+              value={formData.unit}
+              onChange={handleChange}
+              fullWidth
+              required
+              disabled={loading}
+            >
+              <MenuItem value="Per Spoon">
+                Per Spoon
+              </MenuItem>
 
-                <MenuItem value="Per Portion">
-                    Per Portion
-                </MenuItem>
+              <MenuItem value="Per Portion">
+                Per Portion
+              </MenuItem>
 
-                <MenuItem value="Per Wrap">
-                    Per Wrap
-                </MenuItem>
+              <MenuItem value="Per Wrap">
+                Per Wrap
+              </MenuItem>
 
-                <MenuItem value="Per Piece">
-                    Per Piece
-                </MenuItem>
+              <MenuItem value="Per Piece">
+                Per Piece
+              </MenuItem>
 
-                <MenuItem value="Per Bottle">
-                    Per Bottle
-                </MenuItem>
+              <MenuItem value="Per Bottle">
+                Per Bottle
+              </MenuItem>
 
-                <MenuItem value="Per Cup">
-                    Per Cup
-                </MenuItem>
+              <MenuItem value="Per Cup">
+                Per Cup
+              </MenuItem>
 
-                <MenuItem value="Per Slice">
-                    Per Slice
-                </MenuItem>
+              <MenuItem value="Per Slice">
+                Per Slice
+              </MenuItem>
 
-                <MenuItem value="Per Stick">
-                    Per Stick
-                </MenuItem>
+              <MenuItem value="Per Stick">
+                Per Stick
+              </MenuItem>
             </TextField>
-
           </Stack>
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={onClose}>
+          <Button
+            onClick={onClose}
+            disabled={loading}
+          >
             Cancel
           </Button>
 
@@ -235,6 +282,8 @@ onClose();
                 size={22}
                 color="inherit"
               />
+            ) : menuItem ? (
+              "Update Menu Item"
             ) : (
               "Save Menu Item"
             )}

@@ -1,5 +1,8 @@
 import { useRef, useState } from "react";
 import CloudUploadRoundedIcon from "@mui/icons-material/CloudUploadRounded";
+import CircularProgress from "@mui/material/CircularProgress";
+import { toast } from "react-toastify";
+
 import { uploadImage } from "../services/uploadService";
 
 const ImageUploader = ({
@@ -8,33 +11,48 @@ const ImageUploader = ({
   value,
   onUpload,
 }) => {
-  const [uploading, setUploading] = useState(false);
+  const [uploading, setUploading] =
+    useState(false);
 
   const inputRef = useRef(null);
 
   const handleSelect = () => {
+    if (uploading) return;
+
     inputRef.current.click();
   };
 
   const handleChange = async (e) => {
-    const file = e.target.files[0];
+    const file = e.target.files?.[0];
 
     if (!file) return;
 
     try {
       setUploading(true);
 
-      const imageUrl = await uploadImage(
-        file,
-        folder
-      );
+      const imageUrl =
+        await uploadImage(
+          file,
+          folder
+        );
 
       onUpload(imageUrl);
+
+      toast.success(
+        "Image uploaded successfully."
+      );
     } catch (error) {
       console.error(error);
-      alert("Image upload failed.");
+
+      toast.error(
+        error.response?.data?.message ||
+          "Image upload failed."
+      );
     } finally {
       setUploading(false);
+
+      // Reset input so same file can be selected again
+      e.target.value = "";
     }
   };
 
@@ -57,14 +75,56 @@ const ImageUploader = ({
       <div
         onClick={handleSelect}
         style={{
-          cursor: "pointer",
-          border: "2px dashed #d1d5db",
+          cursor: uploading
+            ? "not-allowed"
+            : "pointer",
+          border:
+            "2px dashed #d1d5db",
           borderRadius: "16px",
           padding: "30px",
           textAlign: "center",
           background: "#fafafa",
+          position: "relative",
+          opacity: uploading
+            ? 0.75
+            : 1,
+          transition:
+            "all 0.3s ease",
         }}
       >
+        {/* Upload Overlay */}
+        {uploading && (
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background:
+                "rgba(255,255,255,0.85)",
+              display: "flex",
+              flexDirection:
+                "column",
+              justifyContent:
+                "center",
+              alignItems: "center",
+              borderRadius: "16px",
+              zIndex: 10,
+              gap: "12px",
+            }}
+          >
+            <CircularProgress />
+
+            <p
+              style={{
+                margin: 0,
+                fontWeight: "600",
+                color: "#F97316",
+              }}
+            >
+              Uploading Image...
+            </p>
+          </div>
+        )}
+
         {value ? (
           <>
             <img
@@ -101,18 +161,6 @@ const ImageUploader = ({
             </p>
           </>
         )}
-
-        {uploading && (
-          <p
-            style={{
-              marginTop: "15px",
-              color: "#F97316",
-              fontWeight: "600",
-            }}
-          >
-            Uploading...
-          </p>
-        )}
       </div>
 
       <input
@@ -123,6 +171,7 @@ const ImageUploader = ({
           display: "none",
         }}
         onChange={handleChange}
+        disabled={uploading}
       />
     </div>
   );

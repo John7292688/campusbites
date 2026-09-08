@@ -129,3 +129,22 @@ ul{
     }
 
 }
+
+/* ==========================
+   TOASTIFY - CAMPUSBITES
+========================== */
+
+.Toastify__toast--success {
+    background: #ffffff !important;
+    color: #111111 !important;
+    border-radius: 12px !important;
+    font-family: "Poppins", sans-serif;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+    fill: var(--primary) !important;
+}
+
+.Toastify__progress-bar--success {
+    background: var(--primary) !important;
+}

@@ -8,32 +8,105 @@ function OrderSuccess() {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        background: "#f5f5f5",
+        background: "#f8fafc",
+        padding: "20px",
       }}
     >
       <div
         style={{
           background: "#fff",
-          padding: "40px",
-          borderRadius: "12px",
+          padding: "50px 35px",
+          borderRadius: "20px",
           textAlign: "center",
-          maxWidth: "500px",
-          boxShadow: "0 5px 15px rgba(0,0,0,0.1)",
+          maxWidth: "550px",
+          width: "100%",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.08)",
         }}
       >
-        <h1>🎉 Order Placed Successfully!</h1>
+        <div
+          style={{
+            width: "90px",
+            height: "90px",
+            borderRadius: "50%",
+            background: "#DCFCE7",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "42px",
+            margin: "0 auto 25px",
+          }}
+        >
+          ✅
+        </div>
 
-        <p style={{ margin: "20px 0" }}>
+        <h1
+          style={{
+            fontSize: "2rem",
+            marginBottom: "15px",
+            color: "#111827",
+          }}
+        >
+          Order Placed Successfully!
+        </h1>
+
+        <p
+          style={{
+            color: "#6B7280",
+            lineHeight: "1.7",
+            marginBottom: "30px",
+          }}
+        >
           Thank you for ordering with CampusBites.
-          Your restaurant has received your order.
+          Your restaurant has received your order and
+          will begin processing it shortly.
         </p>
 
-        <Link
-          to="/"
-          className="view-menu-btn"
-        >
-          Back to Home
-        </Link>
+        <div
+  style={{
+    display: "flex",
+    gap: "12px",
+    justifyContent: "center",
+    flexWrap: "wrap",
+  }}
+>
+  <Link
+    to="/my-orders"
+    style={{
+      minWidth: "180px",
+      height: "50px",
+      borderRadius: "10px",
+      background: "#f97316",
+      color: "#fff",
+      textDecoration: "none",
+      fontWeight: "600",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+    }}
+  >
+    Track My Order
+  </Link>
+
+  <Link
+    to="/restaurants"
+    style={{
+      minWidth: "180px",
+      height: "50px",
+      borderRadius: "10px",
+      border: "1px solid #ddd",
+      textDecoration: "none",
+      color: "#111827",
+      fontWeight: "600",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      background: "#fff",
+      boxSizing: "border-box",
+    }}
+  >
+    Order More Food
+  </Link>
+</div>
       </div>
     </section>
   );

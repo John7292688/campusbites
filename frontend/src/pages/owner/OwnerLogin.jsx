@@ -1,12 +1,21 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import {
+  useNavigate,
+  Link,
+} from "react-router-dom";
+import { toast } from "react-toastify";
+import { requestNotificationPermission } from "../../firebase";
 
 import "../../styles/auth.css";
 import { loginRestaurantOwner } from "../../services/restaurantOwnerAuthService";
 
 function OwnerLogin() {
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] =
+    useState("");
+
+  const [loading, setLoading] =
+    useState(false);
 
   const navigate = useNavigate();
 
@@ -14,33 +23,57 @@ function OwnerLogin() {
     e.preventDefault();
 
     try {
-      const data = await loginRestaurantOwner(email, password);
+      setLoading(true);
 
-      localStorage.setItem("ownerToken", data.token);
+      const fcmToken =
+        await requestNotificationPermission();
+
+      const data =
+        await loginRestaurantOwner(
+          email,
+          password,
+          fcmToken
+        );
+
+      localStorage.setItem(
+        "ownerToken",
+        data.token
+      );
 
       localStorage.setItem(
         "restaurantOwner",
         JSON.stringify(data.owner)
       );
 
-      alert("Restaurant owner login successful!");
+      toast.success(
+        "Login successful!"
+      );
 
-      navigate("/owner/dashboard");
+      setTimeout(() => {
+        navigate("/owner/dashboard");
+      }, 1000);
     } catch (error) {
-      alert(
+      toast.error(
         error.response?.data?.message ||
           error.message ||
           "Login failed."
       );
+    } finally {
+      setLoading(false);
     }
   }
 
   return (
     <section className="auth-page">
       <div className="auth-container">
-        <h1>Restaurant Owner Login</h1>
+        <h1>
+          Restaurant Owner Login
+        </h1>
 
-        <p>Login to manage your restaurant.</p>
+        <p>
+          Login to manage your
+          restaurant.
+        </p>
 
         <form onSubmit={handleLogin}>
           <div className="form-group">
@@ -51,7 +84,9 @@ function OwnerLogin() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) =>
-                setEmail(e.target.value)
+                setEmail(
+                  e.target.value
+                )
               }
               required
             />
@@ -65,14 +100,46 @@ function OwnerLogin() {
               placeholder="Enter your password"
               value={password}
               onChange={(e) =>
-                setPassword(e.target.value)
+                setPassword(
+                  e.target.value
+                )
               }
               required
             />
           </div>
 
-          <button type="submit">
-            Login
+          <div
+            style={{
+              textAlign: "right",
+              marginBottom: "20px",
+            }}
+          >
+            <Link
+              to="/owner/forgot-password"
+              style={{
+                color: "#2563eb",
+                textDecoration:
+                  "none",
+                fontSize: "14px",
+                fontWeight: "500",
+              }}
+            >
+              Forgot Password?
+            </Link>
+          </div>
+
+          <button
+            type="submit"
+            disabled={loading}
+          >
+            {loading ? (
+              <>
+                <span className="btn-spinner"></span>
+                Logging in...
+              </>
+            ) : (
+              "Login"
+            )}
           </button>
         </form>
       </div>

@@ -1,4 +1,5 @@
 import api from "./api";
+import ownerApi from "./ownerApi";
 
 // Get restaurant menu
 export const getRestaurantMenu = async (restaurantId) => {
@@ -23,9 +24,8 @@ export const getMenuItemById = async (menuItemId) => {
 };
 
 // Create menu item
-// Create menu item
 export const createMenuItem = async (menuItemData) => {
-  const response = await api.post(
+  const response = await ownerApi.post(
     "/menus",
     menuItemData
   );
@@ -38,7 +38,7 @@ export const updateMenuItem = async (
   menuItemId,
   menuItemData
 ) => {
-  const response = await api.put(
+  const response = await ownerApi.put(
     `/menus/${menuItemId}`,
     menuItemData
   );
@@ -48,7 +48,7 @@ export const updateMenuItem = async (
 
 // Delete menu item
 export const deleteMenuItem = async (menuItemId) => {
-  const response = await api.delete(
+  const response = await ownerApi.delete(
     `/menus/${menuItemId}`
   );
 

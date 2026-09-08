@@ -11,6 +11,8 @@ body {
 .owner-layout {
   display: flex;
   min-height: 100vh;
+  width: 100%;
+  overflow-x: hidden;
 }
 
 /* Sidebar */
@@ -218,6 +220,9 @@ body {
 .page-content {
   flex: 1;
   padding: 35px;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;
 }
 
 .logout-btn {
@@ -287,6 +292,19 @@ body {
 ========================= */
 
 @media (max-width: 768px) {
+
+  .topbar {
+  min-height: 70px;
+  height: auto;
+}
+
+.topbar-right {
+  gap: 8px;
+}
+
+.search-box input {
+  font-size: 14px;
+}
 
   .owner-layout {
     position: relative;
@@ -408,4 +426,66 @@ body {
   display: flex;
   flex-direction: column;
   min-width: 0;
+}
+
+.customers-page {
+  padding: 30px;
+}
+
+.customers-table-wrapper {
+  background: #fff;
+  border-radius: 16px;
+  overflow-x: auto;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+}
+
+.customers-table-wrapper table {
+  width: 100%;
+  min-width: 800px;
+  border-collapse: collapse;
+}
+
+@media (max-width: 768px) {
+  .customers-page {
+    padding: 16px;
+  }
+}
+
+/* =========================
+   SETTINGS PAGE
+========================= */
+
+.settings-page {
+  padding: 30px;
+}
+
+.settings-paper {
+  max-width: 700px;
+  padding: 32px;
+}
+
+@media (max-width: 768px) {
+  .settings-page {
+    padding: 16px;
+  }
+
+  .settings-paper {
+    max-width: 100%;
+    padding: 20px;
+  }
+}
+
+@media (max-width: 480px) {
+  .settings-page h1 {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  .settings-paper {
+    padding: 16px;
+  }
+
+  .settings-paper h2 {
+    font-size: 20px;
+  }
 }

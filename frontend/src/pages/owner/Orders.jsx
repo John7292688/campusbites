@@ -11,18 +11,22 @@ const Orders = () => {
   const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
-  fetchOrders();
-
-  const interval = setInterval(() => {
     fetchOrders();
-  }, 2000);
 
-  return () => clearInterval(interval);
-}, []);
+    const interval = setInterval(() => {
+      fetchOrders();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   const fetchOrders = async () => {
     try {
       const data = await getRestaurantOrders();
+
+      console.log("FETCH ORDERS:");
+      console.log(data[0]);
+
       setOrders(data);
     } catch (error) {
       console.error(error);
@@ -31,7 +35,12 @@ const Orders = () => {
     }
   };
 
-  const handleViewDetails = (order) => {
+const handleViewDetails = (order) => {
+  console.log(
+    "SELECTED RECEIPT:",
+    order.receipt_number
+  );
+
   setSelectedOrder(order);
   setDialogOpen(true);
 };
@@ -42,7 +51,9 @@ const Orders = () => {
 
   return (
     <div style={{ padding: "30px" }}>
-      <h1 style={{ marginBottom: "30px" }}>Orders</h1>
+      <h1 style={{ marginBottom: "30px" }}>
+        Orders
+      </h1>
 
       {orders.length === 0 ? (
         <p>No orders yet.</p>
@@ -55,7 +66,8 @@ const Orders = () => {
               padding: "24px",
               borderRadius: "16px",
               marginBottom: "20px",
-              boxShadow: "0 2px 12px rgba(0,0,0,0.08)",
+              boxShadow:
+                "0 2px 12px rgba(0,0,0,0.08)",
             }}
           >
             <div
@@ -73,7 +85,8 @@ const Orders = () => {
                   background:
                     order.status === "Pending"
                       ? "#FEF3C7"
-                      : order.status === "Preparing"
+                      : order.status ===
+                        "Preparing"
                       ? "#DBEAFE"
                       : order.status === "Ready"
                       ? "#DCFCE7"
@@ -100,7 +113,9 @@ const Orders = () => {
 
             <p>
               <strong>Total:</strong> ₦
-              {Number(order.total_amount).toLocaleString()}
+              {Number(
+                order.total_amount
+              ).toLocaleString()}
             </p>
 
             <p>
@@ -109,22 +124,26 @@ const Orders = () => {
                 order.created_at
               ).toLocaleString()}
             </p>
+
             <Button
               variant="contained"
               sx={{ mt: 2 }}
-              onClick={() => handleViewDetails(order)}
+              onClick={() =>
+                handleViewDetails(order)
+              }
             >
               View Details
             </Button>
-               <OrderDetailsDialog
-                open={dialogOpen}
-                onClose={() => setDialogOpen(false)}
-                order={selectedOrder}
-                onStatusUpdated={fetchOrders}
-              />
           </div>
         ))
       )}
+
+      <OrderDetailsDialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        order={selectedOrder}
+        onStatusUpdated={fetchOrders}
+      />
     </div>
   );
 };

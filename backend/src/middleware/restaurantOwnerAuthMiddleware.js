@@ -15,6 +15,11 @@ const restaurantOwnerAuthMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    console.log(
+      req.method,
+      req.originalUrl,
+      decoded
+    );
 
     // Ensure the token belongs to a restaurant owner
     if (decoded.role !== "restaurant_owner") {

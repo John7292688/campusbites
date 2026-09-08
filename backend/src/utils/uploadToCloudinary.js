@@ -6,22 +6,6 @@ const uploadToCloudinary = (buffer) => {
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: "packages",
-
-        // Automatically choose the best compression
-        quality: "auto",
-
-        // Convert every upload to WebP
-        format: "webp",
-
-        // Resize every image
-        transformation: [
-          {
-            width: 800,
-            height: 600,
-            crop: "fill",
-            gravity: "auto",
-          },
-        ],
       },
       (error, result) => {
         if (error) return reject(error);

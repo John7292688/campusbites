@@ -116,10 +116,52 @@ const updateMyRestaurant = asyncHandler(async (req, res) => {
   });
 });
 
+const toggleRestaurantStatus = asyncHandler(
+  async (req, res) => {
+    const { is_open } = req.body;
+
+    const restaurant =
+      await restaurantService.toggleRestaurantStatus(
+        req.owner.id,
+        is_open
+      );
+
+    if (!restaurant) {
+      throw new AppError(
+        "Restaurant not found",
+        404
+      );
+    }
+
+    return res.status(200).json({
+      success: true,
+      message:
+        is_open
+          ? "Restaurant is now open"
+          : "Restaurant is now closed",
+      restaurant,
+    });
+  }
+);
+
+const getTopRestaurants = asyncHandler(
+  async (req, res) => {
+    const restaurants =
+      await restaurantService.getTopRestaurants();
+
+    return res.status(200).json({
+      success: true,
+      restaurants,
+    });
+  }
+);
+
 module.exports = {
   createRestaurant,
   getAllRestaurants,
   getRestaurantById,
   getMyRestaurant,
   updateMyRestaurant,
+  toggleRestaurantStatus,
+  getTopRestaurants,
 };

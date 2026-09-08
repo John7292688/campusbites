@@ -7,6 +7,8 @@ const {
   getRestaurantById,
   getMyRestaurant,
   updateMyRestaurant,
+  toggleRestaurantStatus,
+  getTopRestaurants,
 } = require("../controllers/restaurantController");
 
 const restaurantOwnerAuthMiddleware = require("../middleware/restaurantOwnerAuthMiddleware");
@@ -27,10 +29,21 @@ router.put(
   updateMyRestaurant
 );
 
+router.patch(
+  "/toggle-status",
+  restaurantOwnerAuthMiddleware,
+  toggleRestaurantStatus
+);
+
 router.post(
   "/",
   restaurantOwnerAuthMiddleware,
   createRestaurant
+);
+
+router.get(
+  "/featured",
+  getTopRestaurants
 );
 
 // Keep this LAST

@@ -1,0 +1,119 @@
+.delivery-locations-page {
+  padding: 30px;
+}
+
+.delivery-locations-page h1 {
+  margin-bottom: 8px;
+}
+
+.delivery-locations-page p {
+  color: #666;
+  margin-bottom: 20px;
+}
+
+.location-form {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+
+.location-form input {
+  flex: 1;
+  min-width: 220px;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+}
+
+.location-form button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #16a34a;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.location-form button:hover {
+  opacity: 0.9;
+}
+
+.editing-banner {
+  background: #eff6ff;
+  color: #2563eb;
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  font-weight: 600;
+}
+
+.locations-table-wrapper {
+  overflow-x: auto;
+  background: white;
+  border-radius: 12px;
+}
+
+.locations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.locations-table th {
+  text-align: left;
+  padding: 14px;
+  border-bottom: 1px solid #ddd;
+}
+
+.locations-table td {
+  padding: 14px;
+  border-bottom: 1px solid #eee;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 8px;
+}
+
+.edit-btn {
+  background: #2563eb;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.cancel-btn {
+  background: #6b7280 !important;
+}
+
+@media (max-width: 768px) {
+  .delivery-locations-page {
+    padding: 15px;
+  }
+
+  .location-form {
+    flex-direction: column;
+  }
+
+  .location-form input,
+  .location-form button {
+    width: 100%;
+  }
+
+  .action-buttons {
+    flex-direction: column;
+  }
+}

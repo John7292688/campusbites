@@ -1,3 +1,4 @@
+import { toast } from "react-toastify";
 import {
   createContext,
   useContext,
@@ -129,11 +130,14 @@ const addItemToCart = async ({
   customPlateId = null,
   quantity = 1,
 }) => {
+  console.log("ADD TO CART CLICKED");
   const previousItems = [...cartItems];
   const previousCount = cartCount;
 
   try {
-    const response = await addToCart({
+    console.log("TOAST FROM CART CONTEXT");
+
+    await addToCart({
       menuItemId,
       comboPackageId,
       customPlateId,
@@ -150,23 +154,21 @@ const addItemToCart = async ({
 };
 
 const increaseQuantity = async (cartItem) => {
-  console.log("PLUS CLICKED", cartItem);
   const previousItems = [...cartItems];
 
-  // Instant UI update
   updateItemQuantityLocally(
     cartItem.id,
     cartItem.quantity + 1
   );
+
+  toast.success("Quantity updated");
 
   try {
     await updateCartItemQuantity(
       cartItem.id,
       cartItem.quantity + 1
     );
-
   } catch (error) {
-    // Roll back if the API fails
     setCartItems(previousItems);
 
     setCartCount(
@@ -176,21 +178,28 @@ const increaseQuantity = async (cartItem) => {
       )
     );
 
+    toast.error(
+      "Failed to update quantity"
+    );
+
     throw error;
   }
 };
 
 const decreaseQuantity = async (cartItem) => {
-  console.log("MINUS CLICKED", cartItem);
   const previousItems = [...cartItems];
 
   if (cartItem.quantity === 1) {
     removeItemLocally(cartItem.id);
+
+    toast.info("Item removed");
   } else {
     updateItemQuantityLocally(
       cartItem.id,
       cartItem.quantity - 1
     );
+
+    toast.success("Quantity updated");
   }
 
   try {
@@ -212,6 +221,10 @@ const decreaseQuantity = async (cartItem) => {
       )
     );
 
+    toast.error(
+      "Failed to update cart"
+    );
+
     throw error;
   }
 };
@@ -219,13 +232,13 @@ const decreaseQuantity = async (cartItem) => {
 const removeItem = async (cartItem) => {
   const previousItems = [...cartItems];
 
-  // Remove immediately from the UI
   removeItemLocally(cartItem.id);
+
+  toast.info("Item removed from cart");
 
   try {
     await removeCartItem(cartItem.id);
   } catch (error) {
-    // Roll back if the API fails
     setCartItems(previousItems);
 
     setCartCount(
@@ -233,6 +246,10 @@ const removeItem = async (cartItem) => {
         (sum, item) => sum + item.quantity,
         0
       )
+    );
+
+    toast.error(
+      "Failed to remove item"
     );
 
     throw error;

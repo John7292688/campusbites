@@ -27,7 +27,7 @@ function OrderTracker({ status }) {
             key={step}
             style={{
               flex: 1,
-              minWidth: "120px",
+              minWidth: "80px",
               textAlign: "center",
             }}
           >

@@ -223,6 +223,26 @@ const deletePackage = async (req, res) => {
   }
 };
 
+const getPublicPackages = async (req, res) => {
+  try {
+    const packages =
+      await packageService.getPublicPackages();
+
+    res.json({
+      success: true,
+      count: packages.length,
+      data: packages,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
 module.exports = {
   createPackage,
   getAllPackages,
@@ -230,4 +250,5 @@ module.exports = {
   getPackagesByRestaurant,
   updatePackage,
   deletePackage,
+  getPublicPackages,
 };

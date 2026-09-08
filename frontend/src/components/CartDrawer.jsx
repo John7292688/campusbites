@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
 import "./../styles/cart-drawer.css";
 import { useCart } from "../context/CartContext";
-import { checkout } from "../services/orderService";
 
 function CartDrawer({
   isOpen,
@@ -9,14 +9,16 @@ function CartDrawer({
 }) {
   const navigate = useNavigate();
 
+  const [checkoutLoading, setCheckoutLoading] =
+    useState(false);
+
   const {
-  cartItems,
-  cartCount,
-  refreshCart,
-  increaseQuantity,
-  decreaseQuantity,
-  removeItem,
-} = useCart();
+    cartItems,
+    cartCount,
+    increaseQuantity,
+    decreaseQuantity,
+    removeItem,
+  } = useCart();
 
   const total = cartItems.reduce((sum, item) => {
     const price = Number(
@@ -53,19 +55,15 @@ function CartDrawer({
     }
 
     try {
-      await checkout();
+      setCheckoutLoading(true);
 
       closeCart();
 
-      refreshCart();
-
-      navigate("/order-success");
+      navigate("/checkout");
     } catch (error) {
       console.error(error);
-
-      alert(
-        error.message || "Checkout failed."
-      );
+    } finally {
+      setCheckoutLoading(false);
     }
   };
 
@@ -102,7 +100,8 @@ function CartDrawer({
               <h3>Your tray is empty</h3>
 
               <p>
-                Add some delicious meals to get started.
+                Add some delicious meals to get
+                started.
               </p>
             </div>
           ) : (
@@ -144,7 +143,10 @@ function CartDrawer({
                 <div className="cart-item-right">
                   <button
                     onClick={() =>
-                      handleQuantityChange(item, -1)
+                      handleQuantityChange(
+                        item,
+                        -1
+                      )
                     }
                   >
                     −
@@ -154,7 +156,10 @@ function CartDrawer({
 
                   <button
                     onClick={() =>
-                      handleQuantityChange(item, 1)
+                      handleQuantityChange(
+                        item,
+                        1
+                      )
                     }
                   >
                     +
@@ -174,10 +179,24 @@ function CartDrawer({
             </strong>
           </div>
 
-          <div className="summary-row">
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
             <span>Delivery</span>
 
-            <strong>₦0</strong>
+            <span
+              style={{
+                fontSize: "14px",
+                color: "#F59E0B",
+                fontWeight: "600",
+              }}
+            >
+              Select location at checkout
+            </span>
           </div>
 
           <hr />
@@ -186,15 +205,18 @@ function CartDrawer({
             <span>Total</span>
 
             <strong>
-              ₦{total.toLocaleString()}
+              ₦{total.toLocaleString()} + delivery fee
             </strong>
           </div>
 
           <button
             className="checkout-btn"
             onClick={handleCheckout}
+            disabled={checkoutLoading}
           >
-            Proceed to Checkout
+            {checkoutLoading
+              ? "Loading..."
+              : "Proceed to Checkout"}
           </button>
         </div>
       </div>

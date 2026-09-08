@@ -1,5 +1,5 @@
 import { NavLink } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
 import DashboardRoundedIcon from "@mui/icons-material/DashboardRounded";
 import StoreRoundedIcon from "@mui/icons-material/StoreRounded";
 import RestaurantMenuRoundedIcon from "@mui/icons-material/RestaurantMenuRounded";
@@ -20,12 +20,7 @@ const menuItems = [
     path: "/owner/restaurant",
     icon: <StoreRoundedIcon />,
   },
-
-  {
-    name: "Package Categories",
-    path: "/owner/package-categories",
-    icon: <RestaurantMenuRoundedIcon />,
-  },
+  
   {
     name: "Combo Packages",
     path: "/owner/packages",
@@ -64,6 +59,14 @@ const Sidebar = ({
   sidebarOpen,
   setSidebarOpen,
 }) => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    localStorage.removeItem("ownerToken");
+    localStorage.removeItem("restaurantOwner");
+
+    navigate("/owner/login");
+  };
   return (
     <aside
       className={`sidebar ${
@@ -106,7 +109,10 @@ const Sidebar = ({
           </NavLink>
         ))}
 
-        <button className="logout-btn">
+        <button
+          className="logout-btn"
+          onClick={handleLogout}
+        >
           <LogoutRoundedIcon />
 
           <span>Logout</span>

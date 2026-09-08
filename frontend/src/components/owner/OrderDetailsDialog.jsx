@@ -6,6 +6,8 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+import { jsPDF } from "jspdf";
+import logo from "/images/neatcampusbitelogo.png";
 
 import { useEffect, useState } from "react";
 import StatusBadge from "../StatusBadge";
@@ -26,11 +28,18 @@ const OrderDetailsDialog = ({
   const [currentOrder, setCurrentOrder] = useState(order);
 
   useEffect(() => {
-      if (open && order) {
-        setCurrentOrder(order);
-        fetchItems();
-      }
-    }, [open, order]);
+  if (open && order) {
+    console.log(
+      "DIALOG ORDER:",
+      order
+    );
+
+    setCurrentOrder(order);
+    fetchItems();
+  }
+}, [open, order]);
+
+    console.log(currentOrder);
 
   const fetchItems = async () => {
   try {
@@ -74,6 +83,510 @@ const OrderDetailsDialog = ({
   }
 };
 
+const handleDownloadPDF = () => {
+  const doc = new jsPDF();
+
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  let y = 20;
+
+  const img = new Image();
+  img.src = logo;
+
+  img.onload = () => {
+    const receiptNumber =
+      currentOrder?.receipt_number ||
+      `CB-${currentOrder?.id}`;
+
+    // =========================
+    // LOGO
+    // =========================
+
+    doc.addImage(
+      img,
+      "PNG",
+      pageWidth / 2 - 18,
+      10,
+      36,
+      24
+    );
+
+    y = 42;
+
+    // =========================
+    // CAMPUSBITES TITLE
+    // =========================
+
+    doc.setFontSize(24);
+    doc.setFont(undefined, "bold");
+
+    doc.setFontSize(24);
+    doc.setFont(undefined, "bold");
+
+    const campusWidth = doc.getTextWidth("Campus");
+    const bitesWidth = doc.getTextWidth("Bites");
+
+    const totalWidth = campusWidth + bitesWidth;
+
+    const startX = (pageWidth - totalWidth) / 2;
+
+    doc.setTextColor(31, 41, 55);
+    doc.text("Campus", startX, y);
+
+    doc.setTextColor(249, 115, 22);
+    doc.text(
+      "Bites",
+      startX + campusWidth,
+      y
+    );
+
+    y += 8;
+
+    doc.setFontSize(11);
+    doc.setFont(undefined, "normal");
+
+    doc.setTextColor(107, 114, 128);
+
+    doc.text(
+      "Official Food Order Receipt",
+      pageWidth / 2,
+      y,
+      {
+        align: "center",
+      }
+    );
+
+    y += 8;
+
+    // =========================
+    // RESTAURANT NAME
+    // =========================
+
+    doc.setFontSize(11);
+
+    doc.setTextColor(249, 115, 22);
+
+    doc.text(
+      currentOrder?.restaurant_name ||
+        "CampusBites Partner Restaurant",
+      pageWidth / 2,
+      y,
+      {
+        align: "center",
+      }
+    );
+
+    y += 6;
+
+    doc.setFontSize(9);
+
+    doc.setTextColor(107, 114, 128);
+
+    doc.text(
+      `Address: ${
+        currentOrder?.restaurant_address || "N/A"
+      }`,
+      pageWidth / 2,
+      y,
+      {
+        align: "center",
+      }
+    );
+
+    y += 8;
+
+    // Divider
+
+    doc.setDrawColor(249, 115, 22);
+    doc.setLineWidth(0.7);
+
+    doc.line(20, y, 190, y);
+
+    y += 10;
+
+    // =========================
+    // ORDER INFORMATION
+    // =========================
+
+    doc.setFillColor(255, 247, 237);
+
+    doc.roundedRect(
+      15,
+      y,
+      180,
+      28,
+      3,
+      3,
+      "F"
+    );
+
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+
+    doc.setTextColor(31, 41, 55);
+
+    doc.text(
+      "ORDER INFORMATION",
+      20,
+      y + 8
+    );
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+
+    doc.text(
+      `Receipt No: ${receiptNumber}`,
+      20,
+      y + 18
+    );
+
+    doc.text(
+      `Order ID: #${currentOrder?.id}`,
+      110,
+      y + 18
+    );
+
+    doc.text(
+      `Status: ${currentOrder?.status}`,
+      20,
+      y + 24
+    );
+
+    doc.text(
+      new Date(
+        currentOrder?.created_at
+      ).toLocaleString(),
+      110,
+      y + 24
+    );
+
+    y += 40;
+
+    // =========================
+    // CUSTOMER
+    // =========================
+
+    doc.setFillColor(
+      248,
+      250,
+      252
+    );
+
+    doc.roundedRect(
+      15,
+      y,
+      180,
+      24,
+      3,
+      3,
+      "F"
+    );
+
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+
+    doc.text("CUSTOMER", 20, y + 8);
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+
+    doc.text(
+      `Name: ${currentOrder?.full_name}`,
+      20,
+      y + 18
+    );
+
+    doc.text(
+      `Phone: ${currentOrder?.phone}`,
+      110,
+      y + 18
+    );
+
+    y += 34;
+
+    // =========================
+    // DELIVERY
+    // =========================
+
+    const addressLines =
+      doc.splitTextToSize(
+        currentOrder?.delivery_address ||
+          "N/A",
+        160
+      );
+
+    const deliveryHeight =
+      28 +
+      addressLines.length * 5;
+
+    doc.setFillColor(
+      248,
+      250,
+      252
+    );
+
+    doc.roundedRect(
+      15,
+      y,
+      180,
+      deliveryHeight,
+      3,
+      3,
+      "F"
+    );
+
+    doc.setFontSize(12);
+    doc.setFont(undefined, "bold");
+
+    doc.text(
+      "DELIVERY INFORMATION",
+      20,
+      y + 8
+    );
+
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+
+    doc.text(
+      addressLines,
+      20,
+      y + 18
+    );
+
+    doc.text(
+      `Direction: ${
+        currentOrder?.address_note ||
+        "N/A"
+      }`,
+      20,
+      y + 18 +
+        addressLines.length * 5 +
+        6
+    );
+
+    y += deliveryHeight + 15;
+
+  // =========================
+  // ORDER ITEMS
+  // =========================
+
+  doc.setFontSize(13);
+  doc.setFont(undefined, "bold");
+
+  doc.text("ORDER ITEMS", 15, y);
+
+  y += 8;
+
+  const rowHeight = 8;
+
+  const drawTableHeader = () => {
+    doc.setFillColor(249, 115, 22);
+
+    doc.rect(
+      15,
+      y - 5,
+      180,
+      8,
+      "F"
+    );
+
+    doc.setTextColor(
+      255,
+      255,
+      255
+    );
+
+    doc.setFontSize(10);
+
+    doc.text("Item", 20, y);
+
+    doc.text("Qty", 125, y);
+
+    doc.text(
+      "Price",
+      188,
+      y,
+      {
+        align: "right",
+      }
+    );
+
+    y += 10;
+
+    doc.setTextColor(
+      31,
+      41,
+      55
+    );
+  };
+
+  drawTableHeader();
+
+  items.forEach((item, index) => {
+
+    // Create new page if we're near bottom
+    if (y > 260) {
+
+      doc.addPage();
+
+      y = 20;
+
+      drawTableHeader();
+    }
+
+    const itemName =
+      item.menu_item_name ||
+      item.combo_package_name ||
+      "Custom Plate";
+
+    if (index % 2 === 0) {
+      doc.setFillColor(
+        249,
+        250,
+        251
+      );
+
+      doc.rect(
+        15,
+        y - 5,
+        180,
+        8,
+        "F"
+      );
+    }
+
+    doc.text(
+      itemName,
+      20,
+      y
+    );
+
+    doc.text(
+      String(item.quantity),
+      128,
+      y
+    );
+
+    doc.text(
+      `₦${Number(
+        item.price
+      ).toLocaleString()}`,
+      188,
+      y,
+      {
+        align: "right",
+      }
+    );
+
+    y += rowHeight;
+  });
+
+  // Leave a small gap before total
+  y += 5;
+
+// Only move TOTAL to another page if there is truly
+// not enough room left for TOTAL + FOOTER
+
+if (y > 255) {
+  doc.addPage();
+  y = 20;
+}
+
+    // =========================
+    // TOTAL BOX
+    // =========================
+
+    doc.setFillColor(
+      255,
+      247,
+      237
+    );
+
+    doc.roundedRect(
+      120,
+      y,
+      75,
+      15,
+      3,
+      3,
+      "F"
+    );
+
+    doc.setFontSize(13);
+    doc.setFont(undefined, "bold");
+
+    doc.text(
+      "TOTAL",
+      128,
+      y + 9
+    );
+
+    doc.text(
+      `₦${Number(
+        currentOrder?.total_amount
+      ).toLocaleString()}`,
+      188,
+      y + 9,
+      {
+        align: "right",
+      }
+    );
+
+    y += 22;
+
+    // =========================
+    // FOOTER
+    // =========================
+
+    doc.setDrawColor(220);
+
+    doc.line(
+      20,
+      y,
+      190,
+      y
+    );
+
+    y += 12;
+
+    doc.setFontSize(9);
+    doc.setFont(undefined, "normal");
+
+    doc.setTextColor(
+      107,
+      114,
+      128
+    );
+
+    doc.text(
+      "Thank you for ordering with CampusBites",
+      pageWidth / 2,
+      y,
+      {
+        align: "center",
+      }
+    );
+
+    y += 6;
+
+
+    y += 6;
+
+    doc.text(
+      `Receipt No: ${receiptNumber}`,
+      pageWidth / 2,
+      y,
+      {
+        align: "center",
+      }
+    );
+
+    doc.save(
+      `CampusBites-Receipt-${currentOrder?.id}.pdf`
+    );
+  };
+};
+
   return (
     <Dialog
       open={open}
@@ -85,7 +598,14 @@ const OrderDetailsDialog = ({
         Order #{currentOrder?.id}
       </DialogTitle>
 
-      <DialogContent>
+      <DialogContent
+        dividers
+        sx={{
+          minHeight: "500px",
+          overflowY: "auto",
+        }}
+      >
+
         {loading ? (
           <CircularProgress />
         ) : (
@@ -96,6 +616,7 @@ const OrderDetailsDialog = ({
                 border: "1px solid #E5E7EB",
                 borderRadius: "12px",
                 padding: "16px",
+                display: "block",
                 marginBottom: "20px",
               }}
             >
@@ -121,9 +642,28 @@ const OrderDetailsDialog = ({
               <div
                 style={{
                   color: "#6B7280",
+                  marginBottom: "8px",
                 }}
               >
                 📞 {currentOrder?.phone}
+              </div>
+
+              <div
+                style={{
+                  color: "#6B7280",
+                  marginBottom: "8px",
+                  whiteSpace: "pre-line",
+                }}
+              >
+                📍 {currentOrder?.delivery_address}
+              </div>
+
+              <div
+                style={{
+                  color: "#6B7280",
+                }}
+              >
+                📝 {currentOrder?.address_note}
               </div>
             </div>
 
@@ -275,9 +815,44 @@ const OrderDetailsDialog = ({
                 marginTop: "15px",
               }}
             >
-              <strong>Status:</strong>
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "10px",
+                  marginTop: "15px",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <strong>Payment:</strong>
 
-              <StatusBadge status={currentOrder?.status} />
+                  <StatusBadge
+                    status={
+                      currentOrder?.payment_status
+                    }
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "10px",
+                  }}
+                >
+                  <strong>Order:</strong>
+
+                  <StatusBadge
+                    status={currentOrder?.status}
+                  />
+                </div>
+              </div>
             </div>
           </>
         )}
@@ -285,7 +860,10 @@ const OrderDetailsDialog = ({
 
       <DialogActions>
 
-        {currentOrder?.status === "Pending" && (
+        {(
+          currentOrder?.status === "Pending" ||
+          currentOrder?.status === "Paid"
+        ) && (
             <>
             <Button
                 variant="contained"
@@ -332,6 +910,13 @@ const OrderDetailsDialog = ({
             Mark Delivered
             </Button>
         )}
+
+        <Button
+          variant="outlined"
+          onClick={handleDownloadPDF}
+        >
+          Download PDF
+        </Button>
 
         <Button onClick={onClose}>
             Close

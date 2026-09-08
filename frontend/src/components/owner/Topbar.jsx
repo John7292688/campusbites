@@ -3,7 +3,12 @@ import SearchRoundedIcon from "@mui/icons-material/SearchRounded";
 import KeyboardArrowDownRoundedIcon from "@mui/icons-material/KeyboardArrowDownRounded";
 import MenuRoundedIcon from "@mui/icons-material/MenuRounded";
 
-import { useEffect, useMemo, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useState,
+  useRef,
+} from "react";
 import {
   getNotifications,
   markNotificationAsRead,
@@ -23,6 +28,33 @@ const Topbar = ({ setSidebarOpen }) => {
 
   const [showNotifications, setShowNotifications] =
     useState(false);
+
+  const notificationRef = useRef(null);  
+
+  useEffect(() => {
+  const handleClickOutside = (event) => {
+    if (
+      notificationRef.current &&
+      !notificationRef.current.contains(
+        event.target
+      )
+    ) {
+      setShowNotifications(false);
+    }
+  };
+
+  document.addEventListener(
+    "mousedown",
+    handleClickOutside
+  );
+
+  return () => {
+    document.removeEventListener(
+      "mousedown",
+      handleClickOutside
+    );
+  };
+}, []);
 
     useEffect(() => {
       fetchNotifications();
@@ -140,6 +172,7 @@ const handleNotificationClick = async (
 
         {showNotifications && (
           <div
+            ref={notificationRef}
             style={{
               position: "absolute",
               top: "60px",

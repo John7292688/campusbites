@@ -2,58 +2,173 @@
    SECTION TITLE
 ========================== */
 
-.section-title{
-    text-align:center;
-    margin-bottom:3rem;
+.section-title {
+  text-align: center;
+  margin-bottom: 3rem;
 }
 
-.section-title h2{
-    font-size:2.2rem;
-    color:var(--black);
-    margin-bottom:.7rem;
+.section-title h2 {
+  font-size: 2.2rem;
+  color: var(--black);
+  margin-bottom: 0.7rem;
 }
 
-.section-title p{
-    color:var(--gray);
-    max-width:600px;
-    margin:auto;
+.section-title p {
+  color: var(--gray);
+  max-width: 600px;
+  margin: auto;
+  line-height: 1.6;
 }
 
 /* ==========================
    CATEGORIES
 ========================== */
 
-.categories{
-    padding:70px 0;
-    background:var(--light);
+.categories {
+  padding: 70px 0;
+  background: var(--light);
 }
 
-.categories-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(170px,1fr));
-    gap:1.5rem;
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(170px, 1fr)
+  );
+  gap: 1.5rem;
 }
 
-.category-card{
-    background:var(--white);
-    padding:2rem 1rem;
-    border-radius:18px;
-    text-align:center;
-    box-shadow:var(--shadow);
-    transition:var(--transition);
-    cursor:pointer;
+.category-card {
+  background: var(--white);
+  padding: 2rem 1rem;
+  border-radius: 18px;
+  text-align: center;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  cursor: pointer;
 }
 
-.category-card:hover{
-    transform:translateY(-10px);
+.category-card:hover {
+  transform: translateY(-10px);
 }
 
-.category-icon{
-    font-size:3rem;
-    margin-bottom:1rem;
+.category-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
 }
 
-.category-card h3{
-    font-size:1.05rem;
-    font-weight:600;
+.category-card h3 {
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+/* ==========================
+   TABLETS
+========================== */
+
+@media (max-width: 992px) {
+  .section-title h2 {
+    font-size: 2rem;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(
+      3,
+      minmax(0, 1fr)
+    );
+  }
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media (max-width: 768px) {
+  .categories {
+    padding: 60px 0;
+  }
+
+  .section-title {
+    margin-bottom: 2rem;
+  }
+
+  .section-title h2 {
+    font-size: 1.8rem;
+  }
+
+  .section-title p {
+    font-size: 0.95rem;
+    padding: 0 10px;
+  }
+
+  .categories-grid {
+    grid-template-columns: repeat(
+      2,
+      minmax(0, 1fr)
+    );
+    gap: 1rem;
+  }
+
+  .category-card {
+    padding: 1.5rem 0.8rem;
+  }
+
+  .category-icon {
+    font-size: 2.5rem;
+  }
+
+  .category-card h3 {
+    font-size: 0.95rem;
+  }
+}
+
+/* ==========================
+   SMALL PHONES
+========================== */
+
+@media (max-width: 480px) {
+  .categories {
+    padding: 50px 0;
+  }
+
+  .section-title h2 {
+    font-size: 1.6rem;
+  }
+
+  .section-title p {
+    font-size: 0.9rem;
+  }
+
+  .categories-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.8rem;
+  }
+
+  .category-card {
+    padding: 1.2rem 0.5rem;
+    border-radius: 14px;
+  }
+
+  .category-icon {
+    font-size: 2rem;
+    margin-bottom: 0.7rem;
+  }
+
+  .category-card h3 {
+    font-size: 0.85rem;
+  }
+}
+
+/* ==========================
+   EXTRA SMALL DEVICES
+========================== */
+
+@media (max-width: 360px) {
+  .categories-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .category-card h3 {
+    font-size: 0.95rem;
+  }
 }

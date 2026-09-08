@@ -48,8 +48,11 @@ const getCartByStudentId = asyncHandler(async (req, res) => {
 const updateCartItemQuantity = asyncHandler(async (req, res) => {
   const { cartItemId } = req.params;
   const { quantity } = req.body;
-
   const studentId = req.student.id;
+
+  console.log("cartItemId:", cartItemId);
+  console.log("quantity:", quantity);
+  console.log("studentId:", studentId);
 
   const cartItem = await cartService.updateCartItemQuantity(
     cartItemId,

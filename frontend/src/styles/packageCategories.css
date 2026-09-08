@@ -1,0 +1,57 @@
+.package-categories-page {
+  padding: 40px;
+}
+
+/* Add Category Form */
+
+.category-form-row {
+  display: flex;
+  gap: 12px;
+}
+
+/* Table */
+
+.categories-table-wrapper {
+  overflow-x: auto;
+}
+
+.categories-table-wrapper table {
+  min-width: 700px;
+}
+
+/* Actions */
+
+.category-actions {
+  display: flex;
+  gap: 10px;
+}
+
+/* Mobile */
+
+@media (max-width: 768px) {
+  .package-categories-page {
+    padding: 20px;
+  }
+
+  .category-form-row {
+    flex-direction: column;
+  }
+
+  .category-form-row button {
+    width: 100%;
+  }
+
+  .category-actions {
+    flex-direction: column;
+  }
+
+  .category-actions button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .package-categories-page {
+    padding: 15px;
+  }
+}
