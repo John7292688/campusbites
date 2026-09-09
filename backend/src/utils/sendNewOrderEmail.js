@@ -213,7 +213,7 @@ const sendNewOrderEmail = async (order) => {
         "
         >
         <a
-            href="http://localhost:5173/owner"
+            href="https://campusbites-woad-one.vercel.app/owner"
             style="
             background:#ff6b00;
             color:white;

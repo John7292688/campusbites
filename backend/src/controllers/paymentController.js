@@ -114,7 +114,7 @@ const initializePayment = async (
           email,
           amount: amount * 100,
           callback_url:
-            "http://localhost:5173/payment-success",
+            "https://campusbites-woad-one.vercel.app/payment-success",
         }
       );
 
