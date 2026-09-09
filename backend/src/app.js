@@ -46,7 +46,10 @@ app.use(express.urlencoded({ extended: true }));
 // Enable CORS for React frontend
 app.use(
   cors({
-    origin: "http://localhost:5173",
+    origin: [
+      "http://localhost:5173",
+      "https://campusbites-woad-one.vercel.app",
+    ],
     credentials: true,
   })
 );
