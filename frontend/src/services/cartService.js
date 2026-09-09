@@ -1,4 +1,4 @@
-const API_URL = "http://localhost:5000/api";
+const API_URL = `${import.meta.env.VITE_API_URL}/api`;
 
 // Add menu item or combo package to cart
 export async function addToCart({

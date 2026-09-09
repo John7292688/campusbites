@@ -18,7 +18,7 @@ function RestaurantApplication() {
         localStorage.getItem("adminToken");
 
       const response = await axios.get(
-        `http://localhost:5000/api/admin/restaurants/${id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/restaurants/${id}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -48,7 +48,7 @@ const approveRestaurant = async () => {
       localStorage.getItem("adminToken");
 
     await axios.patch(
-      `http://localhost:5000/api/admin/restaurants/${restaurant.id}/approve`,
+      `${import.meta.env.VITE_API_URL}/api/admin/restaurants/${restaurant.id}/approve`,
       {},
       {
         headers: {
@@ -80,7 +80,7 @@ const suspendRestaurant = async () => {
       localStorage.getItem("adminToken");
 
     await axios.patch(
-      `http://localhost:5000/api/admin/restaurants/${restaurant.id}/suspend`,
+      `${import.meta.env.VITE_API_URL}/api/admin/restaurants/${restaurant.id}/suspend`,
       {},
       {
         headers: {
@@ -132,7 +132,7 @@ const reactivateRestaurant = async () => {
       localStorage.getItem("adminToken");
 
     await axios.patch(
-      `http://localhost:5000/api/admin/restaurants/${restaurant.id}/reactivate`,
+      `${import.meta.env.VITE_API_URL}/api/admin/restaurants/${restaurant.id}/reactivate`,
       {},
       {
         headers: {

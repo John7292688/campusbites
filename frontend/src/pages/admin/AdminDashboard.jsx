@@ -23,7 +23,7 @@ function AdminDashboard() {
   const fetchStats = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/admin-dashboard/stats"
+        "${import.meta.env.VITE_API_URL}/api/admin-dashboard/stats"
       );
 
       setStats(response.data.stats);
@@ -41,7 +41,7 @@ const fetchRestaurants = async () => {
     const token = localStorage.getItem("adminToken");
 
     const response = await axios.get(
-      "http://localhost:5000/api/admin/restaurants",
+      "${import.meta.env.VITE_API_URL}/api/admin/restaurants",
       {
         headers: {
           Authorization: `Bearer ${token}`,

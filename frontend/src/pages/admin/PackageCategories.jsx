@@ -23,7 +23,7 @@ function PackageCategories() {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/package-categories"
+        "${import.meta.env.VITE_API_URL}/api/package-categories"
       );
 
       setCategories(
@@ -60,7 +60,7 @@ function PackageCategories() {
 
   try {
     const response = await axios.post(
-      "http://localhost:5000/api/package-categories",
+      "${import.meta.env.VITE_API_URL}/api/package-categories",
       {
         name: categoryName,
       }
@@ -101,7 +101,7 @@ const deleteCategory = async (id) => {
 
   try {
     await axios.delete(
-      `http://localhost:5000/api/package-categories/${id}`
+      `${import.meta.env.VITE_API_URL}/api/package-categories/${id}`
     );
 
     toast.success(
@@ -145,7 +145,7 @@ const saveCategoryEdit = async () => {
 
   try {
     await axios.put(
-      `http://localhost:5000/api/package-categories/${editingCategory.id}`,
+      `${import.meta.env.VITE_API_URL}/api/package-categories/${editingCategory.id}`,
       {
         name: editName,
       }
