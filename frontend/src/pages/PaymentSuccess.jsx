@@ -32,9 +32,12 @@ function PaymentSuccess() {
 
           return;
         }
-
+        
+        console.time("VERIFY_PAYMENT");
         const response =
           await verifyPayment(reference);
+
+          console.timeEnd("VERIFY_PAYMENT");
 
         console.log(
           "Verify response:",
