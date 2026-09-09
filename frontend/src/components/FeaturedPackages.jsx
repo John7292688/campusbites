@@ -5,7 +5,7 @@ import {
 } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { getPublicPackages } from "../services/comboPackageService";
-import "../styles/FeaturedPackages.css";
+import "../styles/featuredPackages.css";
 import { toast } from "react-toastify";
 
 function FeaturedPackages() {
