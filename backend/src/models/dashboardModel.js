@@ -6,14 +6,32 @@ const getDashboardSummary = async (ownerId) => {
     SELECT
       COALESCE(COUNT(DISTINCT o.id) FILTER (
         WHERE DATE(o.created_at) = CURRENT_DATE
+        AND EXISTS (
+          SELECT 1
+          FROM payments p
+          WHERE p.order_id = o.id
+          AND p.payment_status = 'Successful'
+        )
       ), 0) AS today_orders,
 
       COALESCE(SUM(DISTINCT o.total_amount) FILTER (
         WHERE DATE(o.created_at) = CURRENT_DATE
+        AND EXISTS (
+          SELECT 1
+          FROM payments p
+          WHERE p.order_id = o.id
+          AND p.payment_status = 'Successful'
+        )
       ), 0) AS today_revenue,
 
       COALESCE(COUNT(DISTINCT o.id) FILTER (
         WHERE o.status = 'Pending'
+        AND EXISTS (
+          SELECT 1
+          FROM payments p
+          WHERE p.order_id = o.id
+          AND p.payment_status = 'Successful'
+        )
       ), 0) AS pending_orders,
 
       COALESCE(COUNT(DISTINCT o.id) FILTER (
@@ -101,6 +119,12 @@ const getRecentOrders = async (ownerId) => {
         cp.restaurant_id,
         cplt.restaurant_id
       ) = r.id
+      AND EXISTS (
+        SELECT 1
+        FROM payments p
+        WHERE p.order_id = o.id
+        AND p.payment_status = 'Successful'
+      )
 
     ORDER BY o.created_at DESC
 
