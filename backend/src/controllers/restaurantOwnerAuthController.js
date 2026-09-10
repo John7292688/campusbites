@@ -93,6 +93,20 @@ const login = asyncHandler(async (req, res) => {
     );
   }
 
+  const checkToken = await pool.query(
+    `
+    SELECT fcm_token
+    FROM restaurant_owners
+    WHERE id = $1
+    `,
+    [owner.id]
+  );
+
+  console.log(
+    "SAVED OWNER TOKEN:",
+    checkToken.rows[0].fcm_token
+  );
+
   res.status(200).json({
     success: true,
     message: "Login successful",
