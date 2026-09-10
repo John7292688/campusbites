@@ -225,12 +225,10 @@ const verifyPayment = async (
         
         try {
           console.log("BEFORE EMAIL");
-          await sendNewOrderEmail(
-            order
-          );
+          console.log("EMAIL SKIPPED");
           console.log("AFTER EMAIL");
+           
           
-
           console.log(
             "✅ EMAIL SENT TO:",
             order.owner_email
