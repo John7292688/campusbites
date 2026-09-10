@@ -187,7 +187,6 @@ const verifyPayment = async (
           "Successful"
         );
 
-
         const order =
           await orderService.getOrderById(
             paymentRecord.order_id
@@ -196,9 +195,12 @@ const verifyPayment = async (
         console.log(
           "OWNER FCM TOKEN:",
           order.owner_fcm_token
-        );  
- 
-        console.log("SENDING OWNER NOTIFICATION");
+        );
+
+        console.log(
+          "SENDING OWNER NOTIFICATION"
+        );
+
         if (order.owner_fcm_token) {
           await sendPushNotification(
             order.owner_fcm_token,
@@ -222,33 +224,32 @@ const verifyPayment = async (
           order.restaurant_name
         );
 
-        
-        try {
-          console.log("BEFORE EMAIL");
-          console.log("EMAIL SKIPPED");
-          console.log("AFTER EMAIL");
-           
-          
-          console.log(
-            "✅ EMAIL SENT TO:",
-            order.owner_email
-          );
-          if (order.fcm_token) {
-            await sendPushNotification(
-              order.fcm_token,
-              "New Order Received 🍽️",
-              `Order #${order.order_id} has been paid and is ready for processing`
-            );
-
+        // Run email in background
+        sendNewOrderEmail(order)
+          .then(() => {
             console.log(
-              "✅ PUSH SENT:",
-              order.fcm_token
+              "✅ EMAIL SENT TO:",
+              order.owner_email
             );
-          }
-        } catch (error) {
-          console.error(
-            "❌ EMAIL ERROR:",
-            error
+          })
+          .catch((error) => {
+            console.error(
+              "❌ EMAIL ERROR:",
+              error
+            );
+          });
+
+        // Student notification
+        if (order.fcm_token) {
+          await sendPushNotification(
+            order.fcm_token,
+            "New Order Received 🍽️",
+            `Order #${order.order_id} has been paid and is ready for processing`
+          );
+
+          console.log(
+            "✅ PUSH SENT:",
+            order.fcm_token
           );
         }
 
