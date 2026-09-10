@@ -19,7 +19,7 @@ function AdminLogin() {
 
     try {
       const response = await axios.post(
-        "${import.meta.env.VITE_API_URL}/api/admin/login",
+        `${import.meta.env.VITE_API_URL}/api/admin/login`,
         {
           email,
           password,
