@@ -201,6 +201,11 @@ const verifyPayment = async (
           "SENDING OWNER NOTIFICATION"
         );
 
+        console.log(
+          "OWNER FCM TOKEN:",
+          order.owner_fcm_token
+        );
+        
         if (order.owner_fcm_token) {
           sendPushNotification(
             order.owner_fcm_token,
