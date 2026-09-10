@@ -202,11 +202,16 @@ const verifyPayment = async (
         );
 
         if (order.owner_fcm_token) {
-          await sendPushNotification(
+          sendPushNotification(
             order.owner_fcm_token,
             "🍽️ New Order Received",
             `${order.student_name} placed Order #${order.id} worth ₦${order.total_amount}`
-          );
+          ).catch((err) => {
+            console.error(
+              "OWNER PUSH ERROR:",
+              err.message
+            );
+          });
         }
 
         console.log(
@@ -241,16 +246,23 @@ const verifyPayment = async (
 
         // Student notification
         if (order.fcm_token) {
-          await sendPushNotification(
+          sendPushNotification(
             order.fcm_token,
             "New Order Received 🍽️",
             `Order #${order.order_id} has been paid and is ready for processing`
-          );
-
-          console.log(
-            "✅ PUSH SENT:",
-            order.fcm_token
-          );
+          )
+            .then(() => {
+              console.log(
+                "✅ PUSH SENT:",
+                order.fcm_token
+              );
+            })
+            .catch((err) => {
+              console.error(
+                "STUDENT PUSH ERROR:",
+                err.message
+              );
+            });
         }
 
         console.log(
