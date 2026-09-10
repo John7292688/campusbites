@@ -313,16 +313,28 @@ const getTopRestaurants = async () => {
 
     FROM restaurants r
 
-    JOIN menus m
-      ON r.id = m.restaurant_id
-
     JOIN order_items oi
-      ON m.id = oi.menu_item_id
+      ON TRUE
+
+    LEFT JOIN menus m
+      ON oi.menu_item_id = m.id
+
+    LEFT JOIN combo_packages cp
+      ON oi.combo_package_id = cp.id
+
+    LEFT JOIN custom_plates cplt
+      ON oi.custom_plate_id = cplt.id
 
     JOIN orders o
       ON oi.order_id = o.id
 
-    WHERE r.status = 'approved'
+    WHERE r.id = COALESCE(
+      m.restaurant_id,
+      cp.restaurant_id,
+      cplt.restaurant_id
+    )
+
+    AND r.status = 'approved'
 
     GROUP BY r.id
 
