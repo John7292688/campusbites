@@ -30,7 +30,7 @@ function Restaurants() {
         localStorage.getItem("adminToken");
 
       const response = await axios.get(
-        "${import.meta.env.VITE_API_URL}/api/admin/restaurants",
+        `${import.meta.env.VITE_API_URL}/api/admin/restaurants`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
