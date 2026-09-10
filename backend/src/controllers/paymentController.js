@@ -222,10 +222,14 @@ const verifyPayment = async (
           order.restaurant_name
         );
 
+        
         try {
+          console.log("BEFORE EMAIL");
           await sendNewOrderEmail(
             order
           );
+          console.log("AFTER EMAIL");
+          
 
           console.log(
             "✅ EMAIL SENT TO:",
