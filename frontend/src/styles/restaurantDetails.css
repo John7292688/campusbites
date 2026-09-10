@@ -492,7 +492,8 @@
   }
 
   .combo-image {
-    height: 160px;
+    height: 100px;
+    width: 100px;
   }
 
   .build-row {
