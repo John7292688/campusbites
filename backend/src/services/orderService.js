@@ -307,11 +307,11 @@ if (restaurantId) {
       restaurantId
     );
 
-  await notificationService.createNotification(
-    restaurant.owner_id,
-    "New Order",
-    `Order #${order.id} has been placed.`
-  );
+  // await notificationService.createNotification(
+  //   restaurant.owner_id,
+  //   "New Order",
+  //   `Order #${order.id} has been placed.`
+  // );
 }
 
 return order;
