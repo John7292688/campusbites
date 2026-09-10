@@ -15,18 +15,16 @@ function AdminDashboard() {
 
   const [restaurants, setRestaurants] = useState([]);
 
-  useEffect(() => {
-    fetchStats();
-    fetchRestaurants();
-  }, []);
+
 
   const fetchStats = async () => {
     try {
       const response = await axios.get(
-        "${import.meta.env.VITE_API_URL}/api/admin-dashboard/stats"
+        `${import.meta.env.VITE_API_URL}/api/admin-dashboard/stats`
       );
 
       setStats(response.data.stats);
+      console.log(response.data);
       setRecentRestaurants(
         response.data.stats
           .recentRestaurants || []
@@ -41,7 +39,7 @@ const fetchRestaurants = async () => {
     const token = localStorage.getItem("adminToken");
 
     const response = await axios.get(
-      "${import.meta.env.VITE_API_URL}/api/admin/restaurants",
+      `${import.meta.env.VITE_API_URL}/api/admin/restaurants`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -54,6 +52,11 @@ const fetchRestaurants = async () => {
     console.error(error);
   }
 };
+
+useEffect(() => {
+    fetchStats();
+    fetchRestaurants();
+  }, []);
 
   return (
     <div className="admin-dashboard">
