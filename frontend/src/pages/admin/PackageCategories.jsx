@@ -23,14 +23,15 @@ function PackageCategories() {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        "${import.meta.env.VITE_API_URL}/api/package-categories"
+        `${import.meta.env.VITE_API_URL}/api/package-categories`
       );
 
       setCategories(
-        response.data.categories
+        response.data.categories || []
       );
     } catch (error) {
       console.error(error);
+      setCategories([]);
     }
   };
 
@@ -60,7 +61,7 @@ function PackageCategories() {
 
   try {
     const response = await axios.post(
-      "${import.meta.env.VITE_API_URL}/api/package-categories",
+      `${import.meta.env.VITE_API_URL}/api/package-categories`,
       {
         name: categoryName,
       }
