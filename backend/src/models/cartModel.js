@@ -97,7 +97,8 @@ const getCartByStudentId = async (studentId) => {
         cplt.total_price
       ) AS price,
 
-      r.name AS restaurant_name
+      r.name AS restaurant_name,
+      r.packaging_fee
 
     FROM cart_items ci
 
