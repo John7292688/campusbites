@@ -203,6 +203,19 @@ const cartTotal = cartItems.reduce((total, item) => {
   return total + Number(item.price) * item.quantity;
 }, 0);
 
+const packagingFee = cartItems.reduce(
+  (total, item) => {
+    if (!item.custom_plate_id) return total;
+
+    return (
+      total +
+      Number(item.packaging_fee || 0) *
+        item.quantity
+    );
+  },
+  0
+);
+
 const locationResult = await pool.query(
   `
   SELECT delivery_fee
@@ -220,11 +233,14 @@ const deliveryFee =
   Number(locationResult.rows[0].delivery_fee);
 
 const totalAmount =
-  cartTotal + Number(deliveryFee || 0);
+  cartTotal +
+  packagingFee +
+  Number(deliveryFee || 0);
 
 console.log("CART TOTAL:", cartTotal);
+console.log("PACKAGING FEE:", packagingFee);
 console.log("DELIVERY FEE:", deliveryFee);
-console.log("FINAL TOTAL:", totalAmount);  
+console.log("FINAL TOTAL:", totalAmount);
 
 const order = await orderModel.createOrderWithClient(
   client,
