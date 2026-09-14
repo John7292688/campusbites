@@ -31,6 +31,21 @@ function CartDrawer({
     return sum + price * item.quantity;
   }, 0);
 
+  const packagingFee = cartItems.reduce(
+    (sum, item) => {
+      if (!item.custom_plate_id) return sum;
+
+      return (
+        sum +
+        Number(item.packaging_fee || 0) *
+          item.quantity
+      );
+    },
+    0
+  );
+
+  const grandTotal = total + packagingFee;
+
   const handleQuantityChange = async (
     item,
     change
@@ -179,6 +194,16 @@ function CartDrawer({
             </strong>
           </div>
 
+          {packagingFee > 0 && (
+            <div className="summary-row">
+              <span>Packaging Fee</span>
+
+              <strong>
+                ₦{packagingFee.toLocaleString()}
+              </strong>
+            </div>
+          )}
+
           <div
             style={{
               display: "flex",
@@ -205,7 +230,8 @@ function CartDrawer({
             <span>Total</span>
 
             <strong>
-              ₦{total.toLocaleString()} + delivery fee
+              ₦{grandTotal.toLocaleString()} +
+              delivery fee
             </strong>
           </div>
 
