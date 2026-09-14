@@ -40,9 +40,22 @@ function Cart() {
 
   const deliveryFee = 500;
 
-  const total =
-    subtotal + deliveryFee;
+  const packagingFee = cartItems.reduce(
+    (total, item) =>
+      total +
+      (item.custom_plate_id
+        ? Number(item.packaging_fee || 0) *
+          item.quantity
+        : 0),
+    0
+  );
 
+  const total =
+    subtotal +
+    deliveryFee +
+    packagingFee;
+
+  console.log("CART ITEMS:", cartItems);
   return (
     <section className="cart-page">
       <div className="container">
@@ -158,6 +171,14 @@ function Cart() {
                 <span>
                   ₦
                   {deliveryFee.toLocaleString()}
+                </span>
+              </p>
+
+              <p>
+                <span>Packaging Fee</span>
+
+                <span>
+                  ₦{packagingFee.toLocaleString()}
                 </span>
               </p>
 
