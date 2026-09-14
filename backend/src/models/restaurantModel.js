@@ -8,6 +8,7 @@ const createRestaurant = async (restaurantData) => {
     phone,
     image_url,
     logo_url,
+    packaging_fee,
     owner_id,
   } = restaurantData;
 
@@ -21,10 +22,11 @@ const createRestaurant = async (restaurantData) => {
       phone,
       image_url,
       logo_url,
+      packaging_fee,
       owner_id,
       status
     )
-    VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+    VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     RETURNING *;
     `,
     [
@@ -34,6 +36,7 @@ const createRestaurant = async (restaurantData) => {
       phone,
       image_url,
       logo_url,
+      packaging_fee || 0,
       owner_id,
       "pending",
     ]
@@ -104,6 +107,7 @@ const updateRestaurantByOwnerId = async (
     phone,
     image_url,
     logo_url,
+    packaging_fee,
   } = restaurantData;
 
   const result = await pool.query(
@@ -115,8 +119,9 @@ const updateRestaurantByOwnerId = async (
       location = $3,
       phone = $4,
       image_url = $5,
-      logo_url = $6
-    WHERE owner_id = $7
+      logo_url = $6,
+      packaging_fee = $7
+    WHERE owner_id = $8
     RETURNING *;
     `,
     [
@@ -126,6 +131,7 @@ const updateRestaurantByOwnerId = async (
       phone,
       image_url,
       logo_url,
+      packaging_fee,
       ownerId,
     ]
   );

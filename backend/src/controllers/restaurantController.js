@@ -13,6 +13,7 @@ const createRestaurant = asyncHandler(async (req, res) => {
     phone,
     image_url,
     logo_url,
+    packaging_fee,
   } = req.body;
 
   const { error } =
@@ -30,6 +31,7 @@ const createRestaurant = asyncHandler(async (req, res) => {
       phone,
       image_url,
       logo_url,
+      packaging_fee,
       owner_id: req.owner.id,
     });
 
@@ -90,6 +92,7 @@ const updateMyRestaurant = asyncHandler(async (req, res) => {
     phone,
     image_url,
     logo_url,
+    packaging_fee,
   } = req.body;
 
   const restaurant =
@@ -102,6 +105,7 @@ const updateMyRestaurant = asyncHandler(async (req, res) => {
         phone,
         image_url,
         logo_url,
+        packaging_fee,
       }
     );
 

@@ -19,6 +19,7 @@ const Restaurant = () => {
     phone: "",
     image_url: "",
     logo_url: "",
+    packaging_fee: 0,
   });
 
   useEffect(() => {
@@ -189,6 +190,15 @@ const Restaurant = () => {
             <input
               name="location"
               value={restaurant.location}
+              onChange={handleChange}
+            />
+
+            <label>Packaging Fee (₦)</label>
+
+            <input
+              type="number"
+              name="packaging_fee"
+              value={restaurant.packaging_fee || 0}
               onChange={handleChange}
             />
 
