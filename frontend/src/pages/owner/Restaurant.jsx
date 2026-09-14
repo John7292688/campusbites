@@ -198,7 +198,7 @@ const Restaurant = () => {
             <input
               type="number"
               name="packaging_fee"
-              value={restaurant.packaging_fee || 0}
+              value={restaurant.packaging_fee ?? ""}
               onChange={handleChange}
             />
 
