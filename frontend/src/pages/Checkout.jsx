@@ -93,6 +93,21 @@ function Checkout() {
   setCartSubtotal(subtotal);
 }, [cartItems]);
 
+const packagingFee = cartItems.reduce(
+  (sum, item) => {
+    if (!item.custom_plate_id) {
+      return sum;
+    }
+
+    return (
+      sum +
+      Number(item.packaging_fee || 0) *
+        item.quantity
+    );
+  },
+  0
+);
+
   const handleCheckout = async () => {
     try {
       if (!address.trim()) {
@@ -139,8 +154,10 @@ function Checkout() {
     }
   };
 
-  const grandTotal =
-  cartSubtotal + deliveryFee;
+const grandTotal =
+  cartSubtotal +
+  packagingFee +
+  deliveryFee;
 
 return (
   <section className="checkout-page">
@@ -235,6 +252,16 @@ return (
               ₦{cartSubtotal.toLocaleString()}
             </strong>
           </div>
+
+          {packagingFee > 0 && (
+            <div className="summary-row">
+              <span>Packaging Fee</span>
+
+              <strong>
+                ₦{packagingFee.toLocaleString()}
+              </strong>
+            </div>
+          )}
 
           <div className="summary-row">
             <span>Delivery Fee</span>
