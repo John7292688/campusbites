@@ -189,7 +189,17 @@ const decreaseQuantity = (itemId) => {
         <div className="restaurant-hero-content">
           <div className="restaurant-header">
             <div className="restaurant-info">
-              <h1>{restaurant.name}</h1>
+              <h1
+                style={{
+                  fontSize: "clamp(1.8rem, 5vw, 3.5rem)",
+                  lineHeight: "1.2",
+                  wordBreak: "break-word",
+                  overflowWrap: "break-word",
+                  margin: 0,
+                }}
+              >
+                {restaurant.name}
+              </h1>
 
               <div className="restaurant-meta">
                 <span>📍 {restaurant.location}</span>
