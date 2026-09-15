@@ -1,6 +1,14 @@
 import { FaWhatsapp } from "react-icons/fa";
 import "../styles/campus-market.css";
 import marketBanner from "../assets/images/marketbanner.png";
+import riceImg from "../assets/images/rawrice.jfif";
+import beansImg from "../assets/images/rawbeans.jfif";
+import eggsImg from "../assets/images/raweggs.jfif";
+import noodlesImg from "../assets/images/rawnoodles.jfif";
+import palmoilImg from "../assets/images/rawpalmoil.jfif";
+import vegetablesImg from "../assets/images/rawvegetables.jfif";
+import vegetableoilImg from "../assets/images/rawvegetableoil.jfif";
+import beefImg from "../assets/images/rawbeef.jfif";
 
 function CampusMarket() {
   const whatsappLink =
@@ -59,23 +67,23 @@ function CampusMarket() {
         <div className="market-grid">
           <div className="market-card">
             <img
-              src="https://images.unsplash.com/photo-1586201375761-83865001e31c"
+              src={riceImg}
               alt="Rice"
             />
-            <h3>Rice & Grains</h3>
+            <h3>Rice</h3>
           </div>
 
           <div className="market-card">
             <img
-              src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b"
+              src={beansImg}
               alt="Beans"
             />
-            <h3>Beans & Garri</h3>
+            <h3>Beans</h3>
           </div>
 
           <div className="market-card">
             <img
-              src="https://images.unsplash.com/photo-1542838132-92c53300491e"
+              src={vegetablesImg}
               alt="Vegetables"
             />
             <h3>Vegetables</h3>
@@ -83,23 +91,23 @@ function CampusMarket() {
 
           <div className="market-card">
             <img
-              src="https://images.unsplash.com/photo-1603048297172-c92544798d5a"
+              src={eggsImg}
               alt="Cooking Essentials"
             />
-            <h3>Cooking Essentials</h3>
+            <h3>Eggs</h3>
           </div>
 
           <div className="market-card">
             <img
-              src="https://images.unsplash.com/photo-1615485290382-441e4d049cb5"
+              src={palmoilImg}
               alt="Eggs"
             />
-            <h3>Eggs & Proteins</h3>
+            <h3>Palmoil</h3>
           </div>
 
           <div className="market-card">
             <img
-              src="https://images.unsplash.com/photo-1515003197210-e0cd71810b5f"
+              src={noodlesImg}
               alt="Noodles"
             />
             <h3>Noodles & Pasta</h3>
