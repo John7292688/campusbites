@@ -1,6 +1,6 @@
 import { FaWhatsapp } from "react-icons/fa";
 import "../styles/campus-market.css";
-import marketBanner from "../assets/marketbanner.png";
+import marketBanner from "../assets/images/marketbanner.png";
 
 function CampusMarket() {
   const whatsappLink =
