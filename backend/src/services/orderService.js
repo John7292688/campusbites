@@ -215,6 +215,8 @@ const packagingFee = cartItems.reduce(
   },
   0
 );
+console.log("PACKAGING FEE:", packagingFee);
+console.log("CART ITEMS:", cartItems);
 
 const locationResult = await pool.query(
   `
