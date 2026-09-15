@@ -169,6 +169,10 @@ function Navbar({ openCart }) {
               Orders
             </Link>
 
+            <Link to="/campus-market">
+              Campus Market
+            </Link>
+
             <Link to="/contact">
               Contact
             </Link>
@@ -420,6 +424,13 @@ function Navbar({ openCart }) {
             onClick={closeMobileMenu}
           >
             Orders
+          </Link>
+
+          <Link
+            to="/campus-market"
+            onClick={closeMobileMenu}
+          >
+            Campus Market
           </Link>
 
           {isLoggedIn && (

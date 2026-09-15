@@ -13,6 +13,7 @@ import PaymentSuccess from "./pages/PaymentSuccess";
 import SearchResults from "./pages/SearchResults";
 import OrderDetails from "./pages/OrderDetails";
 import Packages from "./pages/Packages";
+import CampusMarket from "./pages/CampusMarket";
 import CustomerRestaurants from "./pages/Restaurants";
 import CustomerLayout from "./layouts/CustomerLayout";
 import VerifyOtp from "./pages/VerifyOtp";
@@ -156,6 +157,11 @@ function App() {
         <MyOrders />
       </ProtectedRoute>
     }
+  />
+
+  <Route
+    path="/campus-market"
+    element={<CampusMarket />}
   />
 
   <Route
