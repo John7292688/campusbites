@@ -179,7 +179,9 @@ const getCartByStudentIdWithClient = async (client, studentId) => {
         m.price,
         cp.price,
         cplt.total_price
-      ) AS price
+      ) AS price,
+
+      r.packaging_fee
 
     FROM cart_items ci
 
@@ -191,6 +193,13 @@ const getCartByStudentIdWithClient = async (client, studentId) => {
 
     LEFT JOIN custom_plates cplt
       ON ci.custom_plate_id = cplt.id
+
+    LEFT JOIN restaurants r
+      ON r.id = COALESCE(
+        m.restaurant_id,
+        cp.restaurant_id,
+        cplt.restaurant_id
+      )
 
     WHERE ci.student_id = $1;
     `,
