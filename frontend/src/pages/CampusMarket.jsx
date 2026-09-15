@@ -112,6 +112,22 @@ function CampusMarket() {
             />
             <h3>Noodles & Pasta</h3>
           </div>
+
+          <div className="market-card">
+            <img
+              src={vegetableoilImg}
+              alt="Noodles"
+            />
+            <h3>Vegetable Oil</h3>
+          </div>        
+
+          <div className="market-card">
+            <img
+              src={beefImg}
+              alt="Noodles"
+            />
+            <h3>Fresh Beef</h3>
+          </div>                
         </div>
       </section>
 
