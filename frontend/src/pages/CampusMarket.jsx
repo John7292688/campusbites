@@ -1,14 +1,23 @@
 import { FaWhatsapp } from "react-icons/fa";
 import "../styles/campus-market.css";
+import marketBanner from "../assets/marketbanner.png";
 
 function CampusMarket() {
   const whatsappLink =
-    "https://wa.me/2348168932500?text=Hello%20CampusBites,%20I%20would%20like%20to%20order%20foodstuffs.";
+    "https://wa.me/2347046540252?text=Hello%20CampusBites,%20I%20would%20like%20to%20order%20foodstuffs.";
 
   return (
     <div className="campus-market">
       {/* Hero Section */}
-      <section className="market-hero">
+      <section
+        className="market-hero"
+        style={{
+          backgroundImage: `linear-gradient(
+            rgba(0,0,0,0.55),
+            rgba(0,0,0,0.55)
+          ), url(${marketBanner})`,
+        }}
+      >
         <div className="market-overlay">
           <h1>CampusBites Market</h1>
 

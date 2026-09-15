@@ -6,13 +6,9 @@
 /* HERO SECTION */
 .market-hero {
   min-height: 80vh;
-  background: linear-gradient(
-      rgba(0, 0, 0, 0.55),
-      rgba(0, 0, 0, 0.55)
-    ),
-    url("https://images.unsplash.com/photo-1542838132-92c53300491e");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
   display: flex;
   align-items: center;
   justify-content: center;
