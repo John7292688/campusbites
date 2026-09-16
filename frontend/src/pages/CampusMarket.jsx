@@ -11,8 +11,13 @@ import vegetableoilImg from "../assets/images/rawvegetableoil.jfif";
 import beefImg from "../assets/images/rawbeef.jfif";
 
 function CampusMarket() {
+  const message =
+    "Hello CampusBites, I would like to order foodstuffs.";
+
   const whatsappLink =
-    "https://wa.me/2347046540252?text=Hello%20CampusBites,%20I%20would%20like%20to%20order%20foodstuffs.";
+    `https://api.whatsapp.com/send?phone=2347046540252&text=${encodeURIComponent(
+      message
+    )}`;
 
   return (
     <div className="campus-market">
