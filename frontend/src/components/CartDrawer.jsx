@@ -125,13 +125,14 @@ function CartDrawer({
                 key={item.id}
                 className="cart-item"
               >
-                <div className="cart-item-left">
-                  <h4>
-                    {item.name ||
-                      item.combo_name ||
-                      item.custom_plate_name}
-                  </h4>
+               <div className="cart-item-left">
+                <h4 className="cart-item-title">
+                  {item.name ||
+                    item.combo_name ||
+                    item.custom_plate_name}
+                </h4>
 
+                <div className="cart-item-bottom">
                   <p className="cart-item-price">
                     ₦
                     {Number(
@@ -154,6 +155,7 @@ function CartDrawer({
                     Remove
                   </button>
                 </div>
+              </div>
 
                 <div className="cart-item-right">
                   <button
