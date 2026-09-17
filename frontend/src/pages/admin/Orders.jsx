@@ -1,4 +1,4 @@
-import "../styles/adminOrders.css";
+import "../../styles/adminOrders.css";
 
 function Orders() {
   return (
