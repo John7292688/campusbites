@@ -223,6 +223,15 @@ const checkout = asyncHandler(async (req, res) => {
   });
 });
 
+const getAllOrders = asyncHandler(async (req, res) => {
+  const orders = await orderService.getAllOrders();
+
+  res.status(200).json({
+    success: true,
+    orders,
+  });
+});
+
 module.exports = {
   createOrder,
   getOrderById,
@@ -234,4 +243,5 @@ module.exports = {
   getCustomers,
   getLatestDeliveryInfo,
   checkout,
+  getAllOrders,
 };

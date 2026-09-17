@@ -341,6 +341,53 @@ return order;
   }
 };
 
+const getAllOrders = async () => {
+  const result = await pool.query(`
+    SELECT
+      o.id,
+      o.student_id,
+      o.total_amount,
+      o.status,
+      o.created_at,
+
+      s.full_name AS student_name,
+
+      r.name AS restaurant_name
+
+    FROM orders o
+
+    JOIN students s
+      ON s.id = o.student_id
+
+    JOIN order_items oi
+      ON oi.order_id = o.id
+
+    LEFT JOIN menus m
+      ON oi.menu_item_id = m.id
+
+    LEFT JOIN combo_packages cp
+      ON oi.combo_package_id = cp.id
+
+    LEFT JOIN custom_plates cplt
+      ON oi.custom_plate_id = cplt.id
+
+    JOIN restaurants r
+      ON r.id = COALESCE(
+        m.restaurant_id,
+        cp.restaurant_id,
+        cplt.restaurant_id
+      )
+
+    GROUP BY
+      o.id,
+      s.full_name,
+      r.name
+
+    ORDER BY o.created_at DESC
+  `);
+
+  return result.rows;
+};
 module.exports = {
   createOrder,
   getOrderById,
@@ -356,4 +403,5 @@ module.exports = {
   getCustomersForAuthenticatedOwner,
   getLatestDeliveryInfoByStudentId,
   checkout,
+  getAllOrders,
 };
