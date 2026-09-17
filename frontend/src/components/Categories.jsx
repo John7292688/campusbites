@@ -52,7 +52,7 @@ function Categories() {
               key={category.id}
             >
               <div className="category-icon">
-                {getCategoryIcon(category.name)}
+                {category.icon || "🍽️"}
               </div>
 
               <h3>{category.name}</h3>
