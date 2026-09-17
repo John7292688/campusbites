@@ -1,0 +1,76 @@
+.admin-orders-page {
+  padding: 32px;
+}
+
+.admin-page-header h1 {
+  margin: 0;
+  font-size: 36px;
+  font-weight: 800;
+}
+
+.admin-page-header p {
+  color: #64748b;
+  margin-top: 8px;
+}
+
+.orders-stats {
+  margin-top: 30px;
+
+  display: grid;
+  grid-template-columns: repeat(
+    auto-fit,
+    minmax(220px, 1fr)
+  );
+
+  gap: 20px;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 16px;
+  padding: 24px;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.stat-card h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #64748b;
+}
+
+.stat-card span {
+  display: block;
+  margin-top: 12px;
+
+  font-size: 30px;
+  font-weight: 800;
+
+  color: #0f172a;
+}
+
+.orders-table-card {
+  margin-top: 30px;
+
+  background: white;
+
+  border-radius: 16px;
+
+  padding: 24px;
+
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.orders-table-card h2 {
+  margin-top: 0;
+}
+
+@media (max-width: 768px) {
+  .admin-orders-page {
+    padding: 20px;
+  }
+
+  .admin-page-header h1 {
+    font-size: 28px;
+  }
+}
