@@ -2,9 +2,11 @@ const pool = require("../config/database");
 
 const getAllComboCategories = async () => {
   const result = await pool.query(`
-    SELECT *
-    FROM combo_categories
-    ORDER BY name ASC
+    SELECT DISTINCT cc.*
+    FROM combo_categories cc
+    INNER JOIN combo_packages cp
+      ON cp.category_id = cc.id
+    ORDER BY cc.name ASC
   `);
 
   return result.rows;
