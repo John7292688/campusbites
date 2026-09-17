@@ -5,14 +5,10 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    fetchOrders();
-  }, []);
-
   const fetchOrders = async () => {
     try {
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL}/api/orders/admin/all`
+        `${import.meta.env.VITE_API_URL}/api/orders/admin`
       );
 
       const data = await response.json();
@@ -27,6 +23,10 @@ function Orders() {
     }
   };
 
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
   const totalOrders = orders.length;
 
   const pendingOrders = orders.filter(
@@ -37,8 +37,8 @@ function Orders() {
     (order) => order.status === "Delivered"
   ).length;
 
-  const totalRevenue = orders.reduce(
-    (sum, order) => sum + Number(order.total_amount || 0),
+  const revenue = orders.reduce(
+    (total, order) => total + Number(order.total_amount || 0),
     0
   );
 
@@ -71,9 +71,7 @@ function Orders() {
 
         <div className="stat-card">
           <h3>Revenue</h3>
-          <span>
-            ₦{totalRevenue.toLocaleString()}
-          </span>
+          <span>₦{revenue.toLocaleString()}</span>
         </div>
       </div>
 
@@ -83,53 +81,37 @@ function Orders() {
         {loading ? (
           <p>Loading orders...</p>
         ) : (
-          <div className="orders-table-wrapper">
-            <table className="orders-table">
-              <thead>
-                <tr>
-                  <th>ID</th>
-                  <th>Student</th>
-                  <th>Restaurant</th>
-                  <th>Amount</th>
-                  <th>Status</th>
-                  <th>Date</th>
+          <table className="orders-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Restaurant</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Date</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              {orders.map((order) => (
+                <tr key={order.id}>
+                  <td>{order.id}</td>
+                  <td>{order.student_name}</td>
+                  <td>{order.restaurant_name}</td>
+                  <td>
+                    ₦{Number(order.total_amount).toLocaleString()}
+                  </td>
+                  <td>{order.status}</td>
+                  <td>
+                    {new Date(
+                      order.created_at
+                    ).toLocaleDateString()}
+                  </td>
                 </tr>
-              </thead>
-
-              <tbody>
-                {orders.map((order) => (
-                  <tr key={order.id}>
-                    <td>#{order.id}</td>
-
-                    <td>
-                      {order.student_name}
-                    </td>
-
-                    <td>
-                      {order.restaurant_name}
-                    </td>
-
-                    <td>
-                      ₦
-                      {Number(
-                        order.total_amount
-                      ).toLocaleString()}
-                    </td>
-
-                    <td>
-                      {order.status}
-                    </td>
-
-                    <td>
-                      {new Date(
-                        order.created_at
-                      ).toLocaleDateString()}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              ))}
+            </tbody>
+          </table>
         )}
       </div>
     </div>
