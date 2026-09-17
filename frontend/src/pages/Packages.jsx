@@ -5,6 +5,7 @@ import "../styles/packages.css";
 import { toast } from "react-toastify";
 import PackageGridSkeleton from "../components/loaders/PackageGridSkeleton";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Packages() {
   const [packages, setPackages] = useState([]);
@@ -16,6 +17,8 @@ function Packages() {
   const { addItemToCart } = useCart();
   
   const navigate = useNavigate();
+
+  const location = useLocation();
 
   const categories = [
     "all",
@@ -64,6 +67,24 @@ function Packages() {
 
     fetchPackages();
   }, []);
+
+  useEffect(() => {
+  if (!loading && location.hash) {
+    const targetId = location.hash.replace("#", "");
+
+    setTimeout(() => {
+      const element =
+        document.getElementById(targetId);
+
+      if (element) {
+        element.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    }, 300);
+  }
+}, [loading, location]);
 
   if (loading) {
   return (
@@ -132,6 +153,9 @@ function Packages() {
         {Object.entries(groupedPackages).map(
           ([category, categoryPackages]) => (
             <div
+              id={category
+                .toLowerCase()
+                .replace(/\s+/g, "-")}
               className="category-section"
               key={category}
             >

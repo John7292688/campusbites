@@ -50,6 +50,12 @@ function Categories() {
             <div
               className="category-card"
               key={category.id}
+              onClick={() =>
+                window.location.href = `/packages#${category.name
+                  .toLowerCase()
+                  .replace(/\s+/g, "-")}`
+              }
+              style={{ cursor: "pointer" }}
             >
               <div className="category-icon">
                 {category.icon || "🍽️"}
