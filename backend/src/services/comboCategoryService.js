@@ -9,17 +9,25 @@ const getCategories = async () => {
   return await getAllComboCategories();
 };
 
-const addCategory = async (name) => {
-  return await createComboCategory(name);
+const addCategory = async (
+  name,
+  icon
+) => {
+  return await createComboCategory(
+    name,
+    icon
+  );
 };
 
 const updateCategory = async (
   id,
-  name
+  name,
+  icon
 ) => {
   return await updateComboCategory(
     id,
-    name
+    name,
+    icon
   );
 };
 

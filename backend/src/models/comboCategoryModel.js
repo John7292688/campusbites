@@ -11,15 +11,16 @@ const getAllComboCategories = async () => {
 };
 
 const createComboCategory = async (
-  name
+  name,
+  icon
 ) => {
   const result = await pool.query(
     `
-    INSERT INTO combo_categories (name)
-    VALUES ($1)
+    INSERT INTO combo_categories (name, icon)
+    VALUES ($1, $2)
     RETURNING *;
     `,
-    [name]
+    [name, icon]
   );
 
   return result.rows[0];
@@ -27,16 +28,19 @@ const createComboCategory = async (
 
 const updateComboCategory = async (
   id,
-  name
+  name,
+  icon
 ) => {
   const result = await pool.query(
     `
     UPDATE combo_categories
-    SET name = $1
-    WHERE id = $2
+    SET
+      name = $1,
+      icon = $2
+    WHERE id = $3
     RETURNING *;
     `,
-    [name, id]
+    [name, icon, id]
   );
 
   return result.rows[0];

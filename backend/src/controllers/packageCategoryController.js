@@ -19,12 +19,16 @@ const createCategory = async (
   req,
   res
 ) => {
-  const { name } = req.body;
+  const {
+  name,
+  icon = "🍽️",
+} = req.body;
 
-  const category =
-    await comboCategoryService.addCategory(
-      name
-    );
+const category =
+  await comboCategoryService.addCategory(
+    name,
+    icon
+  );
 
   res.status(201).json({
     success: true,
@@ -40,13 +44,17 @@ const updateCategory = async (
 ) => {
   const { id } = req.params;
 
-  const { name } = req.body;
+  const {
+  name,
+  icon = "🍽️",
+} = req.body;
 
-  const category =
-    await comboCategoryService.updateCategory(
-      id,
-      name
-    );
+const category =
+  await comboCategoryService.updateCategory(
+    id,
+    name,
+    icon
+  );
 
   res.json({
     success: true,

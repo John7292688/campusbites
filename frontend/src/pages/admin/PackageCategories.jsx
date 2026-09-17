@@ -4,11 +4,88 @@ import { toast, ToastContainer } from "react-toastify";
 import "../../styles/packageCategories.css";
 import "react-toastify/dist/ReactToastify.css";
 
+const CATEGORY_ICONS = [
+  "🍽️",
+  "🍔",
+  "🍕",
+  "🍗",
+  "🍟",
+  "🌭",
+  "🥪",
+  "🌮",
+  "🌯",
+  "🥙",
+  "🍜",
+  "🍝",
+  "🍛",
+  "🍚",
+  "🫘",
+  "🥘",
+  "🍲",
+  "🍤",
+  "🦐",
+  "🦞",
+  "🦀",
+  "🐟",
+  "🍣",
+  "🍱",
+  "🥟",
+  "🍳",
+  "🥚",
+  "🥓",
+  "🥩",
+  "🍖",
+  "🌽",
+  "🥕",
+  "🥬",
+  "🥒",
+  "🍅",
+  "🧅",
+  "🧄",
+  "🥔",
+  "🍌",
+  "🍎",
+  "🍊",
+  "🍉",
+  "🍍",
+  "🥭",
+  "🍇",
+  "🥜",
+  "🌰",
+  "🥥",
+  "🧈",
+  "🧀",
+  "🥛",
+  "☕",
+  "🫖",
+  "🥤",
+  "🧃",
+  "🍹",
+  "🧋",
+  "🍰",
+  "🎂",
+  "🧁",
+  "🍩",
+  "🍪",
+  "🍫",
+  "🍬",
+  "🍭",
+  "🍯",
+  "🍞",
+  "🥐",
+  "🥨"
+];
+
 function PackageCategories() {
   const [categories, setCategories] =
     useState([]);
 
   const [name, setName] = useState("");  
+
+  const [icon, setIcon] = useState("🍽️");
+
+  const [editIcon, setEditIcon] =
+    useState("🍽️");
 
   const [editingCategory, setEditingCategory] =
     useState(null);
@@ -35,17 +112,17 @@ function PackageCategories() {
     }
   };
 
-  const createCategory = async () => {
+const createCategory = async () => {
   if (!name.trim()) return;
 
   const tempCategory = {
     id: Date.now(),
     name: name.trim(),
+    icon,
   };
 
   const oldCategories = [...categories];
 
-  // Show immediately
   setCategories((prev) => [
     ...prev,
     tempCategory,
@@ -56,21 +133,21 @@ function PackageCategories() {
   setName("");
 
   toast.success(
-      "Category added successfully!"
-    );
+    "Category added successfully!"
+  );
 
   try {
     const response = await axios.post(
       `${import.meta.env.VITE_API_URL}/api/package-categories`,
       {
         name: categoryName,
+        icon,
       }
     );
 
     const realCategory =
       response.data.category;
 
-    // Replace temporary category with real one
     setCategories((prev) =>
       prev.map((category) =>
         category.id === tempCategory.id
@@ -78,11 +155,9 @@ function PackageCategories() {
           : category
       )
     );
-
   } catch (error) {
     console.error(error);
 
-    // Roll back if failed
     setCategories(oldCategories);
 
     toast.error(
@@ -119,7 +194,12 @@ const deleteCategory = async (id) => {
 
 const editCategory = (category) => {
   setEditingCategory(category);
+
   setEditName(category.name);
+
+  setEditIcon(
+    category.icon || "🍽️"
+  );
 };
 
 const saveCategoryEdit = async () => {
@@ -133,6 +213,7 @@ const saveCategoryEdit = async () => {
         ? {
             ...category,
             name: editName,
+            icon: editIcon,
           }
         : category
     )
@@ -149,6 +230,7 @@ const saveCategoryEdit = async () => {
       `${import.meta.env.VITE_API_URL}/api/package-categories/${editingCategory.id}`,
       {
         name: editName,
+        icon: editIcon,
       }
     );
 
@@ -227,6 +309,64 @@ return (
             outline: "none",
           }}
         />
+
+        <input
+          type="text"
+          placeholder="Enter icon (🍔)"
+          value={icon}
+          onChange={(e) =>
+            setIcon(e.target.value)
+          }
+          style={{
+            width: "140px",
+            padding: "14px",
+            border: "1px solid #CBD5E1",
+            borderRadius: "10px",
+            fontSize: "15px",
+            outline: "none",
+          }}
+        />
+
+        <select
+          value={icon}
+          onChange={(e) => setIcon(e.target.value)}
+          style={{
+            padding: "14px",
+            border: "1px solid #CBD5E1",
+            borderRadius: "10px",
+            fontSize: "15px",
+            outline: "none",
+          }}
+        >
+          <option value="🍽️">🍽️ General Food</option>
+          <option value="🍔">🍔 Fast Food</option>
+          <option value="🍕">🍕 Pizza</option>
+          <option value="🍗">🍗 Chicken</option>
+          <option value="🍟">🍟 Fries</option>
+          <option value="🥤">🥤 Drinks</option>
+          <option value="☕">☕ Coffee</option>
+          <option value="🍚">🍚 Rice</option>
+          <option value="🍜">🍜 Noodles</option>
+          <option value="🍲">🍲 Soups</option>
+          <option value="🥩">🥩 Meat</option>
+          <option value="🍖">🍖 Barbecue</option>
+          <option value="🐟">🐟 Fish</option>
+          <option value="🦐">🦐 Seafood</option>
+          <option value="🥚">🥚 Eggs</option>
+          <option value="🥗">🥗 Salads</option>
+          <option value="🥬">🥬 Vegetables</option>
+          <option value="🌮">🌮 Snacks</option>
+          <option value="🍞">🍞 Bread</option>
+          <option value="🧁">🧁 Pastries</option>
+          <option value="🍰">🍰 Desserts</option>
+          <option value="🍩">🍩 Doughnuts</option>
+          <option value="🍪">🍪 Cookies</option>
+          <option value="🍫">🍫 Chocolates</option>
+          <option value="🍎">🍎 Fruits</option>
+          <option value="🍌">🍌 Fresh Produce</option>
+          <option value="🥛">🥛 Dairy</option>
+          <option value="🛒">🛒 Groceries</option>
+        </select>
 
         <button
           onClick={createCategory}
@@ -352,6 +492,15 @@ return (
                   fontWeight: "600",
                 }}
               >
+                <span
+                  style={{
+                    marginRight: "10px",
+                    fontSize: "20px",
+                  }}
+                >
+                  {category.icon || "🍽️"}
+                </span>
+
                 {category.name}
               </td>
 
@@ -505,6 +654,30 @@ return (
               boxSizing: "border-box",
             }}
           />
+
+          <select
+            value={editIcon}
+            onChange={(e) =>
+              setEditIcon(e.target.value)
+            }
+            style={{
+              width: "100%",
+              padding: "12px",
+              marginBottom: "20px",
+              border: "1px solid #CBD5E1",
+              borderRadius: "8px",
+              boxSizing: "border-box",
+            }}
+          >
+            {CATEGORY_ICONS.map((icon) => (
+              <option
+                key={icon}
+                value={icon}
+              >
+                {icon}
+              </option>
+            ))}
+          </select>
 
           <div
             style={{
