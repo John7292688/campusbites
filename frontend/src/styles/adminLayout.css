@@ -23,8 +23,7 @@
 
   overflow-y: auto;
 
-  transition: 0.3s ease;
-   overflow: hidden; 
+  transition: all 0.3s ease;
 }
 
 .admin-logo {
@@ -69,9 +68,6 @@
   gap: 8px;
   margin-top: 30px;
   flex: 1;
-
-  overflow-y: auto; 
-  padding-right: 5px;
 }
 
 .admin-link {
@@ -107,8 +103,7 @@
   cursor: pointer;
   font-weight: 600;
   text-align: left;
-
-  margin-top: 20px; 
+  margin-bottom: 10px;
 }
 
 .logout-btn:hover {
@@ -121,8 +116,9 @@
 
 .admin-content {
   flex: 1;
-  background: #f8fafc;
   min-width: 0;
+  background: #f8fafc;
+  overflow-x: hidden;
 }
 
 /* =========================
@@ -142,16 +138,38 @@
 }
 
 /* =========================
-   TABLET & MOBILE
+   TABLETS
+========================= */
+
+@media (max-width: 1024px) {
+  .admin-sidebar {
+    width: 250px;
+    padding: 22px;
+  }
+
+  .admin-logo h2 {
+    font-size: 28px;
+  }
+}
+
+/* =========================
+   MOBILE
 ========================= */
 
 @media (max-width: 768px) {
   .admin-sidebar {
     position: fixed;
-    left: -280px;
     top: 0;
+    left: -260px;
+
+    width: 260px;
+    height: 100vh;
 
     z-index: 1001;
+
+    padding: 20px;
+
+    overflow-y: auto;
   }
 
   .admin-sidebar.open {
@@ -182,11 +200,15 @@
     background: white;
 
     border-bottom: 1px solid #e5e7eb;
+
+    position: sticky;
+    top: 0;
+    z-index: 900;
   }
 
   .mobile-topbar h2 {
     margin: 0;
-    font-size: 22px;
+    font-size: 20px;
   }
 
   .menu-btn {
@@ -201,5 +223,51 @@
     cursor: pointer;
 
     font-size: 22px;
+  }
+
+  .admin-logo h2 {
+    font-size: 24px;
+  }
+
+  .admin-user {
+    padding: 12px;
+  }
+
+  .admin-user-name {
+    font-size: 14px;
+  }
+
+  .admin-user-role {
+    font-size: 12px;
+  }
+
+  .admin-link {
+    padding: 10px 14px;
+    font-size: 15px;
+  }
+}
+
+/* =========================
+   SMALL PHONES
+========================= */
+
+@media (max-width: 480px) {
+  .admin-sidebar {
+    width: 240px;
+    left: -240px;
+    padding: 18px;
+  }
+
+  .admin-logo h2 {
+    font-size: 22px;
+  }
+
+  .admin-link {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .mobile-topbar h2 {
+    font-size: 18px;
   }
 }
