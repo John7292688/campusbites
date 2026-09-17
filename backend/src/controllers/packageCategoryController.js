@@ -15,6 +15,19 @@ const getAllCategories = async (
   });
 };
 
+const getPublicCategories = async (
+  req,
+  res
+) => {
+  const categories =
+    await comboCategoryService.getPublicCategories();
+
+  res.json({
+    success: true,
+    categories,
+  });
+};
+
 const createCategory = async (
   req,
   res
@@ -83,6 +96,7 @@ const deleteCategory = async (
 
 module.exports = {
   getAllCategories,
+  getPublicCategories,
   createCategory,
   updateCategory,
   deleteCategory,

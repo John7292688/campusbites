@@ -4,11 +4,17 @@ const router = express.Router();
 
 const {
   getAllCategories,
+  getPublicCategories,
   createCategory,
   updateCategory,
   deleteCategory,
 } = require(
   "../controllers/packageCategoryController"
+);
+
+router.get(
+  "/public",
+  getPublicCategories
 );
 
 router.get(

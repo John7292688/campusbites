@@ -2,6 +2,16 @@ const pool = require("../config/database");
 
 const getAllComboCategories = async () => {
   const result = await pool.query(`
+    SELECT *
+    FROM combo_categories
+    ORDER BY name ASC
+  `);
+
+  return result.rows;
+};
+
+const getPublicComboCategories = async () => {
+  const result = await pool.query(`
     SELECT DISTINCT cc.*
     FROM combo_categories cc
     INNER JOIN combo_packages cp
@@ -62,6 +72,7 @@ const deleteComboCategory = async (
 
 module.exports = {
   getAllComboCategories,
+  getPublicComboCategories,
   createComboCategory,
   updateComboCategory,
   deleteComboCategory,

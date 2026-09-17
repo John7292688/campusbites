@@ -11,7 +11,7 @@ function Categories() {
   const fetchCategories = async () => {
     try {
       const response = await axios.get(
-        `${import.meta.env.VITE_API_URL}/api/package-categories`
+        `${import.meta.env.VITE_API_URL}/api/package-categories/public`
       );
 
       setCategories(response.data.categories || []);

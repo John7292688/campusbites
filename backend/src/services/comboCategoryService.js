@@ -1,5 +1,6 @@
 const {
   getAllComboCategories,
+  getPublicComboCategories,
   createComboCategory,
   updateComboCategory,
   deleteComboCategory,
@@ -7,6 +8,10 @@ const {
 
 const getCategories = async () => {
   return await getAllComboCategories();
+};
+
+const getPublicCategories = async () => {
+  return await getPublicComboCategories();
 };
 
 const addCategory = async (
@@ -41,6 +46,7 @@ const deleteCategory = async (
 
 module.exports = {
   getCategories,
+  getPublicCategories,
   addCategory,
   updateCategory,
   deleteCategory,
