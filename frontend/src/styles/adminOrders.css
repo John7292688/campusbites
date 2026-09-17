@@ -59,6 +59,8 @@
   padding: 24px;
 
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+
+  overflow-x: auto;
 }
 
 .orders-table-card h2 {
@@ -72,5 +74,72 @@
 
   .admin-page-header h1 {
     font-size: 28px;
+  }
+}
+
+.orders-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.orders-table th,
+.orders-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.orders-table th {
+  font-weight: 700;
+  color: #334155;
+}
+
+.orders-table td {
+  color: #475569;
+}
+
+.pagination {
+  margin-top: 20px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+
+  flex-wrap: wrap;
+}
+
+.pagination button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  background: #f97316;
+  color: white;
+  font-weight: 600;
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination span {
+  font-weight: 600;
+  color: #334155;
+}
+
+@media (max-width: 768px) {
+  .orders-table-card {
+    overflow-x: auto;
+  }
+
+  .orders-table {
+    min-width: 700px;
+  }
+
+  .pagination {
+    justify-content: center;
   }
 }

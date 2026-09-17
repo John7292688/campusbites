@@ -4,6 +4,9 @@ import "../../styles/adminOrders.css";
 function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const ordersPerPage = 20;
 
   const fetchOrders = async () => {
     try {
@@ -38,8 +41,24 @@ function Orders() {
   ).length;
 
   const revenue = orders.reduce(
-    (total, order) => total + Number(order.total_amount || 0),
+    (total, order) =>
+      total + Number(order.total_amount || 0),
     0
+  );
+
+  const indexOfLastOrder =
+    currentPage * ordersPerPage;
+
+  const indexOfFirstOrder =
+    indexOfLastOrder - ordersPerPage;
+
+  const currentOrders = orders.slice(
+    indexOfFirstOrder,
+    indexOfLastOrder
+  );
+
+  const totalPages = Math.ceil(
+    orders.length / ordersPerPage
   );
 
   return (
@@ -71,7 +90,9 @@ function Orders() {
 
         <div className="stat-card">
           <h3>Revenue</h3>
-          <span>₦{revenue.toLocaleString()}</span>
+          <span>
+            ₦{revenue.toLocaleString()}
+          </span>
         </div>
       </div>
 
@@ -81,37 +102,85 @@ function Orders() {
         {loading ? (
           <p>Loading orders...</p>
         ) : (
-          <table className="orders-table">
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Student</th>
-                <th>Restaurant</th>
-                <th>Amount</th>
-                <th>Status</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {orders.map((order) => (
-                <tr key={order.id}>
-                  <td>{order.id}</td>
-                  <td>{order.student_name}</td>
-                  <td>{order.restaurant_name}</td>
-                  <td>
-                    ₦{Number(order.total_amount).toLocaleString()}
-                  </td>
-                  <td>{order.status}</td>
-                  <td>
-                    {new Date(
-                      order.created_at
-                    ).toLocaleDateString()}
-                  </td>
+          <>
+            <table className="orders-table">
+              <thead>
+                <tr>
+                  <th>ID</th>
+                  <th>Student</th>
+                  <th>Restaurant</th>
+                  <th>Amount</th>
+                  <th>Status</th>
+                  <th>Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              <tbody>
+                {currentOrders.map((order) => (
+                  <tr key={order.id}>
+                    <td>{order.id}</td>
+
+                    <td>
+                      {order.student_name}
+                    </td>
+
+                    <td>
+                      {order.restaurant_name}
+                    </td>
+
+                    <td>
+                      ₦
+                      {Number(
+                        order.total_amount
+                      ).toLocaleString()}
+                    </td>
+
+                    <td>{order.status}</td>
+
+                    <td>
+                      {new Date(
+                        order.created_at
+                      ).toLocaleDateString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            <div className="pagination">
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.max(prev - 1, 1)
+                  )
+                }
+                disabled={currentPage === 1}
+              >
+                Previous
+              </button>
+
+              <span>
+                Page {currentPage} of{" "}
+                {totalPages}
+              </span>
+
+              <button
+                onClick={() =>
+                  setCurrentPage((prev) =>
+                    Math.min(
+                      prev + 1,
+                      totalPages
+                    )
+                  )
+                }
+                disabled={
+                  currentPage === totalPages
+                }
+              >
+                Next
+              </button>
+            </div>
+          </>
         )}
       </div>
     </div>
