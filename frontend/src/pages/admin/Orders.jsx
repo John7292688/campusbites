@@ -135,7 +135,15 @@ function Orders() {
                       ).toLocaleString()}
                     </td>
 
-                    <td>{order.status}</td>
+                    <td>
+                      <span
+                        className={`status-badge ${order.status
+                          .toLowerCase()
+                          .replace(/\s+/g, "-")}`}
+                      >
+                        {order.status}
+                      </span>
+                    </td>
 
                     <td>
                       {new Date(
