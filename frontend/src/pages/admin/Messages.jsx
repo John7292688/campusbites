@@ -88,17 +88,34 @@ function Messages() {
 
   return (
     <div style={{ padding: "30px" }}>
-      <h1>
-        Contact Messages
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          gap: "12px",
+          flexWrap: "wrap",
+          marginBottom: "20px",
+        }}
+      >
+        <h1
+          style={{
+            margin: 0,
+            fontSize: "2rem",
+          }}
+        >
+          Contact Messages
+        </h1>
 
         <span
           style={{
-            marginLeft: "12px",
             background: "#EF4444",
             color: "#fff",
-            padding: "4px 10px",
+            padding: "8px 14px",
             borderRadius: "999px",
             fontSize: "14px",
+            fontWeight: "600",
+            whiteSpace: "nowrap",
           }}
         >
           {
@@ -108,7 +125,7 @@ function Messages() {
           }{" "}
           Unread
         </span>
-      </h1>
+      </div>
 
       <input
       type="text"
