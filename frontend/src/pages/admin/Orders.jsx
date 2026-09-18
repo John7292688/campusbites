@@ -6,6 +6,7 @@ function Orders() {
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
+  const [statusFilter, setStatusFilter] = useState("All");
 
   const ordersPerPage = 20;
 
@@ -48,16 +49,27 @@ function Orders() {
   );
 
 const filteredOrders = orders.filter(
-  (order) =>
-    order.id
-      .toString()
-      .includes(searchTerm) ||
-    order.student_name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase()) ||
-    order.restaurant_name
-      ?.toLowerCase()
-      .includes(searchTerm.toLowerCase())
+  (order) => {
+    const matchesSearch =
+      order.id
+        .toString()
+        .includes(searchTerm) ||
+      order.student_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase()) ||
+      order.restaurant_name
+        ?.toLowerCase()
+        .includes(searchTerm.toLowerCase());
+
+    const matchesStatus =
+      statusFilter === "All" ||
+      order.status === statusFilter;
+
+    return (
+      matchesSearch &&
+      matchesStatus
+    );
+  }
 );
 
 const indexOfLastOrder =
@@ -141,16 +153,37 @@ const getStatusClass = (status) => {
         <div className="orders-header">
           <h2>All Orders</h2>
 
-          <input
-            type="text"
-            placeholder="Search by ID, student or restaurant..."
-            value={searchTerm}
-            onChange={(e) => {
-              setSearchTerm(e.target.value);
-              setCurrentPage(1);
-            }}
-            className="orders-search"
-          />
+          <div className="orders-actions">
+            <select
+              value={statusFilter}
+              onChange={(e) => {
+                setStatusFilter(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="orders-filter"
+            >
+              <option value="All">All Statuses</option>
+              <option value="Pending">Pending</option>
+              <option value="Preparing">Preparing</option>
+              <option value="Ready">Ready</option>
+              <option value="Out for Delivery">
+                Out for Delivery
+              </option>
+              <option value="Delivered">Delivered</option>
+              <option value="Cancelled">Cancelled</option>
+            </select>
+
+            <input
+              type="text"
+              placeholder="Search by ID, student or restaurant..."
+              value={searchTerm}
+              onChange={(e) => {
+                setSearchTerm(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="orders-search"
+            />
+          </div>
         </div>
 
         {loading ? (
