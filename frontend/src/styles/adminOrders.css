@@ -252,6 +252,22 @@
 
 @media (max-width: 600px) {
   .orders-stats {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+
+  .stat-card {
+    min-height: 95px;
+    padding: 18px;
+    text-align: center;
+  }
+
+  .stat-card span {
+    font-size: 28px;
+    margin-top: 8px;
+  }
+
+  .stat-card h3 {
+    font-size: 14px;
   }
 }
