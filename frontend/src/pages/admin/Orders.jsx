@@ -5,6 +5,7 @@ function Orders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const ordersPerPage = 20;
 
@@ -46,20 +47,35 @@ function Orders() {
     0
   );
 
-  const indexOfLastOrder =
-    currentPage * ordersPerPage;
+const filteredOrders = orders.filter(
+  (order) =>
+    order.id
+      .toString()
+      .includes(searchTerm) ||
+    order.student_name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase()) ||
+    order.restaurant_name
+      ?.toLowerCase()
+      .includes(searchTerm.toLowerCase())
+);
 
-  const indexOfFirstOrder =
-    indexOfLastOrder - ordersPerPage;
+const indexOfLastOrder =
+  currentPage * ordersPerPage;
 
-  const currentOrders = orders.slice(
+const indexOfFirstOrder =
+  indexOfLastOrder - ordersPerPage;
+
+const currentOrders =
+  filteredOrders.slice(
     indexOfFirstOrder,
     indexOfLastOrder
   );
 
-  const totalPages = Math.ceil(
-    orders.length / ordersPerPage
-  );  
+const totalPages = Math.ceil(
+  filteredOrders.length /
+    ordersPerPage
+);
 
   const getStatusClass = (status) => {
     switch (status) {
@@ -116,7 +132,20 @@ function Orders() {
       </div>
 
       <div className="orders-table-card">
-        <h2>All Orders</h2>
+        <div className="orders-header">
+          <h2>All Orders</h2>
+
+          <input
+            type="text"
+            placeholder="Search by ID, student or restaurant..."
+            value={searchTerm}
+            onChange={(e) => {
+              setSearchTerm(e.target.value);
+              setCurrentPage(1);
+            }}
+            className="orders-search"
+          />
+        </div>
 
         {loading ? (
           <p>Loading orders...</p>
@@ -201,7 +230,8 @@ function Orders() {
                   )
                 }
                 disabled={
-                  currentPage === totalPages
+                  currentPage === totalPages ||
+                  totalPages === 0
                 }
               >
                 Next
