@@ -74,10 +74,31 @@
   border-radius: 10px;
   font-size: 14px;
   outline: none;
+  transition: all 0.2s ease;
 }
 
 .orders-search:focus {
   border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
+}
+
+.orders-filter {
+  width: 180px;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  background: white;
+  font-size: 14px;
+  font-weight: 500;
+  color: #334155;
+  outline: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.orders-filter:focus {
+  border-color: #f97316;
+  box-shadow: 0 0 0 3px rgba(249, 115, 22, 0.15);
 }
 
 .orders-table {
@@ -118,6 +139,11 @@
   background: #f97316;
   color: white;
   font-weight: 600;
+  transition: 0.2s ease;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #ea580c;
 }
 
 .pagination button:disabled {
@@ -187,6 +213,7 @@
     align-items: stretch;
   }
 
+  .orders-filter,
   .orders-search {
     width: 100%;
   }
