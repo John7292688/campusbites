@@ -59,7 +59,26 @@ function Orders() {
 
   const totalPages = Math.ceil(
     orders.length / ordersPerPage
-  );
+  );  
+
+  const getStatusClass = (status) => {
+    switch (status) {
+      case "Delivered":
+        return "status-delivered";
+
+      case "Pending":
+        return "status-pending";
+
+      case "Ready":
+        return "status-ready";
+
+      case "Cancelled":
+        return "status-cancelled";
+
+      default:
+        return "status-default";
+    }
+  };
 
   return (
     <div className="admin-orders-page">
@@ -137,9 +156,9 @@ function Orders() {
 
                     <td>
                       <span
-                        className={`status-badge ${order.status
-                          .toLowerCase()
-                          .replace(/\s+/g, "-")}`}
+                        className={`status-badge ${getStatusClass(
+                          order.status
+                        )}`}
                       >
                         {order.status}
                       </span>
