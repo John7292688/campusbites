@@ -66,6 +66,13 @@
   flex-wrap: wrap;
 }
 
+.orders-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
 .orders-search {
   width: 320px;
   max-width: 100%;
@@ -211,6 +218,11 @@
   .orders-header {
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .orders-actions {
+    width: 100%;
+    flex-direction: column;
   }
 
   .orders-filter,
