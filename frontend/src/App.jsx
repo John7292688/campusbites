@@ -41,6 +41,7 @@ import OwnerLogin from "./pages/owner/OwnerLogin";
 import AdminLogin from "./pages/admin/AdminLogin";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import AdminOrders from "./pages/admin/Orders";
+import AdminSettings from "./pages/admin/Settings";
 import RestaurantApplication from "./pages/admin/RestaurantApplication";
 import Restaurants from "./pages/admin/Restaurants";
 import PackageCategories from "./pages/admin/PackageCategories";
@@ -254,6 +255,11 @@ function App() {
     <Route
       path="messages"
       element={<Messages />}
+    />
+
+    <Route
+      path="settings"
+      element={<AdminSettings />}
     />
   </Route>
 
