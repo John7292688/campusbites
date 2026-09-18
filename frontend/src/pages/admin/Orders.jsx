@@ -77,24 +77,30 @@ const totalPages = Math.ceil(
     ordersPerPage
 );
 
-  const getStatusClass = (status) => {
-    switch (status) {
-      case "Delivered":
-        return "status-delivered";
+const getStatusClass = (status) => {
+  switch (status) {
+    case "Delivered":
+      return "status-delivered";
 
-      case "Pending":
-        return "status-pending";
+    case "Pending":
+      return "status-pending";
 
-      case "Ready":
-        return "status-ready";
+    case "Ready":
+      return "status-ready";
 
-      case "Cancelled":
-        return "status-cancelled";
+    case "Preparing":
+      return "status-preparing";
 
-      default:
-        return "status-default";
-    }
-  };
+    case "Out for Delivery":
+      return "status-out-for-delivery";
+
+    case "Cancelled":
+      return "status-cancelled";
+
+    default:
+      return "status-default";
+  }
+};
 
   return (
     <div className="admin-orders-page">

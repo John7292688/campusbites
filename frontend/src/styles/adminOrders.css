@@ -15,13 +15,11 @@
 
 .orders-stats {
   margin-top: 30px;
-
   display: grid;
   grid-template-columns: repeat(
     auto-fit,
     minmax(220px, 1fr)
   );
-
   gap: 20px;
 }
 
@@ -29,8 +27,7 @@
   background: white;
   border-radius: 16px;
   padding: 24px;
-
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
 .stat-card h3 {
@@ -42,39 +39,45 @@
 .stat-card span {
   display: block;
   margin-top: 12px;
-
   font-size: 30px;
   font-weight: 800;
-
   color: #0f172a;
 }
 
 .orders-table-card {
   margin-top: 30px;
-
   background: white;
-
   border-radius: 16px;
-
   padding: 24px;
-
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   overflow-x: auto;
 }
 
 .orders-table-card h2 {
-  margin-top: 0;
+  margin: 0;
 }
 
-@media (max-width: 768px) {
-  .admin-orders-page {
-    padding: 20px;
-  }
+.orders-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
 
-  .admin-page-header h1 {
-    font-size: 28px;
-  }
+.orders-search {
+  width: 320px;
+  max-width: 100%;
+  padding: 12px 16px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+}
+
+.orders-search:focus {
+  border-color: #f97316;
 }
 
 .orders-table {
@@ -100,12 +103,10 @@
 
 .pagination {
   margin-top: 20px;
-
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 12px;
-
   flex-wrap: wrap;
 }
 
@@ -114,7 +115,6 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-
   background: #f97316;
   color: white;
   font-weight: 600;
@@ -128,28 +128,6 @@
 .pagination span {
   font-weight: 600;
   color: #334155;
-}
-
-@media (max-width: 768px) {
-  .orders-table-card {
-    overflow-x: auto;
-  }
-
-  .orders-table {
-    min-width: 700px;
-  }
-
-  .pagination {
-    justify-content: center;
-  }
-}
-
-.status-badge {
-  display: inline-block;
-  padding: 6px 12px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 600;
 }
 
 .status-badge {
@@ -180,7 +158,44 @@
   color: #dc2626;
 }
 
+.status-preparing {
+  background: #dbeafe;
+  color: #2563eb;
+}
+
+.status-out-for-delivery {
+  background: #cffafe;
+  color: #0891b2;
+}
+
 .status-default {
   background: #f1f5f9;
   color: #475569;
+}
+
+@media (max-width: 768px) {
+  .admin-orders-page {
+    padding: 20px;
+  }
+
+  .admin-page-header h1 {
+    font-size: 28px;
+  }
+
+  .orders-header {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .orders-search {
+    width: 100%;
+  }
+
+  .orders-table {
+    min-width: 700px;
+  }
+
+  .pagination {
+    justify-content: center;
+  }
 }
