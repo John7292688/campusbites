@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import heroFood from "../assets/images/transparent.png";
+import heroFood from "../assets/images/herosection.jfif";
 
 function Hero() {
   const navigate = useNavigate();
