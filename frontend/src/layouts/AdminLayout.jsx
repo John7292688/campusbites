@@ -119,17 +119,6 @@ function AdminLayout() {
             📩 Messages
           </Link>
 
-          <Link
-            to="/admin/settings"
-            className={`admin-link ${
-              isActive("/admin/settings")
-                ? "active"
-                : ""
-            }`}
-          >
-            ⚙ Settings
-          </Link>
-
           <div className="admin-divider" />
 
           <button
