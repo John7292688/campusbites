@@ -7,6 +7,7 @@ function RestaurantApplication() {
 
   const [restaurant, setRestaurant] =
     useState(null);
+  const isMobile = window.innerWidth <= 768;  
 
   useEffect(() => {
     fetchRestaurant();
@@ -99,23 +100,40 @@ const suspendRestaurant = async () => {
 };
 
 const rejectRestaurant = async () => {
-    const confirmAction = window.confirm(
-        "Are you sure you want to reject this restaurant?"
+  const confirmAction = window.confirm(
+    "Are you sure you want to reject this restaurant?"
+  );
+
+  if (!confirmAction) return;
+
+  const previousStatus = restaurant.status;
+
+  setRestaurant((prev) => ({
+    ...prev,
+    status: "rejected",
+  }));
+
+  try {
+    const token =
+      localStorage.getItem("adminToken");
+
+    await axios.patch(
+      `${import.meta.env.VITE_API_URL}/api/admin/restaurants/${restaurant.id}/reject`,
+      {},
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
     );
+  } catch (error) {
+    console.error(error);
 
-    if (!confirmAction) return;
-
-    try {
-        await axios.put(
-            `${API_URL}/admin/restaurants/${id}/reject`,
-            {},
-            authConfig()
-        );
-
-        fetchRestaurant();
-    } catch (error) {
-        console.error(error);
-    }
+    setRestaurant((prev) => ({
+      ...prev,
+      status: previousStatus,
+    }));
+  }
 };
 
 const reactivateRestaurant = async () => {
@@ -155,7 +173,14 @@ const reactivateRestaurant = async () => {
   }
 
   return (
-    <div style={{ padding: "30px" }}>
+    <div
+        style={{
+            padding:
+            isMobile
+                ? "15px"
+                : "30px",
+        }}
+    >
       <div
         style={{
             background: "#fff",
@@ -172,7 +197,7 @@ const reactivateRestaurant = async () => {
             alt={restaurant.name}
             style={{
                 width: "100%",
-                height: "250px",
+                height: isMobile ? "180px" : "250px",
                 objectFit: "cover",
             }}
             />
@@ -182,8 +207,9 @@ const reactivateRestaurant = async () => {
             style={{
             padding: "25px",
             display: "flex",
+            flexDirection: isMobile ? "column" : "row",
             gap: "20px",
-            alignItems: "center",
+            alignItems: isMobile ? "flex-start" : "center",
             }}
         >
             {restaurant.logo_url && (
@@ -205,7 +231,10 @@ const reactivateRestaurant = async () => {
             <h1
                 style={{
                     margin: 0,
-                    fontSize: "48px",
+                    fontSize:
+                        isMobile
+                            ? "22px"
+                            : "48px",
                     fontWeight: "700",
                     lineHeight: 1.1,
                 }}
@@ -382,8 +411,8 @@ const reactivateRestaurant = async () => {
                         </button>
 
                         <button
-                           
-                            style={{
+                        onClick={rejectRestaurant}
+                        style={{
                                 background: "#DC2626",
                                 color: "#fff",
                                 border: "none",
@@ -483,7 +512,7 @@ const reactivateRestaurant = async () => {
         style={{
             display: "grid",
             gridTemplateColumns:
-            "repeat(auto-fit, minmax(320px, 1fr))",
+            isMobile ? "1fr" : "repeat(auto-fit, minmax(320px, 1fr))",
             gap: "20px",
             marginTop: "20px",
             width: "100%",
@@ -495,10 +524,9 @@ const reactivateRestaurant = async () => {
             border: "1px solid #E2E8F0",
             borderRadius: "16px",
             padding:
-                window.innerWidth <= 768
-                    ? "20px"
-                    : "42px",
-            minHeight: "180px",
+                isMobile
+                    ? "18px"
+                    : "32px",
             background: "#FFFFFF",
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
             }}
@@ -507,7 +535,7 @@ const reactivateRestaurant = async () => {
             style={{
                 marginTop: 0,
                 marginBottom: "24px",
-                fontSize: "32px",
+                fontSize: isMobile ? "22px" : "32px",
             }}
             >
             Restaurant Information
@@ -586,9 +614,9 @@ const reactivateRestaurant = async () => {
             border: "1px solid #E2E8F0",
             borderRadius: "16px",
             padding:
-                window.innerWidth <= 768
-                    ? "20px"
-                    : "42px",
+                isMobile
+                    ? "18px"
+                    : "32px",
             minHeight: "180px",
             background: "#FFFFFF",
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
@@ -598,7 +626,7 @@ const reactivateRestaurant = async () => {
             style={{
                 marginTop: 0,
                 marginBottom: "24px",
-                fontSize: "32px",
+                fontSize: isMobile ? "22px" : "32px",
             }}
             >
             Owner Information
@@ -715,6 +743,12 @@ const reactivateRestaurant = async () => {
             {restaurant.menuItems.length === 0 ? (
             <p>No menu items added yet.</p>
             ) : (
+
+           <div
+            style={{
+                overflowX: "auto",
+            }}
+            >     
             <table
                 style={{
                     width: "100%",
@@ -805,6 +839,7 @@ const reactivateRestaurant = async () => {
                 )}
                 </tbody>
             </table>
+           </div> 
             )}
         </div>
 
@@ -857,15 +892,15 @@ const reactivateRestaurant = async () => {
                 style={{
                     border: "1px solid #E2E8F0",
                     borderRadius: "16px",
-                    padding: "20px",
+                    padding: isMobile ? "15px" : "20px",
                     display: "flex",
                     flexDirection:
-                    window.innerWidth <= 768
+                    isMobile
                         ? "column"
                         : "row",
                     justifyContent: "space-between",
                     alignItems:
-                    window.innerWidth <= 768
+                    isMobile
                         ? "flex-start"
                         : "center",
                     gap: "20px",
@@ -875,7 +910,14 @@ const reactivateRestaurant = async () => {
                 }}
                 >
                 <div style={{ flex: 1 }}>
-                    <h3>{pkg.name}</h3>
+                    <h3
+                    style={{
+                        marginTop: 0,
+                        fontSize: isMobile ? "16px" : "20px",
+                    }}
+                    >
+                    {pkg.name}
+                    </h3>
 
                     <p>{pkg.description}</p>
 
@@ -901,11 +943,11 @@ const reactivateRestaurant = async () => {
                     alt={pkg.name}
                     style={{
                         width:
-                        window.innerWidth <= 768
+                        isMobile
                             ? "100%"
                             : "220px",
                         height:
-                        window.innerWidth <= 768
+                        isMobile
                             ? "180px"
                             : "140px",
                         objectFit: "cover",
