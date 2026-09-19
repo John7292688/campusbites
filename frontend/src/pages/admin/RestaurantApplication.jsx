@@ -482,7 +482,10 @@ const reactivateRestaurant = async () => {
         <div
         style={{
             display: "grid",
-            gridTemplateColumns: "1fr 1fr",
+            gridTemplateColumns:
+            window.innerWidth <= 768
+                ? "1fr"
+                : "1fr 1fr",
             gap: "30px",
             marginTop: "20px",
             width: "100%",
@@ -493,7 +496,10 @@ const reactivateRestaurant = async () => {
             style={{
             border: "1px solid #E2E8F0",
             borderRadius: "16px",
-            padding: "42px",
+            padding:
+                window.innerWidth <= 768
+                    ? "20px"
+                    : "42px",
             minHeight: "180px",
             background: "#FFFFFF",
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
@@ -581,7 +587,10 @@ const reactivateRestaurant = async () => {
             style={{
             border: "1px solid #E2E8F0",
             borderRadius: "16px",
-            padding: "42px",
+            padding:
+                window.innerWidth <= 768
+                    ? "20px"
+                    : "42px",
             minHeight: "180px",
             background: "#FFFFFF",
             boxShadow: "0 1px 3px rgba(0,0,0,0.05)",
