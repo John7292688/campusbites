@@ -483,10 +483,8 @@ const reactivateRestaurant = async () => {
         style={{
             display: "grid",
             gridTemplateColumns:
-            window.innerWidth <= 768
-                ? "1fr"
-                : "1fr 1fr",
-            gap: "30px",
+            "repeat(auto-fit, minmax(320px, 1fr))",
+            gap: "20px",
             marginTop: "20px",
             width: "100%",
         }}
@@ -855,19 +853,26 @@ const reactivateRestaurant = async () => {
             {restaurant.comboPackages.map(
             (pkg) => (
                 <div
-                    key={pkg.id}
-                    style={{
-                        border: "1px solid #E2E8F0",
-                        borderRadius: "16px",
-                        padding: "24px",
-                        display: "flex",
-                        justifyContent: "space-between",
-                        alignItems: "center",
-                        gap: "24px",
-                        background: "#FFFFFF",
-                        boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-                        marginBottom: "20px",
-                    }}
+                key={pkg.id}
+                style={{
+                    border: "1px solid #E2E8F0",
+                    borderRadius: "16px",
+                    padding: "20px",
+                    display: "flex",
+                    flexDirection:
+                    window.innerWidth <= 768
+                        ? "column"
+                        : "row",
+                    justifyContent: "space-between",
+                    alignItems:
+                    window.innerWidth <= 768
+                        ? "flex-start"
+                        : "center",
+                    gap: "20px",
+                    background: "#FFFFFF",
+                    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+                    marginBottom: "20px",
+                }}
                 >
                 <div style={{ flex: 1 }}>
                     <h3>{pkg.name}</h3>
@@ -894,10 +899,15 @@ const reactivateRestaurant = async () => {
                     <img
                     src={pkg.image}
                     alt={pkg.name}
-                    width="250"
                     style={{
-                        width: "220px",
-                        height: "140px",
+                        width:
+                        window.innerWidth <= 768
+                            ? "100%"
+                            : "220px",
+                        height:
+                        window.innerWidth <= 768
+                            ? "180px"
+                            : "140px",
                         objectFit: "cover",
                         borderRadius: "12px",
                     }}
