@@ -51,7 +51,7 @@ function Footer() {
           <h3>Contact</h3>
 
           <p>📍 Osun State Polytechnic, Iree</p>
-          <p>📞 +234 XXX XXX XXXX</p>
+          <p>📞 +234 704 654 0252</p>
           <p>✉️ support@campusbites.com</p>
         </div>
 

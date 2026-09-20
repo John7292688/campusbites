@@ -4,7 +4,7 @@
 
 .restaurant-layout {
   display: grid;
-  grid-template-columns: 35% 65%;
+  grid-template-columns: minmax(280px, 380px) 1fr;
   gap: 30px;
   align-items: start;
 }
@@ -425,7 +425,7 @@
    TABLET
 ========================== */
 
-@media (max-width: 992px) {
+@media (max-width: 1024px) {
   .restaurant-layout {
     grid-template-columns: 1fr;
   }
