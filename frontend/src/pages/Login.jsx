@@ -10,11 +10,15 @@ import "../styles/auth.css";
 import { loginStudent } from "../services/authService";
 
 function Login() {
-  const [email, setEmail] = useState("");
+  const [email, setEmail] =
+    useState("");
+
   const [password, setPassword] =
     useState("");
+
   const [showPassword, setShowPassword] =
     useState(false);
+
   const [loading, setLoading] =
     useState(false);
 
@@ -26,10 +30,11 @@ function Login() {
     try {
       setLoading(true);
 
-      const data = await loginStudent(
-        email,
-        password
-      );
+      const data =
+        await loginStudent(
+          email,
+          password
+        );
 
       localStorage.setItem(
         "token",
@@ -38,7 +43,9 @@ function Login() {
 
       localStorage.setItem(
         "student",
-        JSON.stringify(data.student)
+        JSON.stringify(
+          data.student
+        )
       );
 
       toast.success(
@@ -62,7 +69,8 @@ function Login() {
         <h1>Welcome Back</h1>
 
         <p>
-          Login to your CampusBites account
+          Login to your CampusBites
+          account
         </p>
 
         <form onSubmit={handleLogin}>
@@ -74,7 +82,9 @@ function Login() {
               placeholder="Enter your email"
               value={email}
               onChange={(e) =>
-                setEmail(e.target.value)
+                setEmail(
+                  e.target.value
+                )
               }
               required
             />
@@ -103,30 +113,27 @@ function Login() {
                 }
                 required
                 style={{
-                  paddingRight: "50px",
+                  width: "100%",
                 }}
               />
 
-              <button
-                type="button"
+              <span
                 onClick={() =>
                   setShowPassword(
                     !showPassword
                   )
                 }
                 style={{
-                  position: "absolute",
-                  right: "12px",
+                  position:
+                    "absolute",
+                  right: "15px",
                   top: "50%",
                   transform:
                     "translateY(-50%)",
-                  border: "none",
-                  background: "transparent",
                   cursor: "pointer",
-                  color: "#6B7280",
+                  color: "#666",
                   display: "flex",
-                  alignItems: "center",
-                  justifyContent:
+                  alignItems:
                     "center",
                 }}
               >
@@ -135,7 +142,7 @@ function Login() {
                 ) : (
                   <Visibility />
                 )}
-              </button>
+              </span>
             </div>
           </div>
 
@@ -149,7 +156,8 @@ function Login() {
               to="/forgot-password"
               style={{
                 color: "#2563eb",
-                textDecoration: "none",
+                textDecoration:
+                  "none",
                 fontSize: "14px",
                 fontWeight: "500",
               }}
