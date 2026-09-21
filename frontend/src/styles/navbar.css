@@ -325,6 +325,10 @@
     gap: 8px;
   }
 
+  .nav-actions {
+    gap: 4px;
+  }
+
   .theme-btn,
   .cart-btn,
   .notification-btn,
@@ -336,9 +340,10 @@
 
   .logo {
     font-size: 1rem;
-    flex-shrink: 0;
-    max-width: 95px;
+    flex-shrink: 1;
+    min-width: 0;
     overflow: hidden;
+    text-overflow: ellipsis;
   }
 }
 
