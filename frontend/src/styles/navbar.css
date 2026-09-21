@@ -335,9 +335,10 @@
   }
 
   .logo {
-    font-size: 1.15rem;
+    font-size: 1rem;
     flex-shrink: 0;
-    max-width: 120px;
+    max-width: 95px;
+    overflow: hidden;
   }
 }
 
