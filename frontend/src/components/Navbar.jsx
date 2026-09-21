@@ -34,6 +34,8 @@ function Navbar({ openCart }) {
 
   const notificationRef = useRef(null);
 
+  const profileRef = useRef(null);
+
   const [showProfileMenu, setShowProfileMenu] =
   useState(false);
 
@@ -70,6 +72,33 @@ function Navbar({ openCart }) {
       document.removeEventListener(
         "mousedown",
         handleClickOutside
+      );
+    };
+  }, []);
+
+  useEffect(() => {
+    const handleProfileClickOutside = (
+      event
+    ) => {
+      if (
+        profileRef.current &&
+        !profileRef.current.contains(
+          event.target
+        )
+      ) {
+        setShowProfileMenu(false);
+      }
+    };
+
+    document.addEventListener(
+      "mousedown",
+      handleProfileClickOutside
+    );
+
+    return () => {
+      document.removeEventListener(
+        "mousedown",
+        handleProfileClickOutside
       );
     };
   }, []);
@@ -309,6 +338,7 @@ function Navbar({ openCart }) {
             {isLoggedIn && (
               <div
                 className="profile-wrapper"
+                ref={profileRef}
               >
                 <button
                   className="profile-btn"
