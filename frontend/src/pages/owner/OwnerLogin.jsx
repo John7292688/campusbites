@@ -5,6 +5,8 @@ import {
 } from "react-router-dom";
 import { toast } from "react-toastify";
 import { requestNotificationPermission } from "../../firebase";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
 
 import "../../styles/auth.css";
 import { loginRestaurantOwner } from "../../services/restaurantOwnerAuthService";
@@ -13,6 +15,9 @@ function OwnerLogin() {
   const [email, setEmail] = useState("");
   const [password, setPassword] =
     useState("");
+
+  const [showPassword, setShowPassword] =
+    useState(false);
 
   const [loading, setLoading] =
     useState(false);
@@ -95,17 +100,56 @@ function OwnerLogin() {
           <div className="form-group">
             <label>Password</label>
 
-            <input
-              type="password"
-              placeholder="Enter your password"
-              value={password}
-              onChange={(e) =>
-                setPassword(
-                  e.target.value
-                )
-              }
-              required
-            />
+            <div
+              style={{
+                position: "relative",
+              }}
+            >
+              <input
+                type={
+                  showPassword
+                    ? "text"
+                    : "password"
+                }
+                placeholder="Enter your password"
+                value={password}
+                onChange={(e) =>
+                  setPassword(
+                    e.target.value
+                  )
+                }
+                required
+                style={{
+                  width: "100%",
+                }}
+              />
+
+              <span
+                onClick={() =>
+                  setShowPassword(
+                    !showPassword
+                  )
+                }
+                style={{
+                  position: "absolute",
+                  right: "15px",
+                  top: "50%",
+                  transform:
+                    "translateY(-50%)",
+                  cursor: "pointer",
+                  color: "#666",
+                  display: "flex",
+                  alignItems:
+                    "center",
+                }}
+              >
+                {showPassword ? (
+                  <VisibilityOff />
+                ) : (
+                  <Visibility />
+                )}
+              </span>
+            </div>
           </div>
 
           <div
